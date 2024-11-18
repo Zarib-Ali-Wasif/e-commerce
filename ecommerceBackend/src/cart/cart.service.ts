@@ -42,7 +42,10 @@ export class CartService {
 
   async addItemToCart(userId: string, itemDTO: ItemDTO): Promise<Cart> {
     const { productId, quantity, price } = itemDTO;
-    const subTotalPrice = quantity * price;
+
+    if (quantity <= 0) {
+      throw new Error('Quantity must be greater than zero');
+    }
 
     const cart = await this.getCart(userId);
 
@@ -53,18 +56,33 @@ export class CartService {
 
       if (itemIndex > -1) {
         let item = cart.items[itemIndex];
-        item.quantity = Number(item.quantity) + Number(quantity);
-        item.subTotalPrice = item.quantity * item.price;
 
-        cart.items[itemIndex] = item;
+        const newQuantity = Number(item.quantity) + Number(quantity);
+
+        if (newQuantity <= 0) {
+          // Remove item if the updated quantity is zero or less
+          cart.items.splice(itemIndex, 1);
+        } else {
+          // Update the item with new quantity and subTotalPrice
+          item.quantity = newQuantity;
+          item.subTotalPrice = item.quantity * item.price;
+          cart.items[itemIndex] = item;
+        }
+
         this.recalculateCart(cart);
         return cart.save();
       } else {
-        cart.items.push({ ...itemDTO, subTotalPrice });
-        this.recalculateCart(cart);
-        return cart.save();
+        if (quantity > 0) {
+          // Add new item if it does not exist in the cart
+          const subTotalPrice = quantity * price;
+          cart.items.push({ ...itemDTO, subTotalPrice });
+          this.recalculateCart(cart);
+          return cart.save();
+        }
       }
     } else {
+      // Create a new cart if no cart exists
+      const subTotalPrice = quantity * price;
       const newCart = await this.createCart(userId, itemDTO, subTotalPrice);
       return newCart;
     }
