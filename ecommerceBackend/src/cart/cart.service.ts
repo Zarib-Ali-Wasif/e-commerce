@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Cart, CartDocument } from './schemas/cart.schema';
 import { ItemDTO } from './dtos/item.dto';
+import { UpdateDTO } from './dtos/update.dto';
 
 @Injectable()
 export class CartService {
@@ -41,50 +42,86 @@ export class CartService {
   }
 
   async addItemToCart(userId: string, itemDTO: ItemDTO): Promise<Cart> {
-    const { productId, quantity, price } = itemDTO;
-
-    if (quantity <= 0) {
-      throw new Error('Quantity must be greater than zero');
+    const { productId, price } = itemDTO;
+    let quantity = itemDTO.quantity;
+    if (!quantity || isNaN(quantity) || quantity <= 0) {
+      quantity = 1;
     }
 
     const cart = await this.getCart(userId);
 
     if (cart) {
       const itemIndex = cart.items.findIndex(
-        (item) => item.productId == productId,
+        (item) => item.productId === productId,
       );
 
       if (itemIndex > -1) {
-        let item = cart.items[itemIndex];
-
-        const newQuantity = Number(item.quantity) + Number(quantity);
-
-        if (newQuantity <= 0) {
-          // Remove item if the updated quantity is zero or less
-          cart.items.splice(itemIndex, 1);
-        } else {
-          // Update the item with new quantity and subTotalPrice
-          item.quantity = newQuantity;
-          item.subTotalPrice = item.quantity * item.price;
-          cart.items[itemIndex] = item;
-        }
-
-        this.recalculateCart(cart);
-        return cart.save();
+        // Item exists, increment its quantity
+        const item = cart.items[itemIndex];
+        item.quantity += quantity;
+        item.subTotalPrice = item.quantity * item.price;
+        cart.items[itemIndex] = item;
       } else {
-        if (quantity > 0) {
-          // Add new item if it does not exist in the cart
-          const subTotalPrice = quantity * price;
-          cart.items.push({ ...itemDTO, subTotalPrice });
-          this.recalculateCart(cart);
-          return cart.save();
-        }
+        // Item does not exist, add it with quantity
+        const subTotalPrice = price * quantity;
+        cart.items.push({ ...itemDTO, quantity, subTotalPrice });
       }
+
+      this.recalculateCart(cart);
+      return cart.save();
     } else {
-      // Create a new cart if no cart exists
-      const subTotalPrice = quantity * price;
-      const newCart = await this.createCart(userId, itemDTO, subTotalPrice);
+      // Create new cart with the first item
+      const subTotalPrice = price * quantity;
+      const newCart = await this.createCart(
+        userId,
+        { ...itemDTO, quantity },
+        subTotalPrice,
+      );
       return newCart;
+    }
+  }
+
+  async updateItemQuantity(
+    userId: string,
+    updateDTO: UpdateDTO,
+  ): Promise<Cart> {
+    const { productId, updatedQuantity } = updateDTO; // Receive the updated quantity directly
+    const cart = await this.getCart(userId);
+
+    if (!cart) {
+      throw new Error('Cart not found');
+    }
+
+    const itemIndex = cart.items.findIndex(
+      (item) => item.productId === productId,
+    );
+
+    if (itemIndex === -1) {
+      throw new NotFoundException('Item not found in cart');
+    }
+
+    if (itemIndex > -1) {
+      const item = cart.items[itemIndex];
+
+      // Validate updated quantity
+      if (isNaN(updatedQuantity)) {
+        return cart;
+      }
+
+      // Update quantity or remove item if quantity is 0
+      if (updatedQuantity <= 0) {
+        cart.items.splice(itemIndex, 1); // Remove item from cart
+      } else {
+        item.quantity = updatedQuantity; // Update quantity
+        item.subTotalPrice = item.quantity * item.price; // Recalculate subTotalPrice
+        cart.items[itemIndex] = item; // Save updated item
+      }
+
+      // Recalculate total cart price
+      this.recalculateCart(cart);
+      return cart.save();
+    } else {
+      throw new Error('Item not found in cart');
     }
   }
 
