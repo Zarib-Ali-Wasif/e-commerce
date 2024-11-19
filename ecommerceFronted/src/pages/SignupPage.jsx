@@ -1,4 +1,4 @@
-// src/pages/LoginPage.js
+// src/pages/SignupPage.js
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -8,24 +8,25 @@ import {
   Typography,
   CircularProgress,
 } from "@mui/material";
-import { loginUser } from "../redux/authSlice";
+import { signupUser } from "../redux/authSlice";
 
-const LoginPage = () => {
+const SignupPage = () => {
   const dispatch = useDispatch();
-  const { loading, loginError } = useSelector((state) => state.auth);
+  const { loading, signupError } = useSelector((state) => state.auth);
 
-  const [credentials, setCredentials] = useState({
+  const [formData, setFormData] = useState({
+    name: "",
     email: "",
     password: "",
   });
 
   const handleInputChange = (e) => {
-    setCredentials({ ...credentials, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(loginUser(credentials));
+    dispatch(signupUser(formData));
   };
 
   return (
@@ -38,14 +39,23 @@ const LoginPage = () => {
       p={2}
     >
       <Typography variant="h4" gutterBottom>
-        Login
+        Signup
       </Typography>
       <Box component="form" onSubmit={handleSubmit} width="100%" maxWidth={400}>
+        <TextField
+          label="Name"
+          name="name"
+          value={formData.name}
+          onChange={handleInputChange}
+          fullWidth
+          margin="normal"
+          required
+        />
         <TextField
           label="Email"
           name="email"
           type="email"
-          value={credentials.email}
+          value={formData.email}
           onChange={handleInputChange}
           fullWidth
           margin="normal"
@@ -55,15 +65,15 @@ const LoginPage = () => {
           label="Password"
           name="password"
           type="password"
-          value={credentials.password}
+          value={formData.password}
           onChange={handleInputChange}
           fullWidth
           margin="normal"
           required
         />
-        {loginError && (
+        {signupError && (
           <Typography color="error" variant="body2">
-            {loginError}
+            {signupError}
           </Typography>
         )}
         <Box mt={2}>
@@ -74,7 +84,7 @@ const LoginPage = () => {
             fullWidth
             disabled={loading}
           >
-            {loading ? <CircularProgress size={24} /> : "Login"}
+            {loading ? <CircularProgress size={24} /> : "Signup"}
           </Button>
         </Box>
       </Box>
@@ -82,18 +92,17 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default SignupPage;
 
 // {
-//   "email": "user@example.com",
-//   "password": "securepassword"
-// }
+//     "name": "John Doe",
+//     "email": "john@example.com",
+//     "password": "securepassword"
+//   }
 
-// {
-//   "token": "JWT_TOKEN",
-//   "user": {
+//   {
 //     "id": "userId123",
 //     "name": "John Doe",
-//     "email": "user@example.com"
+//     "email": "john@example.com",
+//     "token": "JWT_TOKEN"
 //   }
-// }
