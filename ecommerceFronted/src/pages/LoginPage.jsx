@@ -15,7 +15,7 @@ const LoginPage = () => {
   const { loading, loginError } = useSelector((state) => state.auth);
 
   const [credentials, setCredentials] = useState({
-    email: "",
+    username: "",
     password: "",
   });
 
@@ -42,10 +42,10 @@ const LoginPage = () => {
       </Typography>
       <Box component="form" onSubmit={handleSubmit} width="100%" maxWidth={400}>
         <TextField
-          label="Email"
-          name="email"
-          type="email"
-          value={credentials.email}
+          label="Username"
+          name="username"
+          type="username"
+          value={credentials.username}
           onChange={handleInputChange}
           fullWidth
           margin="normal"

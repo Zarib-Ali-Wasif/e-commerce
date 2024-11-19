@@ -3,11 +3,11 @@ import axios from "axios";
 
 // Async thunk for signup
 export const signupUser = createAsyncThunk(
-  "auth/signupUser",
+  "auth/registerUser",
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "https://api.example.com/signup",
+        `${import.meta.env.VITE_API_URL}/auth/register`,
         userData
       );
       return response.data; // Assuming the API returns user data and token
@@ -23,7 +23,7 @@ export const loginUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "https://api.example.com/login",
+        `${import.meta.env.VITE_API_URL}/auth/login`,
         credentials
       );
       return response.data; // Assuming the API returns user data and token

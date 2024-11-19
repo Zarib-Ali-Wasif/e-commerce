@@ -8,6 +8,7 @@ import CartIcon from "../components/CartIcon.jsx";
 import ProtectedRoute from "../components/ProtectedRoute";
 import SignupPage from "../pages/SignupPage";
 import LoginPage from "../pages/LoginPage";
+import Navbar from "../components/Navbar";
 
 function AppRoutes() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); // Mock auth state
@@ -21,6 +22,7 @@ function AppRoutes() {
     // >
     <Router>
       <Container>
+        <Navbar />
         <CartIcon />
         <Routes>
           <Route path="/" element={<ProductsPage />} />

@@ -4,9 +4,11 @@ import axios from "axios";
 
 // Async thunk to fetch products
 export const fetchProducts = createAsyncThunk(
-  "products/fetchProducts",
+  "store/fetchProducts",
   async () => {
-    const response = await axios.get("https://api.example.com/products");
+    const response = await axios.get(
+      `${import.meta.env.VITE_API_URL}/store/products`
+    );
     return response.data;
   }
 );
