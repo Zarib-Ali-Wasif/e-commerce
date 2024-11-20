@@ -28,7 +28,7 @@ function Home() {
             height: "60%",
             color: "#387DA3",
             gap: "20px",
-            ml: 5,
+            ml: { xs: 2, sm: 4 },
           }}
         >
           <Typography variant="h2" fontWeight="bold">

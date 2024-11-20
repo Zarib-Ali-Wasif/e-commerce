@@ -55,10 +55,10 @@ function Header() {
               component={NavLink}
               to={name === "Home" ? "/" : `/${name.toLowerCase()}`}
             >
-              <ListItemIcon sx={{ color: "#282c34" }}>
+              <ListItemIcon sx={{ color: "#1C4771" }}>
                 {drawerIconsComponent[index]}
               </ListItemIcon>
-              <ListItemText primary={name} sx={{ color: "#282c34" }} />
+              <ListItemText primary={name} sx={{ color: "#1C4771" }} />
             </ListItemButton>
           </ListItem>
         ))}
@@ -68,17 +68,17 @@ function Header() {
           sx={{
             // height: "100px",
             // width: "1px",
-            border: "0.5px solid gray",
+            border: "0.5px solid #1C4771",
             display: { xs: "flex", sm: "none" },
           }}
         />
 
         <ListItem sx={{ display: { xs: "flex", sm: "none" } }}>
           <ListItemButton>
-            <ListItemIcon sx={{ color: "#282c34" }}>
+            <ListItemIcon sx={{ color: "#1C4771" }}>
               <AccountCircleIcon />
             </ListItemIcon>
-            <ListItemText primary="Account" sx={{ color: "#282c34" }} />
+            <ListItemText primary="Account" sx={{ color: "#1C4771" }} />
           </ListItemButton>
         </ListItem>
       </List>
@@ -106,10 +106,8 @@ function Header() {
           <Tabs
             sx={{
               display: { xs: "none", md: "flex" },
-              // sx={{ color: "#282c34" }}
               "& .MuiTab-root": { color: "#282c34" },
               "& .MuiTabs-indicator": { backgroundColor: "#1C4771" },
-              // gap: 3, // use box for gap property
             }}
             value={location.pathname}
             textColor="inherit"

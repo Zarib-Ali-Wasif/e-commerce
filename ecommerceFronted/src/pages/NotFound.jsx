@@ -14,9 +14,10 @@ const NotFound = () => {
         textAlign: "center",
         backgroundColor: "#f8f9fa",
         padding: "20px",
+        color: "#387DA3",
       }}
     >
-      <Typography variant="h1" fontWeight="bold" color="primary">
+      <Typography variant="h1" fontWeight="bold">
         404
       </Typography>
       <Typography variant="h4" gutterBottom>
@@ -27,9 +28,8 @@ const NotFound = () => {
         moved or deleted.
       </Typography>
       <Button
-        variant="contained"
-        color="primary"
-        sx={{ textTransform: "none" }}
+        variant="outlined"
+        sx={{ textTransform: "none", backgroundColor: "#387DA3" }}
       >
         <NavLink
           to="/"
