@@ -6,41 +6,11 @@ import {
   Button,
   Grid,
   IconButton,
+  Rating,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-const ProductDetailsModal = ({ open, handleClose, productId }) => {
-  const products = [
-    {
-      id: 1,
-      name: "Product 1",
-      price: 29.99,
-      description: "Description of Product 1",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 2,
-      name: "Product 2",
-      price: 49.99,
-      description: "Description of Product 2",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 3,
-      name: "Product 3",
-      price: 19.99,
-      description: "Description of Product 3",
-      image: "https://via.placeholder.com/300",
-    },
-    // {
-    //   id: 4,
-    //   name: "Product 4",
-    //   price: 99.99,
-    //   description: "Description of Product 4",
-    //   image: "https://via.placeholder.com/300",
-    // },
-  ];
-
+const ProductDetailsModal = ({ open, handleClose, productId, products }) => {
   const product = products.find((p) => p.id === productId);
 
   if (!product) {
@@ -93,7 +63,12 @@ const ProductDetailsModal = ({ open, handleClose, productId }) => {
       <Box
         sx={{
           padding: "20px",
-          width: "50%",
+          width: {
+            xs: "90%",
+            sm: "80%",
+            md: "60%",
+            lg: "50%",
+          },
           margin: "auto",
           backgroundColor: "#dfe5f2",
           borderRadius: "8px",
@@ -103,7 +78,7 @@ const ProductDetailsModal = ({ open, handleClose, productId }) => {
       >
         {/* Close Icon */}
         <IconButton
-          sx={{ position: "absolute", top: 10, right: 10 }} // Move to top-right corner
+          sx={{ position: "absolute", top: 2, right: 4 }}
           onClick={handleClose}
         >
           <CloseIcon />
@@ -115,26 +90,70 @@ const ProductDetailsModal = ({ open, handleClose, productId }) => {
             <Box
               component="img"
               src={product.image}
-              alt={product.name}
-              sx={{ maxHeight: "400px", width: "100%", borderRadius: "8px" }}
+              alt={product.title}
+              sx={{
+                maxHeight: "400px",
+                width: "100%",
+                borderRadius: "8px",
+                objectFit: "contain",
+              }}
             />
           </Grid>
 
           {/* Product Details */}
           <Grid item xs={12} md={6}>
-            <Typography variant="h4" fontWeight="bold" gutterBottom>
-              {product.name}
+            <Typography
+              variant="h5"
+              fontWeight="bold"
+              color="#1C4771"
+              gutterBottom
+            >
+              {product.title}
             </Typography>
             <Typography variant="h6" color="textSecondary" gutterBottom>
               Price: ${product.price}
             </Typography>
-            <Typography variant="body1" paragraph>
+            <Typography
+              variant="body2"
+              textAlign="justify"
+              width={"95%"}
+              paragraph
+            >
               {product.description}
             </Typography>
+
+            {/* Rating Section */}
+            <Box sx={{ mt: 2, textAlign: "left" }}>
+              {/* Rating Stars */}
+              <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                <Rating
+                  value={product.rating.rate}
+                  precision={0.5}
+                  readOnly
+                  sx={{ color: "#FFC107", fontSize: "1.5rem", mr: 1 }} // Golden color
+                />
+              </Box>
+
+              {/* Rating Number */}
+
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                <Typography variant="body1" fontWeight="bold">
+                  {product.rating.rate} / 5
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  sx={{ fontSize: "14px" }}
+                >
+                  ({product.rating.count} reviews)
+                </Typography>
+              </Box>
+            </Box>
+
             <Button
               variant="contained"
               color="primary"
-              sx={{ mt: 2, backgroundColor: "#1C4771" }}
+              sx={{ mt: 3, backgroundColor: "#1C4771" }}
             >
               Add to Cart
             </Button>
