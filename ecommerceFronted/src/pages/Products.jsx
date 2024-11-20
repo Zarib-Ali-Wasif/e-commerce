@@ -9,26 +9,54 @@ import {
   Button,
   Toolbar,
   CircularProgress,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import ProductDetailsModal from "./ProductDetailsModal";
 
 const Products = ({ showModal }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { id } = useParams(); // Get the product ID from the URL
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const { id } = useParams();
   const navigate = useNavigate();
 
   //     image: "https://via.placeholder.com/150",
 
   const [products, setProducts] = useState([]);
 
+  // Fetch categories on component mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(
+          "https://fakestoreapi.com/products/categories"
+        );
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // Fetch products based on selected category
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch("https://fakestoreapi.com/products");
+        const url =
+          selectedCategory === "all"
+            ? "https://fakestoreapi.com/products"
+            : `https://fakestoreapi.com/products/category/${selectedCategory}`;
+        const response = await fetch(url);
         const data = await response.json();
         setProducts(data);
       } catch (error) {
@@ -39,7 +67,12 @@ const Products = ({ showModal }) => {
     };
 
     fetchProducts();
-  }, []);
+  }, [selectedCategory]);
+
+  // Handle category change
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value);
+  };
 
   // Open modal when `showModal` is true and `id` is valid
   useEffect(() => {
@@ -52,20 +85,98 @@ const Products = ({ showModal }) => {
   const handleCloseModal = () => {
     setModalOpen(false);
     setSelectedProductId(null);
-    navigate("/products"); // Remove the product ID from the URL
+    navigate("/products");
   };
 
   const handleOpenModal = (id) => {
-    navigate(`/products/${id}`); // Update the URL with the product ID
+    navigate(`/products/${id}`);
   };
 
   return (
     <>
-      <Toolbar />
-      <Box sx={{ padding: "20px", minHeight: "100vh", height: "100%" }}>
+      <Box sx={{ padding: "20px", minHeight: "100vh", height: "100%", mt: 18 }}>
         <Typography variant="h4" textAlign="center" mb={4}>
           Our Products
         </Typography>
+
+        {/* Category Filter */}
+        <FormControl
+          variant="outlined"
+          sx={{
+            width: { xs: "100%", sm: "40%", md: "20%" }, // Responsive width
+            mt: { xs: 2, md: 0 },
+            mb: { xs: "20px", md: "50px" },
+            backgroundColor: "#f5f5f5",
+            borderRadius: "8px",
+            boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
+            zIndex: 1, // Ensure it's above other elements
+          }}
+        >
+          <InputLabel
+            id="category-select-label"
+            sx={{
+              fontSize: "0.9rem",
+              fontWeight: "500",
+              color: "#1C4771",
+              "&.Mui-focused": {
+                color: "#387DA3", // Color on focus
+              },
+            }}
+          >
+            Filter by Category
+          </InputLabel>
+          <Select
+            labelId="category-select-label"
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  maxHeight: 300, // Limit dropdown height
+                  "& .MuiMenuItem-root:hover": { backgroundColor: "#f0f8ff" },
+                },
+              },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-notchedOutline": { border: "none" }, // Remove outline
+              "&:hover .MuiOutlinedInput-notchedOutline": { border: "none" }, // Remove hover outline
+              "& .MuiSelect-root": {
+                fontSize: "1rem",
+                fontWeight: "500",
+                color: "#1C4771",
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#387DA3", // Border on focus
+              },
+            }}
+          >
+            <MenuItem
+              value="all"
+              sx={{
+                fontSize: "0.9rem",
+                fontWeight: "500",
+                color: "#1C4771",
+                "&:hover": { backgroundColor: "#f0f8ff" },
+              }}
+            >
+              All
+            </MenuItem>
+            {categories.map((category) => (
+              <MenuItem
+                key={category}
+                value={category}
+                sx={{
+                  fontSize: "0.9rem",
+                  fontWeight: "500",
+                  color: "#1C4771",
+                  "&:hover": { backgroundColor: "#f0f8ff" },
+                }}
+              >
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
         {/* Show loader while fetching products */}
         {loading ? (

@@ -10,7 +10,11 @@ import Layout from "../components/Layout";
 function AppRoutes() {
   return (
     <BrowserRouter
-    //  basename={process.env.PUBLIC_URL}
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+      //  basename={process.env.PUBLIC_URL}
     >
       <Layout>
         <Routes>
