@@ -55,10 +55,10 @@ function Header() {
               component={NavLink}
               to={name === "Home" ? "/" : `/${name.toLowerCase()}`}
             >
-              <ListItemIcon sx={{ color: "white" }}>
+              <ListItemIcon sx={{ color: "#282c34" }}>
                 {drawerIconsComponent[index]}
               </ListItemIcon>
-              <ListItemText primary={name} />
+              <ListItemText primary={name} sx={{ color: "#282c34" }} />
             </ListItemButton>
           </ListItem>
         ))}
@@ -75,10 +75,10 @@ function Header() {
 
         <ListItem sx={{ display: { xs: "flex", sm: "none" } }}>
           <ListItemButton>
-            <ListItemIcon sx={{ color: "white" }}>
+            <ListItemIcon sx={{ color: "#282c34" }}>
               <AccountCircleIcon />
             </ListItemIcon>
-            <ListItemText primary="Account" />
+            <ListItemText primary="Account" sx={{ color: "#282c34" }} />
           </ListItemButton>
         </ListItem>
       </List>
@@ -90,7 +90,7 @@ function Header() {
       <AppBar
         position="fixed"
         sx={{
-          backgroundColor: "#282c34",
+          backgroundColor: "#dfe5f2",
           display: { xs: "none", md: "flex" },
         }}
       >
@@ -106,31 +106,32 @@ function Header() {
           <Tabs
             sx={{
               display: { xs: "none", md: "flex" },
-              "& .MuiTab-root": { color: "white" },
+              // sx={{ color: "#282c34" }}
+              "& .MuiTab-root": { color: "#282c34" },
               "& .MuiTabs-indicator": { backgroundColor: "#1C4771" },
               // gap: 3, // use box for gap property
             }}
             value={location.pathname}
             textColor="inherit"
           >
-            {tabsName.map(
-              (name, index) => (
-                console.log(name),
-                (
-                  <Tab
-                    key={index}
-                    label={name}
-                    component={NavLink}
-                    to={name == "Home" ? "/" : `/${name.toLowerCase()}`}
-                    value={name == "Home" ? "/" : `/${name.toLowerCase()}`}
-                    sx={{
-                      "&.active": { color: "#1C4771" },
-                      textDecoration: "none",
-                    }}
-                  />
-                )
-              )
-            )}
+            {tabsName.map((name, index) => (
+              // console.log(name),
+              <Tab
+                key={index}
+                label={name}
+                component={NavLink}
+                to={name == "Home" ? "/" : `/${name.toLowerCase()}`}
+                value={name == "Home" ? "/" : `/${name.toLowerCase()}`}
+                sx={{
+                  "&.active": {
+                    color: "#1C4771",
+                    opacity: 1,
+                    fontWeight: "bold",
+                  },
+                  textDecoration: "none",
+                }}
+              />
+            ))}
           </Tabs>
 
           <IconButton>
@@ -143,7 +144,7 @@ function Header() {
       <AppBar
         position="fixed"
         sx={{
-          backgroundColor: "#282c34",
+          backgroundColor: "#dfe5f2",
           display: { xs: "flex", md: "none" },
         }}
       >
@@ -165,7 +166,7 @@ function Header() {
         open={open}
         onClose={toggleDrawer(false)}
         PaperProps={{
-          sx: { backgroundColor: "#282c34" },
+          sx: { backgroundColor: "#dfe5f2" },
         }}
       >
         {drawerList}

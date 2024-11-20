@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Icon, IconButton } from "@mui/material";
+import { Box, Typography, IconButton, Grid } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faInstagram,
@@ -15,25 +15,60 @@ function Footer() {
         sx={{
           textAlign: "center",
           padding: 2,
-          backgroundColor: "#282c34",
+          backgroundColor: "#dfe5f2",
           color: "#1C4771",
         }}
       >
-        <Box display="flex" justifyContent="center" gap={2}>
-          <IconButton>
-            <FontAwesomeIcon icon={faInstagram} size="2x" color="#1C4771" />
-          </IconButton>
-          <IconButton>
-            <FontAwesomeIcon icon={faGithub} size="2x" color="#1C4771" />
-          </IconButton>
-          <IconButton>
-            <FontAwesomeIcon icon={faYoutube} size="2x" color="#1C4771" />
-          </IconButton>
-          <IconButton>
-            <FontAwesomeIcon icon={faFacebook} size="2x" color="#1C4771" />
-          </IconButton>
-        </Box>
-        <Typography variant="h6" textAlign="center" mt={5} mb={5}>
+        {/* Social Media Icons */}
+        <Grid
+          container
+          justifyContent="center"
+          spacing={2}
+          sx={{
+            mb: 2,
+          }}
+        >
+          <Grid item xs={2} sm={0.8} md={0.6}>
+            <IconButton>
+              <FontAwesomeIcon
+                icon={faInstagram}
+                style={{ fontSize: "1.5rem", color: "#1C4771" }}
+              />
+            </IconButton>
+          </Grid>
+          <Grid item xs={2} sm={0.8} md={0.6}>
+            <IconButton>
+              <FontAwesomeIcon
+                icon={faGithub}
+                style={{ fontSize: "1.5rem", color: "#1C4771" }}
+              />
+            </IconButton>
+          </Grid>
+          <Grid item xs={2} sm={0.8} md={0.6}>
+            <IconButton>
+              <FontAwesomeIcon
+                icon={faYoutube}
+                style={{ fontSize: "1.5rem", color: "#1C4771" }}
+              />
+            </IconButton>
+          </Grid>
+          <Grid item xs={2} sm={0.8} md={0.6}>
+            <IconButton>
+              <FontAwesomeIcon
+                icon={faFacebook}
+                style={{ fontSize: "1.5rem", color: "#1C4771" }}
+              />
+            </IconButton>
+          </Grid>
+        </Grid>
+
+        {/* Footer Text */}
+        <Typography
+          variant="h6"
+          sx={{
+            fontSize: { xs: "0.875rem", sm: "1rem" }, // Font size adapts based on grid
+          }}
+        >
           All Rights Reserved © Techinfo YT
         </Typography>
       </Box>

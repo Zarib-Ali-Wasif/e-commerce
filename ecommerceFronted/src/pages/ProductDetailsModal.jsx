@@ -1,8 +1,8 @@
 import React from "react";
+import { Modal, Box, Typography, Button, Grid } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { Box, Typography, Button, Grid, Toolbar } from "@mui/material";
 
-const ProductDetails = () => {
+const ProductDetailsModal = ({ open, handleClose }) => {
   const { id } = useParams();
 
   // Sample product data (replace with API data or state management)
@@ -11,28 +11,28 @@ const ProductDetails = () => {
       id: 1,
       name: "Product 1",
       price: 29.99,
-      description: "This is a description of Product 1.",
+      description: "Description of Product 1",
       image: "https://via.placeholder.com/300",
     },
     {
       id: 2,
       name: "Product 2",
       price: 49.99,
-      description: "This is a description of Product 2.",
+      description: "Description of Product 2",
       image: "https://via.placeholder.com/300",
     },
     {
       id: 3,
       name: "Product 3",
       price: 19.99,
-      description: "This is a description of Product 3.",
+      description: "Description of Product 3",
       image: "https://via.placeholder.com/300",
     },
     {
       id: 4,
       name: "Product 4",
       price: 99.99,
-      description: "This is a description of Product 4.",
+      description: "Description of Product 4",
       image: "https://via.placeholder.com/300",
     },
   ];
@@ -42,20 +42,35 @@ const ProductDetails = () => {
 
   if (!product) {
     return (
-      <Typography variant="h4" textAlign="center" mt={4}>
-        Product not found!
-      </Typography>
+      <Modal open={open} onClose={handleClose}>
+        <Box
+          sx={{
+            padding: "20px",
+            width: "50%",
+            margin: "auto",
+            marginTop: "100px",
+            backgroundColor: "white",
+            borderRadius: "8px",
+          }}
+        >
+          <Typography variant="h4" textAlign="center" mt={4}>
+            Product not found!
+          </Typography>
+        </Box>
+      </Modal>
     );
   }
 
   return (
-    <>
-      <Toolbar />
+    <Modal open={open} onClose={handleClose}>
       <Box
         sx={{
           padding: "20px",
-          height: "100vh",
-          paddingTop: "100px",
+          width: "50%",
+          margin: "auto",
+          marginTop: "100px",
+          backgroundColor: "white",
+          borderRadius: "8px",
         }}
       >
         <Grid container spacing={3}>
@@ -90,8 +105,8 @@ const ProductDetails = () => {
           </Grid>
         </Grid>
       </Box>
-    </>
+    </Modal>
   );
 };
 
-export default ProductDetails;
+export default ProductDetailsModal;

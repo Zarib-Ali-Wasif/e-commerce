@@ -7,6 +7,7 @@ import {
   CardContent,
   CardMedia,
   Button,
+  Toolbar,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
@@ -40,61 +41,79 @@ const Products = () => {
   ];
 
   return (
-    <Box sx={{ padding: "20px" }}>
-      <Typography variant="h4" textAlign="center" mb={4}>
-        Our Products
-      </Typography>
-      <Grid container spacing={3}>
-        {products.map((product) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
-            <Card
-              sx={{
-                maxWidth: 345,
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              <CardMedia
-                component="img"
-                height="150"
-                image={product.image}
-                alt={product.name}
-              />
-              <CardContent sx={{ flexGrow: 1 }}>
-                <Typography variant="h6" component="div" gutterBottom>
-                  {product.name}
-                </Typography>
-                <Typography variant="body1" color="textSecondary">
-                  Price: ${product.price}
-                </Typography>
-              </CardContent>
-              <Box sx={{ textAlign: "center", mb: 2 }}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  sx={{ textTransform: "none", marginRight: 1 }}
+    <>
+      <Toolbar />
+
+      <Box sx={{ padding: "20px", minHeight: "100vh", height: "100%" }}>
+        <Typography variant="h4" textAlign="center" mb={4}>
+          Our Products
+        </Typography>
+        <Grid container spacing={3}>
+          {products.map((product) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
+              <Card
+                sx={{
+                  maxWidth: 345,
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  height="150"
+                  image={product.image}
+                  alt={product.name}
+                />
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Typography variant="h6" component="div" gutterBottom>
+                    {product.name}
+                  </Typography>
+                  <Typography variant="body1" color="textSecondary">
+                    Price: ${product.price}
+                  </Typography>
+                </CardContent>
+                <Box
+                  sx={{
+                    textAlign: "center",
+                    mb: 2,
+                  }}
                 >
-                  Add to Cart
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  sx={{ textTransform: "none" }}
-                >
-                  <Link
-                    to={`/products/${product.id}`}
-                    style={{ textDecoration: "none", color: "inherit" }}
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    sx={{
+                      textTransform: "none",
+                      marginRight: 1,
+                      backgroundColor: "#1C4771",
+                    }}
                   >
-                    View Details
-                  </Link>
-                </Button>
-              </Box>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-    </Box>
+                    Add to Cart
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      textTransform: "none",
+                      borderColor: "#1C4771",
+                    }}
+                  >
+                    <Link
+                      to={`/products/${product.id}`}
+                      style={{
+                        textDecoration: "none",
+                        color: "#1C4771",
+                      }}
+                    >
+                      View Details
+                    </Link>
+                  </Button>
+                </Box>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+    </>
   );
 };
 
