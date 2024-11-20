@@ -1,5 +1,13 @@
 import React from "react";
-import { Modal, Box, Typography, Button, Grid } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Typography,
+  Button,
+  Grid,
+  IconButton,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 const ProductDetailsModal = ({ open, handleClose, productId }) => {
   const products = [
@@ -54,8 +62,16 @@ const ProductDetailsModal = ({ open, handleClose, productId }) => {
             margin: "auto",
             backgroundColor: "#dfe5f2",
             borderRadius: "8px",
+            outline: "none",
+            position: "relative",
           }}
         >
+          <IconButton
+            sx={{ position: "absolute", top: 10, right: 10 }}
+            onClick={handleClose}
+          >
+            <CloseIcon />
+          </IconButton>
           <Typography variant="h4" textAlign="center" mt={4}>
             Product not found!
           </Typography>
@@ -81,8 +97,18 @@ const ProductDetailsModal = ({ open, handleClose, productId }) => {
           margin: "auto",
           backgroundColor: "#dfe5f2",
           borderRadius: "8px",
+          outline: "none",
+          position: "relative",
         }}
       >
+        {/* Close Icon */}
+        <IconButton
+          sx={{ position: "absolute", top: 10, right: 10 }} // Move to top-right corner
+          onClick={handleClose}
+        >
+          <CloseIcon />
+        </IconButton>
+
         <Grid container spacing={3}>
           {/* Product Image */}
           <Grid item xs={12} md={6}>

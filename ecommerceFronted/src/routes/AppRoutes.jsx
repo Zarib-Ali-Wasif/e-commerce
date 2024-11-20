@@ -4,7 +4,6 @@ import Home from "../pages/Home";
 import About from "../pages/About";
 import Products from "../pages/Products";
 import NotFound from "../pages/NotFound";
-import ProductDetails from "../pages/ProductDetails";
 import Layout from "../components/Layout";
 
 function AppRoutes() {
@@ -17,7 +16,8 @@ function AppRoutes() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/products" element={<Products />} />
-          {/* <Route path="/products/:id" element={<ProductDetails />} /> */}
+          <Route path="/products/:id" element={<Products showModal={true} />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>

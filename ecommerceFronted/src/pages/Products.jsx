@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Grid,
@@ -9,11 +9,14 @@ import {
   Button,
   Toolbar,
 } from "@mui/material";
-import ProductDetailsModal from "./ProductDetailsModal"; // Import the modal component
+import { Link, useParams, useNavigate } from "react-router-dom";
+import ProductDetailsModal from "./ProductDetailsModal";
 
-const Products = () => {
-  const [modalOpen, setModalOpen] = useState(false); // State to control modal visibility
-  const [selectedProductId, setSelectedProductId] = useState(null); // State for selected product ID
+const Products = ({ showModal }) => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const { id } = useParams(); // Get the product ID from the URL
+  const navigate = useNavigate();
 
   const products = [
     {
@@ -42,14 +45,22 @@ const Products = () => {
     },
   ];
 
-  const handleOpenModal = (id) => {
-    setSelectedProductId(id);
-    setModalOpen(true); // Open the modal when a product is selected
-  };
+  // Open modal when `showModal` is true and `id` is valid
+  useEffect(() => {
+    if (showModal && id) {
+      setSelectedProductId(parseInt(id));
+      setModalOpen(true);
+    }
+  }, [id, showModal]);
 
   const handleCloseModal = () => {
     setModalOpen(false);
-    setSelectedProductId(null); // Close the modal and reset product ID
+    setSelectedProductId(null);
+    navigate("/products"); // Remove the product ID from the URL
+  };
+
+  const handleOpenModal = (id) => {
+    navigate(`/products/${id}`); // Update the URL with the product ID
   };
 
   return (
@@ -98,8 +109,11 @@ const Products = () => {
                   </Button>
                   <Button
                     variant="outlined"
-                    sx={{ textTransform: "none", borderColor: "#1C4771" }}
-                    onClick={() => handleOpenModal(product.id)} // Open the modal on click
+                    sx={{
+                      textTransform: "none",
+                      borderColor: "#1C4771",
+                    }}
+                    onClick={() => handleOpenModal(product.id)}
                   >
                     View Details
                   </Button>
@@ -115,7 +129,7 @@ const Products = () => {
         <ProductDetailsModal
           open={modalOpen}
           handleClose={handleCloseModal}
-          productId={selectedProductId} // Pass the selected product ID
+          productId={selectedProductId}
         />
       )}
     </>
