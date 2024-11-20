@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Logo from "../assets/ShopEasy-logo.png";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -27,6 +27,7 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 
 function Header() {
   const location = useLocation();
+  const navigate = useNavigate();
   const tabsName = ["Home", "Products", "About", "Contact"];
   const drawerIconsComponent = [
     <HomeOutlinedIcon />,
@@ -100,7 +101,13 @@ function Header() {
             component="div"
             sx={{ flexGrow: 1, mt: 1, ml: 2 }}
           >
-            <img src={Logo} alt="logo" height="auto" width="100" />
+            <img
+              src={Logo}
+              alt="logo"
+              height="auto"
+              width="100"
+              onClick={() => navigate("/")}
+            />
           </Typography>
 
           <Tabs
