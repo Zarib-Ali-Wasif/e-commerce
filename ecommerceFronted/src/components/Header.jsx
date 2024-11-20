@@ -158,7 +158,13 @@ function Header() {
             <MenuIcon sx={{ color: "#1C4771", fontSize: 30 }} />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ mt: 1 }}>
-            <img src={Logo} alt="logo" height="auto" width="100" />
+            <img
+              src={Logo}
+              alt="logo"
+              height="auto"
+              width="100"
+              onClick={() => navigate("/")}
+            />
           </Typography>
           <IconButton sx={{ display: { xs: "none", sm: "flex" } }}>
             <AccountCircleIcon sx={{ color: "#1C4771", fontSize: 38, ml: 3 }} />
