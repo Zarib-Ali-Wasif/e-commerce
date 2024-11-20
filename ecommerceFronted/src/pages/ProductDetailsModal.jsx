@@ -1,11 +1,7 @@
 import React from "react";
 import { Modal, Box, Typography, Button, Grid } from "@mui/material";
-import { useParams } from "react-router-dom";
 
-const ProductDetailsModal = ({ open, handleClose }) => {
-  const { id } = useParams();
-
-  // Sample product data (replace with API data or state management)
+const ProductDetailsModal = ({ open, handleClose, productId }) => {
   const products = [
     {
       id: 1,
@@ -28,28 +24,35 @@ const ProductDetailsModal = ({ open, handleClose }) => {
       description: "Description of Product 3",
       image: "https://via.placeholder.com/300",
     },
-    {
-      id: 4,
-      name: "Product 4",
-      price: 99.99,
-      description: "Description of Product 4",
-      image: "https://via.placeholder.com/300",
-    },
+    // {
+    //   id: 4,
+    //   name: "Product 4",
+    //   price: 99.99,
+    //   description: "Description of Product 4",
+    //   image: "https://via.placeholder.com/300",
+    // },
   ];
 
-  // Find the product by ID
-  const product = products.find((p) => p.id === parseInt(id));
+  const product = products.find((p) => p.id === productId);
 
   if (!product) {
     return (
-      <Modal open={open} onClose={handleClose}>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <Box
           sx={{
             padding: "20px",
-            width: "50%",
+            width: "30%",
+            height: "10%",
             margin: "auto",
-            marginTop: "100px",
-            backgroundColor: "white",
+            backgroundColor: "#dfe5f2",
             borderRadius: "8px",
           }}
         >
@@ -62,14 +65,21 @@ const ProductDetailsModal = ({ open, handleClose }) => {
   }
 
   return (
-    <Modal open={open} onClose={handleClose}>
+    <Modal
+      open={open}
+      onClose={handleClose}
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <Box
         sx={{
           padding: "20px",
           width: "50%",
           margin: "auto",
-          marginTop: "100px",
-          backgroundColor: "white",
+          backgroundColor: "#dfe5f2",
           borderRadius: "8px",
         }}
       >

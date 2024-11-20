@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Grid,
@@ -9,10 +9,12 @@ import {
   Button,
   Toolbar,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import ProductDetailsModal from "./ProductDetailsModal"; // Import the modal component
 
 const Products = () => {
-  // Sample product data (replace with API data or state management)
+  const [modalOpen, setModalOpen] = useState(false); // State to control modal visibility
+  const [selectedProductId, setSelectedProductId] = useState(null); // State for selected product ID
+
   const products = [
     {
       id: 1,
@@ -40,10 +42,19 @@ const Products = () => {
     },
   ];
 
+  const handleOpenModal = (id) => {
+    setSelectedProductId(id);
+    setModalOpen(true); // Open the modal when a product is selected
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedProductId(null); // Close the modal and reset product ID
+  };
+
   return (
     <>
       <Toolbar />
-
       <Box sx={{ padding: "20px", minHeight: "100vh", height: "100%" }}>
         <Typography variant="h4" textAlign="center" mb={4}>
           Our Products
@@ -73,12 +84,7 @@ const Products = () => {
                     Price: ${product.price}
                   </Typography>
                 </CardContent>
-                <Box
-                  sx={{
-                    textAlign: "center",
-                    mb: 2,
-                  }}
-                >
+                <Box sx={{ textAlign: "center", mb: 2 }}>
                   <Button
                     variant="contained"
                     color="primary"
@@ -92,20 +98,10 @@ const Products = () => {
                   </Button>
                   <Button
                     variant="outlined"
-                    sx={{
-                      textTransform: "none",
-                      borderColor: "#1C4771",
-                    }}
+                    sx={{ textTransform: "none", borderColor: "#1C4771" }}
+                    onClick={() => handleOpenModal(product.id)} // Open the modal on click
                   >
-                    <Link
-                      to={`/products/${product.id}`}
-                      style={{
-                        textDecoration: "none",
-                        color: "#1C4771",
-                      }}
-                    >
-                      View Details
-                    </Link>
+                    View Details
                   </Button>
                 </Box>
               </Card>
@@ -113,6 +109,15 @@ const Products = () => {
           ))}
         </Grid>
       </Box>
+
+      {/* Product Details Modal */}
+      {selectedProductId && (
+        <ProductDetailsModal
+          open={modalOpen}
+          handleClose={handleCloseModal}
+          productId={selectedProductId} // Pass the selected product ID
+        />
+      )}
     </>
   );
 };
