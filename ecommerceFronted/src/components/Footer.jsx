@@ -69,7 +69,7 @@ function Footer() {
             fontSize: { xs: "0.875rem", sm: "1rem" }, // Font size adapts based on grid
           }}
         >
-          All Rights Reserved © Techinfo YT
+          All Rights Reserved &copy; 2024 - ShopEasy
         </Typography>
       </Box>
     </>
