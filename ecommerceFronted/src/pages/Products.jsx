@@ -30,7 +30,7 @@ const Products = ({ showModal }) => {
 
   //     image: "https://via.placeholder.com/150",
 
-  const [products, setProducts] = useState([]);
+  const { addToCart, productsList, setProductsList } = useCart(); // Access addToCart function
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -60,7 +60,7 @@ const Products = ({ showModal }) => {
             : `https://fakestoreapi.com/products/category/${selectedCategory}`;
         const response = await fetch(url);
         const data = await response.json();
-        setProducts(data);
+        setProductsList(data);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -93,8 +93,6 @@ const Products = ({ showModal }) => {
   const handleOpenModal = (id) => {
     navigate(`/products/${id}`);
   };
-
-  const { addToCart } = useCart(); // Access addToCart function
 
   return (
     <>
@@ -207,7 +205,7 @@ const Products = ({ showModal }) => {
           </Box>
         ) : (
           <Grid container spacing={4}>
-            {products.map((product) => (
+            {productsList.map((product) => (
               <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={product.id}>
                 <Card
                   sx={{
@@ -239,7 +237,10 @@ const Products = ({ showModal }) => {
                     <Button
                       variant="contained"
                       color="primary"
-                      onClick={() => addToCart(product)} // Add product to cart
+                      onClick={() => {
+                        addToCart(product); // Add product to cart
+                        setSelectedProductId(product.id); // Set selected product ID
+                      }}
                       sx={{
                         textTransform: "none",
                         marginRight: 1,
@@ -273,15 +274,10 @@ const Products = ({ showModal }) => {
           open={modalOpen}
           handleClose={handleCloseModal}
           productId={selectedProductId}
-          products={products}
+          products={productsList}
         />
       )}
 
-      {/* Cart */}
-      <Cart products={products} />
-      {/* {selectedProductId && (
-        <Cart productId={selectedProductId} products={products} />
-      )} */}
       <Toolbar />
     </>
   );
