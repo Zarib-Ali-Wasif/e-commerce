@@ -6,28 +6,36 @@ import Products from "../pages/Products";
 import Contact from "../pages/Contact";
 import NotFound from "../pages/NotFound";
 import Layout from "../components/Layout";
+import Cart from "../components/Cart";
+import CartProvider from "../context/CartContext";
 
 function AppRoutes() {
   return (
-    <BrowserRouter
-      future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true,
-      }}
-      //  basename={process.env.PUBLIC_URL}
-    >
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/products/:id" element={<Products showModal={true} />} />
-          <Route path="/contact" element={<Contact />} />
+    <CartProvider>
+      <BrowserRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+        //  basename={process.env.PUBLIC_URL}
+      >
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/products" element={<Products />} />
+            <Route
+              path="/products/:id"
+              element={<Products showModal={true} />}
+            />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/cart" element={<Cart />} />
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Layout>
-    </BrowserRouter>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Layout>
+      </BrowserRouter>
+    </CartProvider>
   );
 }
 

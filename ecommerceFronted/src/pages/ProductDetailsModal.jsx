@@ -9,10 +9,11 @@ import {
   Rating,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { useCart } from "../context/CartContext";
 
 const ProductDetailsModal = ({ open, handleClose, productId, products }) => {
   const product = products.find((p) => p.id === productId);
-
+  const { addToCart } = useCart(); // Access addToCart function
   if (!product) {
     return (
       <Modal
@@ -153,6 +154,7 @@ const ProductDetailsModal = ({ open, handleClose, productId, products }) => {
             <Button
               variant="contained"
               color="primary"
+              onClick={() => addToCart(product)} // Add product to cart
               sx={{ mt: 3, backgroundColor: "#1C4771" }}
             >
               Add to Cart

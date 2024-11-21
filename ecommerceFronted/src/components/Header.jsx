@@ -17,6 +17,7 @@ import {
   ListItemIcon,
   ListItemText,
   Drawer,
+  Badge,
 } from "@mui/material";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import InfoIcon from "@mui/icons-material/Info";
@@ -24,10 +25,15 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { useCart } from "../context/CartContext"; // Import "; // Adjust path as needed
 
 function Header() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { cart } = useCart(); // Access the cart context
+  const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0); // Calculate total items in the cart
+
   const tabsName = ["Home", "Products", "About", "Contact"];
   const drawerIconsComponent = [
     <HomeOutlinedIcon />,
@@ -88,6 +94,7 @@ function Header() {
 
   return (
     <Grid container id="header" zIndex={1} justifyContent="space-between">
+      {/* Main AppBar */}
       <AppBar
         position="fixed"
         sx={{
@@ -120,13 +127,12 @@ function Header() {
             textColor="inherit"
           >
             {tabsName.map((name, index) => (
-              // console.log(name),
               <Tab
                 key={index}
                 label={name}
                 component={NavLink}
-                to={name == "Home" ? "/" : `/${name.toLowerCase()}`}
-                value={name == "Home" ? "/" : `/${name.toLowerCase()}`}
+                to={name === "Home" ? "/" : `/${name.toLowerCase()}`}
+                value={name === "Home" ? "/" : `/${name.toLowerCase()}`}
                 sx={{
                   "&.active": {
                     color: "#1C4771",
@@ -139,6 +145,23 @@ function Header() {
             ))}
           </Tabs>
 
+          {/* Cart Icon with Badge */}
+          <IconButton component={NavLink} to="/cart">
+            <Badge
+              badgeContent={cartCount}
+              color="primary"
+              sx={{
+                "& .MuiBadge-badge": {
+                  backgroundColor: "#1C4771",
+                  color: "white",
+                },
+              }}
+            >
+              <ShoppingCartIcon sx={{ color: "#1C4771", fontSize: 28 }} />
+            </Badge>
+          </IconButton>
+
+          {/* Account Icon */}
           <IconButton>
             <AccountCircleIcon sx={{ color: "#1C4771", fontSize: 38, ml: 3 }} />
           </IconButton>
@@ -166,8 +189,19 @@ function Header() {
               onClick={() => navigate("/")}
             />
           </Typography>
-          <IconButton sx={{ display: { xs: "none", sm: "flex" } }}>
-            <AccountCircleIcon sx={{ color: "#1C4771", fontSize: 38, ml: 3 }} />
+          <IconButton component={NavLink} to="/cart">
+            <Badge
+              badgeContent={cartCount}
+              color="primary"
+              sx={{
+                "& .MuiBadge-badge": {
+                  backgroundColor: "#1C4771",
+                  color: "white",
+                },
+              }}
+            >
+              <ShoppingCartIcon sx={{ color: "#1C4771", fontSize: 28 }} />
+            </Badge>
           </IconButton>
         </Toolbar>
       </AppBar>

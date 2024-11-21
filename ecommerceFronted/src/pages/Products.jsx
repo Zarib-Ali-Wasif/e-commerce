@@ -16,6 +16,8 @@ import {
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import ProductDetailsModal from "./ProductDetailsModal";
+import { useCart } from "../context/CartContext";
+import Cart from "../components/Cart";
 
 const Products = ({ showModal }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -91,6 +93,8 @@ const Products = ({ showModal }) => {
   const handleOpenModal = (id) => {
     navigate(`/products/${id}`);
   };
+
+  const { addToCart } = useCart(); // Access addToCart function
 
   return (
     <>
@@ -235,6 +239,7 @@ const Products = ({ showModal }) => {
                     <Button
                       variant="contained"
                       color="primary"
+                      onClick={() => addToCart(product)} // Add product to cart
                       sx={{
                         textTransform: "none",
                         marginRight: 1,
@@ -271,6 +276,12 @@ const Products = ({ showModal }) => {
           products={products}
         />
       )}
+
+      {/* Cart */}
+      <Cart products={products} />
+      {/* {selectedProductId && (
+        <Cart productId={selectedProductId} products={products} />
+      )} */}
       <Toolbar />
     </>
   );
