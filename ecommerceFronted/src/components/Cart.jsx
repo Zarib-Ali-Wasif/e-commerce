@@ -193,7 +193,7 @@ const Cart = () => {
               onClick={handleAddMoreItems}
               sx={{
                 width: { xs: "95%", md: "50%" },
-                margin: "20px auto",
+                margin: "60px auto",
                 display: "block",
                 backgroundColor: "#1C4771",
                 color: "white",
