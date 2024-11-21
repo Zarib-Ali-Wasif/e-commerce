@@ -7,7 +7,7 @@ function About() {
     <>
       <Toolbar />
       <Box>
-        <Box mt={10} mb={10} p={3} sx={{ minHeight: "70vh", height: "100%" }}>
+        <Box mt={10} mb={10} p={3} sx={{ minHeight: "100vh", height: "100%" }}>
           <Typography variant="h4" textAlign="center">
             Welcome to{" "}
             <strong>

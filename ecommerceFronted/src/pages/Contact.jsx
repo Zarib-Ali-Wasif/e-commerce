@@ -61,7 +61,7 @@ const Contact = () => {
         sx={{
           py: 8,
           backgroundColor: "#d1dce8",
-          minHeight: "80vh",
+          minHeight: "100vh",
           height: "100%",
           display: "flex",
           flexDirection: "column",
