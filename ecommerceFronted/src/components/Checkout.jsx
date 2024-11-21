@@ -12,8 +12,8 @@ import {
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 
-const CheckoutPage = () => {
-  const { cart, clearCart } = useCart();
+const Checkout = () => {
+  const { cart, clearCart, cartSummary, productsList } = useCart(); // Using cartSummary from CartContext
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
   const navigate = useNavigate();
@@ -29,6 +29,9 @@ const CheckoutPage = () => {
     navigate("/order-confirmation");
   };
 
+  const getProductDetails = (productId) =>
+    productsList.find((product) => product.id === productId) || {};
+
   return (
     <Box sx={{ padding: "20px", minHeight: "100vh", mt: 15 }}>
       <Typography variant="h4" textAlign="center" fontWeight="bold" mb={4}>
@@ -43,30 +46,39 @@ const CheckoutPage = () => {
                 Order Summary
               </Typography>
               <Divider sx={{ my: 2 }} />
-              {cart.map((item, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    mb: 2,
-                  }}
-                >
-                  <Typography>{item.title}</Typography>
-                  <Typography>
-                    ${item.price} x {item.quantity}
-                  </Typography>
-                </Box>
-              ))}
+              {cart.map((cartItem, index) => {
+                const product = getProductDetails(cartItem.id);
+                return (
+                  <Box
+                    key={index}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      mb: 2,
+                    }}
+                  >
+                    {/* Displaying the product name (e.g., item.title) and price */}
+                    <Typography>{product.title}</Typography>{" "}
+                    {/* Ensure this matches your cart item structure */}
+                    <Typography>
+                      ${product.price} x {cartItem.quantity}
+                    </Typography>
+                  </Box>
+                );
+              })}
+              <Divider sx={{ my: 2 }} />
+              <Typography variant="body1" color="textSecondary" sx={{ mb: 1 }}>
+                Subtotal: ${cartSummary.subtotal.toFixed(2)}
+              </Typography>
+              <Typography variant="body1" color="textSecondary" sx={{ mb: 1 }}>
+                Discount: ${cartSummary.discount.toFixed(2)}
+              </Typography>
+              <Typography variant="body1" color="textSecondary" sx={{ mb: 1 }}>
+                GST: ${cartSummary.gst.toFixed(2)}
+              </Typography>
               <Divider sx={{ my: 2 }} />
               <Typography variant="h6" fontWeight="bold" textAlign="right">
-                Total: $
-                {cart
-                  .reduce(
-                    (total, item) => total + item.price * item.quantity,
-                    0
-                  )
-                  .toFixed(2)}
+                Total: ${isNaN(cartSummary.total) ? "0.00" : cartSummary.total}
               </Typography>
             </CardContent>
           </Card>
@@ -130,4 +142,4 @@ const CheckoutPage = () => {
   );
 };
 
-export default CheckoutPage;
+export default Checkout;

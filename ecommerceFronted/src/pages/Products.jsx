@@ -15,9 +15,8 @@ import {
   InputLabel,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
-import ProductDetailsModal from "./ProductDetailsModal";
+import ProductDetailsModal from "../components/ProductDetailsModal";
 import { useCart } from "../context/CartContext";
-import Cart from "../components/Cart";
 
 const Products = ({ showModal }) => {
   const [modalOpen, setModalOpen] = useState(false);

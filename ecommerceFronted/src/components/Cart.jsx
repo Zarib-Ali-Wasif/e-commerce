@@ -12,32 +12,20 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { autoBatchEnhancer } from "@reduxjs/toolkit";
 
 const Cart = () => {
-  const { cart, productsList, removeFromCart, clearCart, updateQuantity } =
-    useCart();
+  const {
+    cart,
+    cartSummary,
+    productsList,
+    removeFromCart,
+    clearCart,
+    updateQuantity,
+  } = useCart();
   const navigate = useNavigate();
 
   const getProductDetails = (productId) =>
     productsList.find((product) => product.id === productId) || {};
-
-  const calculateSubtotal = () =>
-    cart.reduce((total, item) => {
-      const product = getProductDetails(item.id);
-      return total + (product.price || 0) * item.quantity;
-    }, 0);
-
-  const subtotal = calculateSubtotal();
-  const discount = 0;
-  const gst = 16;
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-  const calculateTotal = () => {
-    const discountAmount = (subtotal * discount) / 100;
-    const gstAmount = (subtotal * gst) / 100;
-    return subtotal - discountAmount + gstAmount;
-  };
 
   const handleAddMoreItems = () => {
     navigate("/products");
@@ -84,13 +72,8 @@ const Cart = () => {
               {cart.map((cartItem) => {
                 const product = getProductDetails(cartItem.id);
                 return (
-                  <Grid item xs={12} sm={6} lg={4} xl={3} key={cartItem.id}>
-                    <Card
-                      sx={{
-                        display: "flex",
-                        height: "100%",
-                      }}
-                    >
+                  <Grid item xs={12} sm={6} lg={4} xl={2} key={cartItem.id}>
+                    <Card sx={{ display: "flex", height: "100%" }}>
                       <Grid container>
                         {/* Image Section */}
                         <Grid item xs={12}>
@@ -180,11 +163,7 @@ const Cart = () => {
                                   <DeleteIcon />
                                 </IconButton>
                               )}
-                              <Typography
-                                sx={{
-                                  marginX: "10px",
-                                }}
-                              >
+                              <Typography sx={{ marginX: "10px" }}>
                                 {cartItem.quantity}
                               </Typography>
                               <IconButton
@@ -206,7 +185,6 @@ const Cart = () => {
                 );
               })}
             </Grid>
-
             <Button
               variant="outlined"
               color="primary"
@@ -246,7 +224,7 @@ const Cart = () => {
                   color="#1C4771"
                   gutterBottom
                 >
-                  Order Summary
+                  Cart Summary
                 </Typography>
                 <Divider sx={{ my: 2, borderColor: "#1C4771" }} />
 
@@ -260,7 +238,9 @@ const Cart = () => {
                   <Typography color="text.secondary" fontWeight="bold">
                     Total Items:
                   </Typography>
-                  <Typography color="black">{totalItems}</Typography>
+                  <Typography color="black">
+                    {cartSummary.totalItems}
+                  </Typography>
                 </Box>
 
                 <Box
@@ -273,7 +253,9 @@ const Cart = () => {
                   <Typography color="text.secondary" fontWeight="bold">
                     Subtotal:
                   </Typography>
-                  <Typography color="black">${subtotal.toFixed(2)}</Typography>
+                  <Typography color="black">
+                    ${cartSummary.subtotal.toFixed(2) || 0}
+                  </Typography>
                 </Box>
 
                 <Box
@@ -286,7 +268,9 @@ const Cart = () => {
                   <Typography color="text.secondary" fontWeight="bold">
                     Discount:
                   </Typography>
-                  <Typography color="black">{discount}%</Typography>
+                  <Typography color="black">
+                    {cartSummary.discount || 0}%
+                  </Typography>
                 </Box>
 
                 <Box
@@ -299,9 +283,7 @@ const Cart = () => {
                   <Typography color="text.secondary" fontWeight="bold">
                     GST (16%):
                   </Typography>
-                  <Typography color="black">
-                    ${((subtotal * gst) / 100).toFixed(2)}
-                  </Typography>
+                  <Typography color="black">${cartSummary.gst || 0}</Typography>
                 </Box>
 
                 <Divider sx={{ my: 2, borderColor: "#1C4771" }} />
@@ -315,7 +297,7 @@ const Cart = () => {
                     Total:
                   </Typography>
                   <Typography variant="h6" color="#1C4771" fontWeight="bold">
-                    ${calculateTotal().toFixed(2)}
+                    ${cartSummary.total || 0}
                   </Typography>
                 </Box>
               </Box>
@@ -335,7 +317,7 @@ const Cart = () => {
                   },
                 }}
               >
-                Checkout
+                Proceed to Checkout
               </Button>
               <Button
                 variant="outlined"

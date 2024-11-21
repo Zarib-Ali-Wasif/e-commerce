@@ -15,13 +15,23 @@ const CartProvider = ({ children }) => {
     return savedProducts ? JSON.parse(savedProducts) : [];
   });
 
+  const [cartSummary, setCartSummary] = useState(() => {
+    const savedSummary = localStorage.getItem("cartSummary");
+    return savedSummary ? JSON.parse(savedSummary) : {};
+  });
+
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
+    saveCartSummary(); // Save cart summary whenever cart is updated
   }, [cart]);
 
   useEffect(() => {
     localStorage.setItem("productsList", JSON.stringify(productsList));
   }, [productsList]);
+
+  useEffect(() => {
+    localStorage.setItem("cartSummary", JSON.stringify(cartSummary));
+  }, [cartSummary]);
 
   const addToCart = (product) => {
     setCart((prevCart) => {
@@ -54,10 +64,43 @@ const CartProvider = ({ children }) => {
     setCart([]);
   };
 
+  const calculateSubtotal = () =>
+    cart.reduce((total, item) => {
+      const product = getProductDetails(item.id);
+      return total + (product.price || 0) * item.quantity;
+    }, 0);
+
+  const calculateTotal = (subtotal) => {
+    const discount = 0; // You can update this with a dynamic discount
+    const gst = 16; // Example GST percentage
+    const discountAmount = (subtotal * discount) / 100;
+    const gstAmount = (subtotal * gst) / 100;
+    return (subtotal - discountAmount + gstAmount).toFixed(2);
+  };
+
+  const saveCartSummary = () => {
+    const subtotal = calculateSubtotal();
+    const total = calculateTotal(subtotal);
+
+    const summary = {
+      subtotal,
+      discount: 0,
+      gst: 16,
+      total,
+      totalItems: cart.reduce((sum, item) => sum + item.quantity, 0),
+    };
+
+    setCartSummary(summary);
+  };
+
+  const getProductDetails = (productId) =>
+    productsList.find((product) => product.id === productId) || {};
+
   return (
     <CartContext.Provider
       value={{
         cart,
+        cartSummary,
         productsList,
         setProductsList,
         addToCart,
