@@ -132,7 +132,9 @@ const Cart = () => {
                               fontWeight="bold"
                               color="primary"
                             >
-                              ${product.price * cartItem.quantity || 0}
+                              $
+                              {(product.price * cartItem.quantity).toFixed(2) ||
+                                0}
                             </Typography>
                             <Box
                               sx={{

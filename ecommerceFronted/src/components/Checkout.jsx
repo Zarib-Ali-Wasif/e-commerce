@@ -39,10 +39,15 @@ const Checkout = () => {
       </Typography>
       <Grid container spacing={3}>
         {/* Order Summary */}
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={7}>
           <Card>
             <CardContent>
-              <Typography variant="h5" fontWeight="bold" gutterBottom>
+              <Typography
+                variant="h5"
+                fontWeight="bold"
+                textAlign={"center"}
+                gutterBottom
+              >
                 Order Summary
               </Typography>
               <Divider sx={{ my: 2 }} />
@@ -55,14 +60,54 @@ const Checkout = () => {
                       display: "flex",
                       justifyContent: "space-between",
                       mb: 2,
+                      alignItems: "center",
                     }}
                   >
-                    {/* Displaying the product name (e.g., item.title) and price */}
-                    <Typography>{product.title}</Typography>{" "}
-                    {/* Ensure this matches your cart item structure */}
-                    <Typography>
-                      ${product.price} x {cartItem.quantity}
-                    </Typography>
+                    <img
+                      src={product.image}
+                      alt={product.title}
+                      style={{ width: "50px", height: "50px" }}
+                    />
+                    {/* Displaying the product name (e.g., product.title) and price */}
+                    <Box
+                      sx={{
+                        ml: 4,
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        width: "100%",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          width: "80%",
+                        }}
+                      >
+                        <Typography
+                          variant="body2"
+                          color="textSecondary"
+                          textAlign="justify"
+                        >
+                          {product.title}
+                        </Typography>
+
+                        <Typography
+                          color="textSecondary"
+                          fontSize={12}
+                          textAlign="justify"
+                          fontWeight="bold"
+                          fontFamily="Rubik"
+                        >
+                          {product.category}
+                        </Typography>
+                      </Box>
+                      {/* Ensure this matches your cart item structure */}
+                      <Typography variant="body2">
+                        ${product.price} x {cartItem.quantity}
+                      </Typography>
+                    </Box>{" "}
                   </Box>
                 );
               })}
@@ -85,10 +130,15 @@ const Checkout = () => {
         </Grid>
 
         {/* Address and Payment Section */}
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={5}>
           <Card>
             <CardContent>
-              <Typography variant="h5" fontWeight="bold" gutterBottom>
+              <Typography
+                variant="h5"
+                fontWeight="bold"
+                textAlign={"center"}
+                gutterBottom
+              >
                 Shipping & Payment
               </Typography>
               <Divider sx={{ my: 2 }} />
