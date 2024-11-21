@@ -227,11 +227,107 @@ const Cart = () => {
           {/* Order Summary Section */}
           <Grid item xs={12} md={4}>
             <Card sx={{ padding: "20px", backgroundColor: "#fff" }}>
-              <Typography variant="h6" textAlign="center" color="black">
+              <Box
+                sx={{
+                  padding: 3,
+                  backgroundColor: "#f5f5f5",
+                  borderRadius: "8px",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <Typography
+                  variant="h5"
+                  textAlign="center"
+                  fontWeight="bold"
+                  color="#1C4771"
+                  gutterBottom
+                >
+                  Order Summary
+                </Typography>
+                <Divider sx={{ my: 2, borderColor: "#1C4771" }} />
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mb: 1,
+                  }}
+                >
+                  <Typography color="text.secondary" fontWeight="bold">
+                    Total Items:
+                  </Typography>
+                  <Typography color="black">{totalItems}</Typography>
+                </Box>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mb: 1,
+                  }}
+                >
+                  <Typography color="text.secondary" fontWeight="bold">
+                    Subtotal:
+                  </Typography>
+                  <Typography color="black">${subtotal.toFixed(2)}</Typography>
+                </Box>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mb: 1,
+                  }}
+                >
+                  <Typography color="text.secondary" fontWeight="bold">
+                    Discount:
+                  </Typography>
+                  <Typography color="black">{discount}%</Typography>
+                </Box>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mb: 2,
+                  }}
+                >
+                  <Typography color="text.secondary" fontWeight="bold">
+                    GST (16%):
+                  </Typography>
+                  <Typography color="black">
+                    ${((subtotal * gst) / 100).toFixed(2)}
+                  </Typography>
+                </Box>
+
+                <Divider sx={{ my: 2, borderColor: "#1C4771" }} />
+
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <Typography
+                    variant="h6"
+                    color="text.primary"
+                    fontWeight="bold"
+                  >
+                    Total:
+                  </Typography>
+                  <Typography variant="h6" color="#1C4771" fontWeight="bold">
+                    ${calculateTotal().toFixed(2)}
+                  </Typography>
+                </Box>
+              </Box>
+
+              {/* <Typography
+                variant="h5"
+                textAlign="center"
+                fontWeight="bold"
+                color="black"
+              >
                 Order Summary
               </Typography>
               <Divider sx={{ my: 2 }} />
-              <Typography color="black">Total Items: {totalItems}</Typography>
+              <Typography color="black" fontWeight="bold">
+                Total Items: {totalItems}
+              </Typography>
               <Typography color="black">
                 Subtotal: ${subtotal.toFixed(2)}
               </Typography>
@@ -242,7 +338,7 @@ const Cart = () => {
               <Divider sx={{ my: 2 }} />
               <Typography variant="h6" color="black" textAlign="center">
                 Total: ${calculateTotal().toFixed(2)}
-              </Typography>
+              </Typography> */}
               <Button
                 variant="contained"
                 color="secondary"

@@ -8,6 +8,8 @@ import NotFound from "../pages/NotFound";
 import Layout from "../components/Layout";
 import Cart from "../components/Cart";
 import CartProvider from "../context/CartContext";
+import CheckoutPage from "../pages/CheckoutPage";
+import OrderConfirmation from "../pages/OrderConfirmation";
 
 function AppRoutes() {
   return (
@@ -30,6 +32,8 @@ function AppRoutes() {
             />
             <Route path="/contact" element={<Contact />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/order-confirmation" element={<OrderConfirmation />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
