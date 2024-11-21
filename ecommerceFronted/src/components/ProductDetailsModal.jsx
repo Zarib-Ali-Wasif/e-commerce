@@ -154,7 +154,10 @@ const ProductDetailsModal = ({ open, handleClose, productId, products }) => {
             <Button
               variant="contained"
               color="primary"
-              onClick={() => addToCart(product)} // Add product to cart
+              onClick={() => {
+                addToCart(product);
+                handleClose();
+              }} // Add product to cart and close the modal
               sx={{ mt: 3, backgroundColor: "#1C4771" }}
             >
               Add to Cart
