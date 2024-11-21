@@ -76,11 +76,11 @@ function Header() {
             // height: "100px",
             // width: "1px",
             border: "0.5px solid #1C4771",
-            display: { xs: "flex", sm: "none" },
+            display: { xs: "flex" },
           }}
         />
 
-        <ListItem sx={{ display: { xs: "flex", sm: "none" } }}>
+        <ListItem sx={{ display: { xs: "flex" } }}>
           <ListItemButton>
             <ListItemIcon sx={{ color: "#1C4771" }}>
               <AccountCircleIcon />
@@ -123,7 +123,15 @@ function Header() {
               "& .MuiTab-root": { color: "#282c34" },
               "& .MuiTabs-indicator": { backgroundColor: "#1C4771" },
             }}
-            value={location.pathname}
+            value={
+              tabsName.some(
+                (name) =>
+                  location.pathname ===
+                  (name === "Home" ? "/" : `/${name.toLowerCase()}`)
+              )
+                ? location.pathname
+                : false // Default to false if no match
+            }
             textColor="inherit"
           >
             {tabsName.map((name, index) => (
@@ -145,25 +153,28 @@ function Header() {
             ))}
           </Tabs>
 
+          {/* Account Icon */}
+          <IconButton>
+            <AccountCircleIcon sx={{ color: "#1C4771", fontSize: 35, ml: 1 }} />
+          </IconButton>
+
           {/* Cart Icon with Badge */}
           <IconButton component={NavLink} to="/cart">
             <Badge
               badgeContent={cartCount}
               color="primary"
               sx={{
+                padding: 0.6,
                 "& .MuiBadge-badge": {
                   backgroundColor: "#1C4771",
                   color: "white",
                 },
               }}
             >
-              <ShoppingCartIcon sx={{ color: "#1C4771", fontSize: 28 }} />
+              <ShoppingCartIcon
+                sx={{ color: "#1C4771", fontSize: 28, ml: 1 }}
+              />
             </Badge>
-          </IconButton>
-
-          {/* Account Icon */}
-          <IconButton>
-            <AccountCircleIcon sx={{ color: "#1C4771", fontSize: 38, ml: 3 }} />
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -194,6 +205,7 @@ function Header() {
               badgeContent={cartCount}
               color="primary"
               sx={{
+                padding: 0.6,
                 "& .MuiBadge-badge": {
                   backgroundColor: "#1C4771",
                   color: "white",

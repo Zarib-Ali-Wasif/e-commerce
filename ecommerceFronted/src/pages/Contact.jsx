@@ -198,7 +198,7 @@ const Contact = () => {
                     borderColor: theme.palette.primary.main,
                   }}
                 >
-                  help@thespicymeal.com
+                  help@shopeasy.com
                 </Button>
               </CardContent>
             </Card>
