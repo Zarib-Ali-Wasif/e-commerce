@@ -63,85 +63,96 @@ const Cart = () => {
               {cart.map((cartItem) => {
                 const product = getProductDetails(cartItem.id);
                 return (
-                  <Grid item xs={12} sm={6} key={cartItem.id}>
+                  <Grid item xs={12} sm={6} md={4} lg={4} key={cartItem.id}>
                     <Card
                       sx={{
-                        height: "350px",
                         display: "flex",
                         flexDirection: "column",
-                        justifyContent: "space-between",
+                        height: "100%",
                       }}
                     >
-                      <CardContent>
-                        <Grid item xs={12} key={cartItem.id}>
-                          <Grid>
-                            <img
-                              src={product.image}
-                              alt={product.title}
-                              style={{
-                                width: "100%",
-                                height: "100px",
-                                objectFit: "contain",
-                                borderRadius: "8px",
-                                marginBottom: "10px",
-                                cursor: "pointer",
-                              }}
-                            />
-                          </Grid>
-                          <Grid item xs={8}>
-                            <Typography variant="h6">
-                              {product.title}
-                            </Typography>
-                            <Typography>
-                              {/* ${product.price || 0} x {cartItem.quantity} = $ */}
-                              {(product.price || 0) * cartItem.quantity}
-                            </Typography>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                border: "1px solid #ccc",
-                                borderRadius: "8px",
-                                padding: "5px",
-                                width: "fit-content",
-                                marginTop: "10px",
-                              }}
+                      {/* Image Section */}
+                      <img
+                        src={product.image}
+                        alt={product.title}
+                        style={{
+                          width: "100%",
+                          height: "150px",
+                          objectFit: "contain",
+                          borderRadius: "8px 8px 0 0",
+                        }}
+                      />
+
+                      {/* Details Section */}
+                      <CardContent sx={{ flexGrow: 1, padding: "10px" }}>
+                        {/* Title and Category */}
+                        <Typography variant="h6" fontWeight="bold" gutterBottom>
+                          {product.title}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          gutterBottom
+                        >
+                          {product.category}
+                        </Typography>
+
+                        {/* Price Section */}
+                        <Typography
+                          variant="body1"
+                          fontWeight="bold"
+                          sx={{ marginBottom: "10px" }}
+                        >
+                          ${product.price || 0}
+                        </Typography>
+
+                        {/* Quantity Section */}
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            marginTop: "auto",
+                            border: "1px solid #ccc",
+                            borderRadius: "8px",
+                            padding: "5px",
+                            position: "sticky",
+                            bottom: 0,
+                          }}
+                        >
+                          {cartItem.quantity > 1 ? (
+                            <>
+                              <IconButton
+                                onClick={() =>
+                                  handleUpdateQuantity(
+                                    cartItem.id,
+                                    cartItem.quantity - 1
+                                  )
+                                }
+                              >
+                                -
+                              </IconButton>
+                            </>
+                          ) : (
+                            <IconButton
+                              onClick={() => removeFromCart(cartItem.id)}
+                              color="error"
                             >
-                              {cartItem.quantity > 1 ? (
-                                <>
-                                  <IconButton
-                                    onClick={() =>
-                                      handleUpdateQuantity(
-                                        cartItem.id,
-                                        cartItem.quantity - 1
-                                      )
-                                    }
-                                  >
-                                    -
-                                  </IconButton>
-                                  <Typography>{cartItem.quantity}</Typography>
-                                  <IconButton
-                                    onClick={() =>
-                                      handleUpdateQuantity(
-                                        cartItem.id,
-                                        cartItem.quantity + 1
-                                      )
-                                    }
-                                  >
-                                    +
-                                  </IconButton>
-                                </>
-                              ) : (
-                                <IconButton
-                                  onClick={() => removeFromCart(cartItem.id)}
-                                  color="error"
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
-                              )}
-                            </Box>
-                          </Grid>
-                        </Grid>
+                              <DeleteIcon />
+                            </IconButton>
+                          )}
+                          <Typography>{cartItem.quantity}</Typography>
+                          <IconButton
+                            onClick={() =>
+                              handleUpdateQuantity(
+                                cartItem.id,
+                                cartItem.quantity + 1
+                              )
+                            }
+                          >
+                            +
+                          </IconButton>
+                        </Box>
                       </CardContent>
                     </Card>
                   </Grid>
@@ -170,6 +181,7 @@ const Cart = () => {
             </Button>
           </Grid>
 
+          {/* Order Summary Section */}
           <Grid item xs={12} md={4}>
             <Card sx={{ padding: "20px", backgroundColor: "#fff" }}>
               <Typography variant="h6" textAlign="center" color="black">
