@@ -48,6 +48,10 @@ const Cart = () => {
     updateQuantity(productId, quantity); // Call updateQuantity function from context
   };
 
+  const handleCheckout = () => {
+    navigate("/checkout");
+  };
+
   return (
     <Box sx={{ padding: "20px", minHeight: "100vh", mt: 15 }}>
       <Typography variant="h4" textAlign="center" fontWeight={"bold"} mb={4}>
@@ -316,33 +320,10 @@ const Cart = () => {
                 </Box>
               </Box>
 
-              {/* <Typography
-                variant="h5"
-                textAlign="center"
-                fontWeight="bold"
-                color="black"
-              >
-                Order Summary
-              </Typography>
-              <Divider sx={{ my: 2 }} />
-              <Typography color="black" fontWeight="bold">
-                Total Items: {totalItems}
-              </Typography>
-              <Typography color="black">
-                Subtotal: ${subtotal.toFixed(2)}
-              </Typography>
-              <Typography color="black">Discount: {discount}%</Typography>
-              <Typography color="black">
-                GST (16%): ${((subtotal * gst) / 100).toFixed(2)}
-              </Typography>
-              <Divider sx={{ my: 2 }} />
-              <Typography variant="h6" color="black" textAlign="center">
-                Total: ${calculateTotal().toFixed(2)}
-              </Typography> */}
               <Button
                 variant="contained"
                 color="secondary"
-                // fullWidth
+                onClick={handleCheckout}
                 sx={{
                   display: "block",
                   margin: "20px auto 0 auto",
@@ -359,7 +340,6 @@ const Cart = () => {
               <Button
                 variant="outlined"
                 color="error"
-                fullWidth
                 onClick={clearCart}
                 sx={{
                   display: "block",

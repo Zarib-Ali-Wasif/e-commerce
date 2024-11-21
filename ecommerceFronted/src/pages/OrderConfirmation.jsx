@@ -10,7 +10,9 @@ const OrderConfirmation = () => {
   };
 
   return (
-    <Box sx={{ textAlign: "center", padding: "50px", mt: 15 }}>
+    <Box
+      sx={{ textAlign: "center", padding: "50px", minHeight: "80vh", mt: 15 }}
+    >
       <Typography variant="h4" fontWeight="bold" gutterBottom>
         Thank You for Your Order!
       </Typography>
