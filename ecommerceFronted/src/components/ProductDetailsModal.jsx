@@ -65,19 +65,19 @@ const ProductDetailsModal = ({ open, handleClose, productId, products }) => {
         sx={{
           padding: "20px",
           width: {
-            xs: "90%",
-            sm: "80%",
-            md: "60%",
-            lg: "50%",
+            xs: "70%", // For small screens, 70% of viewport width
+            sm: "60%", // For small devices, 60%
+            md: "50%", // Default for medium devices and larger
           },
-          margin: "auto",
+
           backgroundColor: "#dfe5f2",
           borderRadius: "8px",
           outline: "none",
           position: "relative",
+          overflowY: "auto", // Allow scrolling if content overflows
         }}
       >
-        {/* Close Icon */}
+        {/* Modal Content */}
         <IconButton
           sx={{ position: "absolute", top: 2, right: 4 }}
           onClick={handleClose}
@@ -93,7 +93,7 @@ const ProductDetailsModal = ({ open, handleClose, productId, products }) => {
               src={product.image}
               alt={product.title}
               sx={{
-                maxHeight: "400px",
+                maxHeight: { xs: "200px", md: "400px" }, // Adjust height for small screens
                 width: "100%",
                 borderRadius: "8px",
                 objectFit: "contain",
