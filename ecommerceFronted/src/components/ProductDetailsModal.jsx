@@ -65,9 +65,13 @@ const ProductDetailsModal = ({ open, handleClose, productId, products }) => {
         sx={{
           padding: "20px",
           width: {
-            xs: "70%", // For small screens, 70% of viewport width
-            sm: "60%", // For small devices, 60%
-            md: "50%", // Default for medium devices and larger
+            xs: "70%",
+            sm: "60%",
+            md: "50%",
+          },
+          height: {
+            xs: "80%",
+            sm: "auto",
           },
 
           backgroundColor: "#dfe5f2",
