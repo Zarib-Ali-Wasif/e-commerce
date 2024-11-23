@@ -6,16 +6,18 @@ import { ProductModule } from './product/product.module'; // 2.1 Import the prod
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { CartModule } from './cart/cart.module';
+import { OrderModule } from './orders/orders.module';
 
 @Module({
   imports: [
     MongooseModule.forRoot(
       'mongodb+srv://admin:admin@ecommerce-cluster.atdj4.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=ecommerce-cluster',
     ), // 1.2 Setup the database
-    ProductModule,
+    ProductModule, // 2.1 Add the product module
     UserModule,
     AuthModule,
-    CartModule, // 2.2 Add the product module
+    CartModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
