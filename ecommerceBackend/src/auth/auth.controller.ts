@@ -29,10 +29,15 @@ export class AuthController {
     return user;
   }
 
-  @UseGuards(LocalAuthGuard)
+  // @UseGuards(LocalAuthGuard)
   @Post('/login')
-  async login(@Request() req) {
-    return this.authService.login(req.user);
+  async login(@Body() credentilas: { email: string; password: string }) {
+    const { email, password } = credentilas;
+    const userWithToken = await this.authService.login(email, password);
+    if (!userWithToken) {
+      return { message: 'Invalid email or password' };
+    }
+    return userWithToken;
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

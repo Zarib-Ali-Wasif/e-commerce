@@ -23,7 +23,7 @@ const Checkout = () => {
   const navigate = useNavigate();
 
   // User details (Replace with actual context or state values)
-  const user = { id: "12345", name: "John Doe", email: "john@example.com" };
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const getProductDetails = (productId) =>
     productsList.find((product) => product.id === productId) || {};
@@ -35,7 +35,7 @@ const Checkout = () => {
       .toString(36)
       .substring(2, 6)
       .toUpperCase();
-    return `ORD-${user.id.slice(-4)}-${timestamp}-${randomSuffix}`;
+    return `ORD-${user.userId.slice(-4)}-${timestamp}-${randomSuffix}`;
   };
 
   const handlePlaceOrder = async () => {
@@ -53,7 +53,7 @@ const Checkout = () => {
 
     const orderDetails = {
       orderNumber,
-      userId: user.id,
+      userId: user.userId,
       userName: user.name,
       email: user.email,
       address,

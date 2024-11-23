@@ -7,6 +7,9 @@ export type UserDocument = User & Document;
 @Schema()
 export class User {
   @Prop()
+  _id: string; // Explicitly define _id as a string
+
+  @Prop()
   name: string;
 
   @Prop()
