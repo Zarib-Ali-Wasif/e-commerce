@@ -64,10 +64,6 @@ export class CreateOrderDto {
   @IsNotEmpty()
   userId: string;
 
-  @IsString()
-  @IsNotEmpty()
-  userName: string;
-
   @IsEmail()
   @IsNotEmpty()
   email: string;

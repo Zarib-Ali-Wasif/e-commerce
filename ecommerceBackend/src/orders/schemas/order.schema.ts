@@ -10,9 +10,6 @@ export class Order {
   userId: string;
 
   @Prop({ required: true })
-  userName: string;
-
-  @Prop({ required: true })
   email: string;
 
   @Prop({ required: true })

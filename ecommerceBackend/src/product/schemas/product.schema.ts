@@ -9,8 +9,7 @@ export class Product {
   title: string;
 
   @Prop({
-    default:
-      'https://images.unsplash.com/photo-1505740106531-4243f3831c78?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxjb2xsZWN0aW9uLXBhZ2V8Nnw5Vjd4MllXSWFjSXx8ZW58MHx8fHx8&auto=format&fit=crop&w=400',
+    default: 'https://placehold.co/400x400?text=Product+Image',
   })
   image: string;
 

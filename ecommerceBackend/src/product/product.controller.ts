@@ -73,4 +73,44 @@ export class ProductController {
     if (!product) throw new NotFoundException('Product does not exist');
     return product;
   }
+
+  // Apply discount to all products (without existing offer)
+  @Post('/apply-discount')
+  async applyDiscount(@Body() discountDTO: { discountPercent: number }) {
+    const result = await this.productService.applyDiscountToAllProducts(
+      discountDTO.discountPercent,
+    );
+    return result;
+  }
+
+  // Remove discount from all products or by category or discount name
+  @Post('/remove-discount')
+  async removeDiscount(
+    @Body() removeDiscountDTO: { category?: string; discountName?: string },
+  ) {
+    const result = await this.productService.removeDiscountFromAllProducts(
+      removeDiscountDTO,
+    );
+    return result;
+  }
+
+  // Apply discount category-wise (without existing offer)
+  @Post('/apply-discount/:category')
+  async applyDiscountCategoryWise(
+    @Param('category') category: string,
+    @Body() discountDTO: { discountPercent: number },
+  ) {
+    const result = await this.productService.applyDiscountToCategory(
+      category,
+      discountDTO.discountPercent,
+    );
+    return result;
+  }
+
+  // Get all categories
+  @Get('/categories')
+  async getAllCategories() {
+    const categories = await this.productService.getAllCategories();
+    return categories;
+  }
 }
