@@ -5,8 +5,8 @@ export type ProductDocument = Product & Document;
 
 @Schema()
 export class Product {
-  @Prop()
-  name: string;
+  @Prop({ required: true })
+  title: string;
 
   @Prop({
     default:
@@ -14,14 +14,32 @@ export class Product {
   })
   image: string;
 
-  @Prop()
+  @Prop({ required: true })
   description: string;
 
-  @Prop()
+  @Prop({ required: true })
   price: number;
 
-  @Prop()
+  @Prop({ required: true })
   category: string;
+
+  @Prop({
+    type: Object,
+    default: { name: 'None', discountPercent: 0 },
+  })
+  discount: {
+    name: string;
+    discountPercent: number;
+  };
+
+  @Prop({
+    type: Object,
+    default: { rate: 0, count: 0 }, // Default rating values
+  })
+  rating: {
+    rate: number;
+    count: number;
+  };
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
