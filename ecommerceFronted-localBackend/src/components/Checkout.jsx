@@ -8,30 +8,51 @@ import {
   Grid,
   Card,
   CardContent,
+  MenuItem,
+  CircularProgress,
 } from "@mui/material";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // Import Axios for making API calls
+import axios from "axios";
 
 const Checkout = () => {
-  const { cart, clearCart, cartSummary, productsList } = useCart(); // Using cartSummary from CartContext
+  const { cart, clearCart, cartSummary, productsList } = useCart();
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Assuming user is fetched from context or some auth service
+  // User details (Replace with actual context or state values)
   const user = { id: "12345", name: "John Doe", email: "john@example.com" };
 
   const getProductDetails = (productId) =>
     productsList.find((product) => product.id === productId) || {};
 
+  // Generate a unique order number
+  const generateOrderNumber = () => {
+    const timestamp = new Date().toISOString().replace(/[-:.TZ]/g, "");
+    const randomSuffix = Math.random()
+      .toString(36)
+      .substring(2, 6)
+      .toUpperCase();
+    return `ORD-${user.id.slice(-4)}-${timestamp}-${randomSuffix}`;
+  };
+
   const handlePlaceOrder = async () => {
+    if (cart.length === 0) {
+      alert("Your cart is empty. Add items before placing an order.");
+      return;
+    }
+
     if (!address || !paymentMethod) {
       alert("Please complete all fields before proceeding.");
       return;
     }
 
+    const orderNumber = generateOrderNumber();
+
     const orderDetails = {
+      orderNumber,
       userId: user.id,
       userName: user.name,
       email: user.email,
@@ -58,16 +79,20 @@ const Checkout = () => {
     };
 
     try {
-      // API call to save order in the backend
-      const response = await axios.post("/api/orders", orderDetails);
+      setLoading(true); // Show loader
+      const response = await axios.post(
+        "http://localhost:3000/orders",
+        orderDetails
+      );
       console.log("Order saved successfully:", response.data);
 
-      // Clear the cart and navigate to the Order Confirmation page
       clearCart();
-      navigate("/order-confirmation");
+      navigate("/order-confirmation", { state: { orderNumber } });
     } catch (error) {
       console.error("Error placing order:", error);
       alert("Failed to place order. Please try again.");
+    } finally {
+      setLoading(false); // Hide loader
     }
   };
 
@@ -193,13 +218,17 @@ const Checkout = () => {
                 Payment Method:
               </Typography>
               <TextField
+                select
                 fullWidth
                 variant="outlined"
-                placeholder="e.g., Credit Card, PayPal"
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value)}
                 sx={{ mb: 3 }}
-              />
+              >
+                <MenuItem value="Credit Card">Credit Card</MenuItem>
+                <MenuItem value="PayPal">PayPal</MenuItem>
+                <MenuItem value="Cash on Delivery">Cash on Delivery</MenuItem>
+              </TextField>
               <Button
                 variant="contained"
                 fullWidth
@@ -211,8 +240,13 @@ const Checkout = () => {
                   },
                 }}
                 onClick={handlePlaceOrder}
+                disabled={loading}
               >
-                Place Order
+                {loading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  "Place Order"
+                )}
               </Button>
             </CardContent>
           </Card>
