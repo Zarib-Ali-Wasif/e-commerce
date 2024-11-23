@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
+import axios from "axios"; // Import Axios for making API calls
 
 const Checkout = () => {
   const { cart, clearCart, cartSummary, productsList } = useCart(); // Using cartSummary from CartContext
@@ -18,19 +19,57 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
   const navigate = useNavigate();
 
-  const handlePlaceOrder = () => {
+  // Assuming user is fetched from context or some auth service
+  const user = { id: "12345", name: "John Doe", email: "john@example.com" };
+
+  const getProductDetails = (productId) =>
+    productsList.find((product) => product.id === productId) || {};
+
+  const handlePlaceOrder = async () => {
     if (!address || !paymentMethod) {
       alert("Please complete all fields before proceeding.");
       return;
     }
 
-    // Clear the cart and navigate to the Order Confirmation page
-    clearCart();
-    navigate("/order-confirmation");
-  };
+    const orderDetails = {
+      userId: user.id,
+      userName: user.name,
+      email: user.email,
+      address,
+      paymentMethod,
+      orderItems: cart.map((item) => {
+        const product = getProductDetails(item.id);
+        return {
+          productId: item.id,
+          productName: product.title,
+          productCategory: product.category,
+          quantity: item.quantity,
+          price: product.price,
+          total: item.quantity * product.price,
+        };
+      }),
+      summary: {
+        subtotal: cartSummary.subtotal,
+        discount: cartSummary.discount,
+        gst: cartSummary.gst,
+        total: cartSummary.total,
+      },
+      orderDate: new Date().toISOString(),
+    };
 
-  const getProductDetails = (productId) =>
-    productsList.find((product) => product.id === productId) || {};
+    try {
+      // API call to save order in the backend
+      const response = await axios.post("/api/orders", orderDetails);
+      console.log("Order saved successfully:", response.data);
+
+      // Clear the cart and navigate to the Order Confirmation page
+      clearCart();
+      navigate("/order-confirmation");
+    } catch (error) {
+      console.error("Error placing order:", error);
+      alert("Failed to place order. Please try again.");
+    }
+  };
 
   return (
     <Box sx={{ padding: "20px", minHeight: "100vh", mt: 15 }}>
@@ -68,7 +107,6 @@ const Checkout = () => {
                       alt={product.title}
                       style={{ width: "50px", height: "50px" }}
                     />
-                    {/* Displaying the product name (e.g., product.title) and price */}
                     <Box
                       sx={{
                         ml: 4,
@@ -92,7 +130,6 @@ const Checkout = () => {
                         >
                           {product.title}
                         </Typography>
-
                         <Typography
                           color="textSecondary"
                           fontSize={12}
@@ -103,7 +140,6 @@ const Checkout = () => {
                           {product.category}
                         </Typography>
                       </Box>
-                      {/* Ensure this matches your cart item structure */}
                       <Typography variant="body2">
                         ${product.price} x {cartItem.quantity}
                       </Typography>
@@ -142,8 +178,6 @@ const Checkout = () => {
                 Shipping & Payment
               </Typography>
               <Divider sx={{ my: 2 }} />
-
-              {/* Address Input */}
               <Typography variant="body1" mb={1}>
                 Address:
               </Typography>
@@ -155,8 +189,6 @@ const Checkout = () => {
                 onChange={(e) => setAddress(e.target.value)}
                 sx={{ mb: 3 }}
               />
-
-              {/* Payment Method */}
               <Typography variant="body1" mb={1}>
                 Payment Method:
               </Typography>
@@ -168,8 +200,6 @@ const Checkout = () => {
                 onChange={(e) => setPaymentMethod(e.target.value)}
                 sx={{ mb: 3 }}
               />
-
-              {/* Place Order Button */}
               <Button
                 variant="contained"
                 fullWidth
