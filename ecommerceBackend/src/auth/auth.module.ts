@@ -6,10 +6,10 @@ import { JwtStrategy } from './jwt/jwt.strategy';
 import { MongooseModule } from '@nestjs/mongoose';
 import { VerifyService } from 'src/utils/verify.service';
 import { MailerModule } from 'src/mailer/mailer.module';
-import { UsersModule } from 'src/users/users.module';
+import { UserModule } from 'src/users/users.module';
 
 @Module({
-  imports: [JwtModule, MongooseModule, MailerModule, UsersModule],
+  imports: [JwtModule, MongooseModule, MailerModule, UserModule],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, VerifyService],
   exports: [AuthService],

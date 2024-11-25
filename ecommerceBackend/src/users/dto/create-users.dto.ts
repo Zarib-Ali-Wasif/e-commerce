@@ -1,6 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Gender, UserRole } from '@prisma/client';
-import { Transform } from 'class-transformer';
 import {
   IsArray,
   IsEmail,
@@ -12,6 +9,10 @@ import {
   IsUrl,
   Matches,
 } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
+import { Gender } from 'src/auth/enums/gender.enum';
+import { Role } from 'src/auth/enums/role.enum';
 
 export class CreateUserDto {
   @ApiProperty()
@@ -40,8 +41,8 @@ export class CreateUserDto {
   password: string;
 
   @ApiProperty()
-  @IsEnum(UserRole)
-  role: UserRole;
+  @IsEnum(Role)
+  role: Role;
 
   @IsOptional()
   @ApiProperty()

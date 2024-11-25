@@ -3,10 +3,10 @@ import { MongooseModule } from '@nestjs/mongoose'; // 1.1 Import the mongoose mo
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProductModule } from './product/product.module'; // 2.1 Import the product module
-import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { CartModule } from './cart/cart.module';
 import { OrderModule } from './orders/orders.module';
+import { UserModule } from './users/users.module';
 
 @Module({
   imports: [
