@@ -79,12 +79,9 @@ export class AuthController {
     },
   })
   getUserDetails(@Req() req, @GetUser() user: User) {
-    console.log(req.user);
-    console.log(user);
     // both are getting user, in @GetUser() here we make it as a decorator, and write a code in this to get the req user data
-
-    return req.user;
-    // return this.authService.findUser(req.user)
+    // return req.user;
+    return user;
   }
 
   @UseGuards(JwtGuard)

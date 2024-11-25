@@ -46,7 +46,11 @@ export class AuthService {
     try {
       const userData = await this.userModel.findOne({ email: loginDto.email });
       await comparePassword(loginDto.password, userData.password);
-      const token = await this.generateToken(userData.id, userData.role);
+      const token = await this.generateToken(
+        userData.id,
+        userData.email,
+        userData.role,
+      );
 
       return { access_token: token, role: userData.role };
     } catch (error) {
@@ -58,7 +62,11 @@ export class AuthService {
     try {
       const verifyUser: any = await this.verifyService.verifyOTP(email, otp);
       console.log(verifyUser.role);
-      const token = await this.generateToken(verifyUser.id, verifyUser.role);
+      const token = await this.generateToken(
+        verifyUser.id,
+        verifyUser.email,
+        verifyUser.role,
+      );
       return {
         message: `User\u00A0\u00A0'${verifyUser.name}'\u00A0\u00A0is verified successfully. Please use\u00A0\u00A0'${verifyUser.email}'\u00A0\u00A0for login`,
         access_token: token,
@@ -75,7 +83,7 @@ export class AuthService {
         throw new BadRequestException('Passwords did not match');
       }
 
-      const userData = await this.userModel.findById(user.id);
+      const userData = await this.userModel.findOne(user.id);
       await comparePassword(updatePasswordDto.oldPassword, userData.password);
       const updatedHashedPassword = await hashPassword(
         updatePasswordDto.newPassword,
@@ -97,9 +105,10 @@ export class AuthService {
 
   remove(id: number) {}
 
-  async generateToken(id: string, role: string) {
+  async generateToken(id: string, email: string, role: string) {
     const payload = {
       userId: id,
+      email: email,
       role: role,
     };
 
@@ -166,7 +175,11 @@ export class AuthService {
       const { email, otp } = verifyForgetPasswordOTP;
       const verifyUser: any = await this.verifyService.verifyOTP(email, otp);
       console.log(verifyUser.role);
-      const token = await this.generateToken(verifyUser.id, verifyUser.role);
+      const token = await this.generateToken(
+        verifyUser.id,
+        verifyUser.email,
+        verifyUser.role,
+      );
       return {
         message: `OTP\u00A0\u00A0'${otp}'\u00A0\u00A0has been verified, Please enter a new password to reset.`,
         access_token: token,
