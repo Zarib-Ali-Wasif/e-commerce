@@ -1,3 +1,4 @@
+import { Model } from 'mongoose';
 import {
   BadRequestException,
   ConflictException,
@@ -7,9 +8,8 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-users.dto';
 import { UpdateUserDto } from './dto/update-users.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { InjectModel } from '@nestjs/mongoose';
 import { hashPassword } from 'src/utils/utility.functions';
-import { Gender, Prisma, UserRole } from '@prisma/client';
 import { MailerService } from 'src/mailer/mailer.service';
 import { VerifyService } from 'src/utils/verify.service';
 import { otpSendTemplate } from 'src/mailer/templates/user-template';
@@ -17,28 +17,24 @@ import { otpSendTemplate } from 'src/mailer/templates/user-template';
 @Injectable()
 export class UsersService {
   constructor(
-    private prismaService: PrismaService,
+    @InjectModel('User') private readonly userModel: Model<any>,
     private mailerService: MailerService,
     private verifyService: VerifyService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
     try {
-      const previousUser = await this.prismaService.user.findUnique({
-        where: {
-          email: createUserDto.email,
-        },
+      const previousUser = await this.userModel.findOne({
+        email: createUserDto.email,
       });
       if (previousUser) {
         throw new ConflictException('Email already exists');
       }
 
       const hashedPassword = await hashPassword(createUserDto.password);
-      const userCreated = await this.prismaService.user.create({
-        data: {
-          ...createUserDto,
-          password: hashedPassword,
-        },
+      const userCreated = await this.userModel.create({
+        ...createUserDto,
+        password: hashedPassword,
       });
 
       if (!userCreated) {
@@ -61,29 +57,13 @@ export class UsersService {
         data: userCreated,
       };
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError ||
-        error instanceof Prisma.PrismaClientUnknownRequestError
-      ) {
-        console.error('Known request error:', error);
-        throw new InternalServerErrorException(`DB error ${error.message}`);
-      }
       throw error;
     }
   }
 
   async findAll() {
     try {
-      const users = await this.prismaService.user.findMany({
-        include: {
-          address: true, // Include the address data
-          orders: true, // Include the orders data
-          restaurants: true, // Include the restaurants data
-          Cart: true, // Include the Cart data
-          vehicle: true, // Include the vehicle data
-          Delivery: true, // Include the Delivery data
-        },
-      });
+      const users = await this.userModel.find();
       return users;
     } catch (error) {
       throw error;
@@ -92,17 +72,9 @@ export class UsersService {
 
   async findOne(id: string) {
     try {
-      const userFound = await this.prismaService.user.findUnique({
-        where: {
-          id: id,
-        },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
-          password: true,
-        },
+      const userFound = await this.userModel.findById(id).select({
+        password: 0,
+        __v: 0,
       });
 
       if (!userFound) {
@@ -117,11 +89,14 @@ export class UsersService {
 
   async findUserByEmail(email: string) {
     try {
-      const userFound = await this.prismaService.user.findFirst({
-        where: {
+      const userFound = await this.userModel
+        .findOne({
           email: email,
-        },
-      });
+        })
+        .select({
+          password: 0,
+          __v: 0,
+        });
 
       if (!userFound) {
         throw new BadRequestException('User not found');
@@ -148,11 +123,7 @@ export class UsersService {
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     try {
-      const userToUpdate = await this.prismaService.user.findUnique({
-        where: {
-          id: id,
-        },
-      });
+      const userToUpdate = await this.userModel.findById(id);
 
       if (!userToUpdate) {
         throw new BadRequestException('User not found');
@@ -162,10 +133,8 @@ export class UsersService {
 
       // Check if email is being updated and if it already exists
       if (dataToUpdate.email && dataToUpdate.email !== userToUpdate.email) {
-        const existingUser = await this.prismaService.user.findUnique({
-          where: {
-            email: dataToUpdate.email,
-          },
+        const existingUser = await this.userModel.findOne({
+          email: dataToUpdate.email,
         });
 
         if (existingUser) {
@@ -179,12 +148,11 @@ export class UsersService {
         dataToUpdate.password = hashedPassword;
       }
 
-      const updatedUser = await this.prismaService.user.update({
-        where: {
-          id: id,
-        },
-        data: dataToUpdate,
-      });
+      const updatedUser = await this.userModel.findByIdAndUpdate(
+        id,
+        { $set: dataToUpdate },
+        { new: true },
+      );
 
       if (!updatedUser) {
         throw new InternalServerErrorException('User update failed');
@@ -201,11 +169,7 @@ export class UsersService {
 
   async delete(id: string) {
     try {
-      const deletedUser = await this.prismaService.user.delete({
-        where: {
-          id: id,
-        },
-      });
+      const deletedUser = await this.userModel.findByIdAndDelete(id);
 
       if (!deletedUser) {
         throw new BadRequestException('User delete failed');

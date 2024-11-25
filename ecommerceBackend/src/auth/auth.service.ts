@@ -12,11 +12,11 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { VerifyService } from 'src/utils/verify.service';
-import { MongooseModule } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User, UserDocument } from './schemas/user.schema';
+import { UserDocument } from '../users/schemas/user.schema';
+import { User } from './entities/user.entity';
 import { UpdatePasswordDto } from './dto/updatePassword.dto';
-import { RequestUser, User } from './entities/user.entity';
+import { RequestUser } from './entities/user.entity';
 import { MailerService } from 'src/mailer/mailer.service';
 import { UsersService } from 'src/users/users.service';
 import {
@@ -33,7 +33,7 @@ export class AuthService {
   constructor(
     private configService: ConfigService,
     private jwt: JwtService,
-    private prismaService: PrismaService,
+    private userModel: Model<UserDocument>,
     private usersService: UsersService,
     private verifyService: VerifyService,
     private mailerService: MailerService,
@@ -41,7 +41,7 @@ export class AuthService {
 
   async login(loginDto: LogInDto) {
     try {
-      const userData = await this.usersService.findUserByEmail(loginDto.email);
+      const userData = await this.userModel.findOne({ email: loginDto.email });
       await comparePassword(loginDto.password, userData.password);
       const token = await this.generateToken(userData.id, userData.role);
 
@@ -53,7 +53,7 @@ export class AuthService {
 
   async verifyUser(email: string, otp: string) {
     try {
-      const verifyUser: User = await this.verifyService.verifyOTP(email, otp);
+      const verifyUser: any = await this.verifyService.verifyOTP(email, otp);
       console.log(verifyUser.role);
       const token = await this.generateToken(verifyUser.id, verifyUser.role);
       return {
@@ -72,19 +72,15 @@ export class AuthService {
         throw new BadRequestException('Passwords did not match');
       }
 
-      const userData = await this.usersService.findOne(user.id);
+      const userData = await this.userModel.findById(user.id);
       await comparePassword(updatePasswordDto.oldPassword, userData.password);
       const updatedHashedPassword = await hashPassword(
         updatePasswordDto.newPassword,
       );
-      await this.prismaService.user.update({
-        where: {
-          id: user.id,
-        },
-        data: {
-          password: updatedHashedPassword,
-        },
-      });
+      await this.userModel.updateOne(
+        { _id: user.id },
+        { $set: { password: updatedHashedPassword } },
+      );
 
       return { message: 'Password update successfully' };
     } catch (error) {
@@ -107,7 +103,6 @@ export class AuthService {
     const jwt_secret = this.configService.get('JWT_SECRET');
     const jwt_expiryTime = this.configService.get('JWT_EXPIRES');
 
-    //TODO : refresh token implementation remove expiry
     const token = await this.jwt.signAsync(payload, {
       expiresIn: jwt_expiryTime,
       secret: jwt_secret,
@@ -116,14 +111,9 @@ export class AuthService {
     return token;
   }
 
-  // Using when hit Forget Password api
   async resendEmailOTP(resendEmailOTP: ResendEmailOTP) {
     const { email } = resendEmailOTP;
-    const isUser = await this.prismaService.user.findUnique({
-      where: {
-        email: email,
-      },
-    });
+    const isUser = await this.userModel.findOne({ email: email });
 
     if (!isUser) {
       throw new NotFoundException(`User with email ${email} not found`);
@@ -133,13 +123,8 @@ export class AuthService {
       isUser.email,
     );
 
-    const getUserDetails = await this.prismaService.user.findUnique({
-      where: {
-        email: email,
-      },
-    });
+    const getUserDetails = await this.userModel.findOne({ email: email });
 
-    // Inside your mailer service method this template or mail is when forgetting pasword
     const content = forgetPasswordTemplate(getUserDetails.name, verifyData.otp);
     const sendEmail = await this.mailerService.sendEmail(
       isUser.email,
@@ -152,11 +137,7 @@ export class AuthService {
 
   async sendForgetPasswordEmail(forgetPassword: ForgetPassword) {
     const { email } = forgetPassword;
-    const userFound = await this.prismaService.user.findFirst({
-      where: {
-        email: email,
-      },
-    });
+    const userFound = await this.userModel.findOne({ email: email });
 
     if (!userFound) {
       throw new BadRequestException('User not found');
@@ -180,7 +161,7 @@ export class AuthService {
   ) {
     try {
       const { email, otp } = verifyForgetPasswordOTP;
-      const verifyUser: User = await this.verifyService.verifyOTP(email, otp);
+      const verifyUser: any = await this.verifyService.verifyOTP(email, otp);
       console.log(verifyUser.role);
       const token = await this.generateToken(verifyUser.id, verifyUser.role);
       return {
@@ -195,26 +176,18 @@ export class AuthService {
 
   async resetPassword(resetPasswordDto: ResetPasswordDto) {
     const { email, newPassword } = resetPasswordDto;
-    const user = await this.prismaService.user.findUnique({
-      where: {
-        email: email,
-      },
-    });
+    const user = await this.userModel.findOne({ email: email });
 
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
     const hashedPassword = await hashPassword(newPassword);
-    const resetPassword = await this.prismaService.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        password: hashedPassword,
-      },
-    });
-    resetPassword;
+    const resetPassword = await this.userModel.updateOne(
+      { _id: user.id },
+      { $set: { password: hashedPassword } },
+    );
+
     if (!resetPassword) {
       throw new BadRequestException('Password not reset');
     }

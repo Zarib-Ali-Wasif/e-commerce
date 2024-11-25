@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LogInDto } from './dto/login.dto';
-import { JwtGuard } from './jwt/jwt.guard';
+import { JwtGuard } from './guards/jwt.guard';
 import { UpdatePasswordDto } from './dto/updatePassword.dto';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { request } from 'http';
@@ -20,8 +20,7 @@ import { VerifyForgetPasswordOTP } from './dto/verifyForgetPasswordOTP.dto';
 import { ForgetPassword } from './dto/forgetPassword.dto';
 import { ResendEmailOTP } from './dto/resendEmailOTP.dto';
 import { GetUser } from './decorators/get-user.decorator';
-import { User } from 'src/users/schemas/user.schema';
-
+import { User } from './entities/user.entity';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {

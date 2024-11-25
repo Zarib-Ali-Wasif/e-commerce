@@ -1,23 +1,25 @@
-import { Gender, UserRole } from '@prisma/client';
+import { Document } from 'mongoose';
+import { Gender } from '../enums/gender.enum';
+import { Role } from '../enums/role.enum';
 
 export interface RequestUser {
-  id: string;
+  id: string; // This will correspond to MongoDB's `_id`
   email: string;
-  role: string;
+  role: Role;
 }
 
-export interface User {
-  id?: string;
-  name?: string;
-  email?: string;
-  password?: string;
+export interface User extends Document {
+  id: string; // Corresponds to MongoDB's _id field
+  name: string;
+  email: string;
+  password: string;
   image?: string;
-  role?: UserRole; // Making role optional
+  role?: Role;
   age?: string;
   gender?: Gender;
-  createdAt?: string;
-  updatedAt?: string;
   is_emailVerified?: boolean;
   is_Active?: boolean;
   is_Deleted?: boolean;
+  createdAt?: Date; // Added timestamps from schema
+  updatedAt?: Date; // Added timestamps from schema
 }
