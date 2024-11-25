@@ -11,10 +11,9 @@ import {
 } from 'src/utils/utility.functions';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { VerifyService } from 'src/utils/verify.service';
 import { Model } from 'mongoose';
-import { UserDocument } from '../users/schemas/user.schema';
-import { User } from './entities/user.entity';
+import { User, UserDocument } from 'src/users/schemas/user.schema';
+// import { User } from './entities/user.entity';
 import { UpdatePasswordDto } from './dto/updatePassword.dto';
 import { RequestUser } from './entities/user.entity';
 import { MailerService } from 'src/mailer/mailer.service';
@@ -27,15 +26,19 @@ import { ResetPasswordDto } from './dto/resetPassword.dto';
 import { VerifyForgetPasswordOTP } from './dto/verifyForgetPasswordOTP.dto';
 import { ForgetPassword } from './dto/forgetPassword.dto';
 import { ResendEmailOTP } from './dto/resendEmailOTP.dto';
+import { VerifyUserService } from 'src/verify-user/verify-user.service';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectModel('User') private readonly userModel: Model<User>, // Inject User model
+
     private configService: ConfigService,
     private jwt: JwtService,
-    private userModel: Model<UserDocument>,
+    // private userModel: Model<UserDocument>,
     private usersService: UsersService,
-    private verifyService: VerifyService,
+    private verifyService: VerifyUserService,
     private mailerService: MailerService,
   ) {}
 

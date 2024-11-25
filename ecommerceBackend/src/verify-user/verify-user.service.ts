@@ -5,13 +5,15 @@ import {
 } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { generateRandom4DigitNumber } from './utility.functions';
+import { generateRandom4DigitNumber } from 'src/utils/utility.functions';
+import { User } from 'src/users/schemas/user.schema';
+import { VerifyUser } from './schemas/verifyUser.schema';
 
 @Injectable()
-export class VerifyService {
+export class VerifyUserService {
   constructor(
-    @InjectModel('VerifyUser') private readonly verifyUserModel: Model<any>,
-    @InjectModel('User') private readonly userModel: Model<any>,
+    @InjectModel(VerifyUser.name) private readonly verifyUserModel: Model<any>,
+    @InjectModel(User.name) private readonly userModel: Model<any>,
   ) {}
 
   async generateAndStoreOTP(email: string) {

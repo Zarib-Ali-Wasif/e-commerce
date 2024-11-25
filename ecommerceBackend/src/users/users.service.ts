@@ -11,15 +11,15 @@ import { UpdateUserDto } from './dto/update-users.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { hashPassword } from 'src/utils/utility.functions';
 import { MailerService } from 'src/mailer/mailer.service';
-import { VerifyService } from 'src/utils/verify.service';
 import { otpSendTemplate } from 'src/mailer/templates/user-template';
+import { VerifyUserService } from 'src/verify-user/verify-user.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel('User') private readonly userModel: Model<any>,
     private mailerService: MailerService,
-    private verifyService: VerifyService,
+    private verifyService: VerifyUserService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {

@@ -1,3 +1,4 @@
+import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose'; // 1.1 Import the mongoose module
 import { AppController } from './app.controller';
@@ -7,15 +8,21 @@ import { AuthModule } from './auth/auth.module';
 import { CartModule } from './cart/cart.module';
 import { OrderModule } from './orders/orders.module';
 import { UserModule } from './users/users.module';
+import { VerifyUserModule } from './verify-user/verify-user.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, // Makes ConfigModule globally available
+    }),
+
     MongooseModule.forRoot(process.env.MONGODB_URI), // 1.2 Setup the database
     ProductModule, // 2.1 Add the product module
     UserModule,
     AuthModule,
     CartModule,
     OrderModule,
+    VerifyUserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
