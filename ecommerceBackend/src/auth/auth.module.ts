@@ -7,21 +7,20 @@ import { JwtStrategy } from './jwt/jwt.strategy';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MailerModule } from 'src/mailer/mailer.module';
 import { UserModule } from 'src/users/users.module';
-import { VerifyUserService } from 'src/verify-user/verify-user.service';
-import { User, UserSchema } from 'src/users/schemas/user.schema'; // Import User model
 import { VerifyUserModule } from 'src/verify-user/verify-user.module';
+import { User, UserSchema } from 'src/users/schemas/user.schema';
 
 @Module({
   imports: [
-    ConfigModule, // Import ConfigModule
+    ConfigModule,
     JwtModule,
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]), // Register User model
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MailerModule,
     UserModule,
-    VerifyUserModule, // Add this line to import VerifyUserModule
+    VerifyUserModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, VerifyUserService],
+  providers: [AuthService, JwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

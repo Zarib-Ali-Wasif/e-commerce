@@ -6,14 +6,15 @@ import {
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { generateRandom4DigitNumber } from 'src/utils/utility.functions';
-import { User } from 'src/users/schemas/user.schema';
-import { VerifyUser } from './schemas/verifyUser.schema';
+import { VerifyUser } from './schemas/verifyUser.schema'; // Import the correct interface
+import { User } from 'src/users/schemas/user.schema'; // Ensure User model is correctly imported
 
 @Injectable()
 export class VerifyUserService {
   constructor(
-    @InjectModel(VerifyUser.name) private readonly verifyUserModel: Model<any>,
-    @InjectModel(User.name) private readonly userModel: Model<any>,
+    @InjectModel(VerifyUser.name)
+    private readonly verifyUserModel: Model<VerifyUser>, // Properly inject the model
+    @InjectModel(User.name) private readonly userModel: Model<User>, // Inject User model
   ) {}
 
   async generateAndStoreOTP(email: string) {
