@@ -10,9 +10,7 @@ import { OrderModule } from './orders/orders.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(
-      'mongodb+srv://admin:admin@ecommerce-cluster.atdj4.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=ecommerce-cluster',
-    ), // 1.2 Setup the database
+    MongooseModule.forRoot(process.env.MONGODB_URI), // 1.2 Setup the database
     ProductModule, // 2.1 Add the product module
     UserModule,
     AuthModule,
