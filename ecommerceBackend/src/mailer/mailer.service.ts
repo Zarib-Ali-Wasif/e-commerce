@@ -53,3 +53,31 @@ export class MailerService {
     return mailOptions;
   }
 }
+
+//   getTransporter() {
+//     return nodemailer.createTransport({
+//       host: 'smtp-mail.outlook.com',
+//       secureConnection: false,
+//       port: 587,
+//       service: 'outlook',
+//       auth: {
+//         user: 'zaribaliwasif140@outlook.com',
+//         pass: 'wrskiqeqwdtevvzi',
+//       },
+//       tls: {
+//         ciphers: 'SSLv3',
+//       },
+//     });
+//   }
+
+//   getMailOptions(recepient: string, subject: string, email_body: string) {
+//     const mailOptions = {
+//       from: 'zaribaliwasif140@outlook.com',
+//       to: recepient,
+//       subject: subject,
+//       html: email_body,
+//     };
+
+//     return mailOptions;
+//   }
+// }
