@@ -9,6 +9,7 @@ import { CartModule } from './cart/cart.module';
 import { OrderModule } from './orders/orders.module';
 import { UserModule } from './users/users.module';
 import { VerifyUserModule } from './verify-user/verify-user.module';
+import { ImageModule } from './image/image.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { VerifyUserModule } from './verify-user/verify-user.module';
     CartModule,
     OrderModule,
     VerifyUserModule,
+    ImageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
