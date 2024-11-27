@@ -17,11 +17,14 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import ProductDetailsModal from "../components/ProductDetailsModal";
 import { useCart } from "../context/CartContext";
+import api from "../../lib/services/api";
+import { toast, ToastContainer } from "react-toastify";
 
 const Products = ({ showModal }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingCategories, setLoadingCategories] = useState(false);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const { id } = useParams();
@@ -35,13 +38,15 @@ const Products = ({ showModal }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(
-          "https://fakestoreapi.com/products/categories"
-        );
-        const data = await response.json();
+        setLoadingCategories(true);
+
+        const response = await api.get("store/products/categories");
+        const data = response;
         setCategories(data);
       } catch (error) {
         console.error("Error fetching categories:", error);
+      } finally {
+        setLoadingCategories(false);
       }
     };
 
@@ -53,15 +58,18 @@ const Products = ({ showModal }) => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const url =
+        const endpoint =
           selectedCategory === "all"
-            ? "https://fakestoreapi.com/products"
-            : `https://fakestoreapi.com/products/category/${selectedCategory}`;
-        const response = await fetch(url);
-        const data = await response.json();
+            ? "store/products"
+            : `store/products/category/${selectedCategory}`;
+        const response = await api.get(endpoint);
+        const data = response.data;
         setProductsList(data);
+        localStorage.setItem("products", JSON.stringify(data));
+        toast.success("Products fetched successfully!");
       } catch (error) {
         console.error("Error fetching products:", error);
+        toast.error("Error fetching products");
       } finally {
         setLoading(false);
       }
@@ -162,20 +170,24 @@ const Products = ({ showModal }) => {
             >
               All
             </MenuItem>
-            {categories.map((category) => (
-              <MenuItem
-                key={category}
-                value={category}
-                sx={{
-                  fontSize: "0.9rem",
-                  fontWeight: "500",
-                  color: "#1C4771",
-                  "&:hover": { backgroundColor: "#f0f8ff" },
-                }}
-              >
-                {category.charAt(0).toUpperCase() + category.slice(1)}
-              </MenuItem>
-            ))}
+            {loadingCategories ? (
+              categories.map((category) => (
+                <MenuItem
+                  key={category}
+                  value={category}
+                  sx={{
+                    fontSize: "0.9rem",
+                    fontWeight: "500",
+                    color: "#1C4771",
+                    "&:hover": { backgroundColor: "#f0f8ff" },
+                  }}
+                >
+                  {category.charAt(0).toUpperCase() + category.slice(1)}
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem disabled>Loading categories...</MenuItem>
+            )}
           </Select>
         </FormControl>
 
@@ -266,6 +278,7 @@ const Products = ({ showModal }) => {
           </Grid>
         )}
       </Box>
+      <ToastContainer />
 
       {/* Product Details Modal */}
       {selectedProductId && (
