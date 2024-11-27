@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Typography, Box, Button, TextField, Avatar } from "@mui/material";
+import {
+  Typography,
+  Box,
+  Button,
+  TextField,
+  Avatar,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { useFormik } from "formik";
@@ -58,6 +68,8 @@ const Signup = () => {
       email: "",
       contactNumber: "",
       password: "",
+      gender: "",
+      age: "",
     },
     validationSchema,
     onSubmit: async (data, { resetForm }) => {
@@ -200,6 +212,69 @@ const Signup = () => {
           ) : null}
         </Box>
 
+        <Box
+          sx={{
+            display: "flex",
+            gap: "10px",
+            mb: 2,
+            mt: 2,
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Box sx={{ width: "45%" }}>
+            <TextField
+              name="age"
+              variant="standard"
+              fullWidth
+              type="number"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.age}
+              placeholder="Age"
+              sx={{
+                height: "45px", // Ensure equal height
+                "& .MuiInputBase-root": {
+                  height: "45px", // Make sure the input field is the same height as Select
+                },
+              }}
+            />
+            {formik.touched.age && formik.errors.age ? (
+              <Typography color="error">{formik.errors.age}</Typography>
+            ) : null}
+          </Box>
+
+          <Box sx={{ width: "45%" }}>
+            <FormControl fullWidth variant="standard">
+              <Select
+                name="gender"
+                value={formik.values.gender}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                displayEmpty
+                fullWidth
+                sx={{
+                  height: "45px", // Set height for the select component
+                  "& .MuiSelect-select": {
+                    paddingTop: "10px", // Adjust padding if needed to center the text vertically
+                  },
+                }}
+              >
+                <MenuItem value="" disabled>
+                  Gender
+                </MenuItem>
+                <MenuItem value="Male">Male</MenuItem>
+                <MenuItem value="Female">Female</MenuItem>
+                <MenuItem value="Other">Other</MenuItem>
+              </Select>
+            </FormControl>
+            {formik.touched.gender && formik.errors.gender ? (
+              <Typography color="error">{formik.errors.gender}</Typography>
+            ) : null}
+          </Box>
+        </Box>
+
+        {/* Password Section */}
         <Typography sx={{ textAlign: "start" }}>Password</Typography>
         <Box sx={{ mb: 1, position: "relative" }}>
           <TextField
@@ -253,7 +328,7 @@ const Signup = () => {
             },
           }}
         >
-          Sign up
+          Sign Up
         </Button>
       </Box>
       <ToastContainer />
