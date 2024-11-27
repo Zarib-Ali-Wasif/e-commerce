@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import axios from "axios";
 import { toast } from "react-toastify";
 
+// This ResetPassword component allows users to reset their password after OTP verification
 const ResetPassword = () => {
   const navigate = useNavigate(); // Initialize navigate
   const [showPassword, setShowPassword] = useState(false);

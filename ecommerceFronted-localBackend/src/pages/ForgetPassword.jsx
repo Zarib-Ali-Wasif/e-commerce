@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import axios from "axios";
 import { toast } from "react-toastify";
 
+// The ForgetPassword component allows users to request a password reset and receive an OTP for verification
 const ForgetPassword = () => {
   const navigate = useNavigate(); // Initialize navigate
 
