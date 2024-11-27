@@ -11,7 +11,6 @@ import {
   FormControl,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useSearchParams } from "react-router-dom";
 import { useFormik } from "formik";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -23,18 +22,23 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(true);
-  const [patientProfilePicture, setPatientProfilePicture] = useState();
+  const [showConfirmPassword, setShowConfirmPassword] = useState(true);
+  const [userProfilePicture, setUserProfilePicture] = useState();
   const [file, setFile] = useState(null);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
+
   const handleFileUpload = (e) => {
     const uploadedFile = e.target.files[0];
     setFile(uploadedFile);
     const imageUrl = URL.createObjectURL(uploadedFile);
-    setPatientProfilePicture(imageUrl);
+    setUserProfilePicture(imageUrl);
   };
 
   const clickhandle = () => {
@@ -59,6 +63,9 @@ const Signup = () => {
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%?&])[A-Za-z\d@$!%?&]+$/,
         "Password must contain one uppercase, one lowercase, one digit, and one special character"
       ),
+    confirmPassword: Yup.string()
+      .required("Confirm password is required")
+      .oneOf([Yup.ref("password"), null], "Passwords must match"), // Validation to check if passwords match
   });
 
   const formik = useFormik({
@@ -68,6 +75,7 @@ const Signup = () => {
       email: "",
       contactNumber: "",
       password: "",
+      confirmPassword: "",
       gender: "",
       age: "",
     },
@@ -88,12 +96,12 @@ const Signup = () => {
 
         const imageUrl = imageResponse.data;
 
-        const patientData = {
+        const userData = {
           ...data,
           profilePic: imageUrl || "",
         };
 
-        const response = await api.post("patient", patientData);
+        const response = await api.post("user", userData);
         console.log(response.data);
         if (typeof window !== "undefined") {
           localStorage.setItem("userEmail", data.email);
@@ -117,7 +125,7 @@ const Signup = () => {
         justifyContent: "center",
         height: "90vh",
         textAlign: "center",
-        padding: 2, // Add some padding to the container for better spacing
+        padding: 10, // Add some padding to the container for better spacing
       }}
     >
       {/* Sign-up Heading */}
@@ -146,8 +154,8 @@ const Signup = () => {
       <Box sx={{ mt: 2 }}>
         <label htmlFor="avatarInput">
           <Avatar
-            alt="Patient Profile"
-            src={patientProfilePicture}
+            alt="User Profile"
+            src={userProfilePicture}
             sx={{
               width: "100px",
               height: "100px",
@@ -304,34 +312,64 @@ const Signup = () => {
             <Typography color="error">{formik.errors.password}</Typography>
           ) : null}
         </Box>
-      </Box>
 
-      {/* Sign-up Button */}
-      <Box>
-        <Button
-          onClick={formik.handleSubmit}
-          sx={{
-            width: "303px",
-            border: "1px solid #1C4771", // Change to the desired color
-            borderRadius: "4px",
-            color: "#1C4771", // Button text color
-            mt: 2,
-            fontSize: "18px",
-            textTransform: "capitalize",
-            "&:hover": {
-              backgroundColor: "#1C4771", // Hover background color
-              color: "white", // Hover text color
-            },
-            "&:active": {
-              backgroundColor: "#1C4771", // Active background color
-              color: "white", // Active text color
-            },
-          }}
-        >
-          Sign Up
-        </Button>
+        <Typography sx={{ textAlign: "start" }}>Confirm Password</Typography>
+        <Box sx={{ mb: 2, position: "relative" }}>
+          <TextField
+            name="confirmPassword"
+            variant="standard"
+            fullWidth
+            type={showConfirmPassword ? "password" : "text"}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.confirmPassword}
+          />
+          <VisibilityIcon
+            sx={{
+              position: "absolute",
+              right: "5px",
+              top: "35%",
+              transform: "translateY(-50%)",
+              border: "none",
+              cursor: "pointer",
+              color: "gray",
+            }}
+            onClick={toggleConfirmPasswordVisibility}
+          />
+          {formik.touched.confirmPassword && formik.errors.confirmPassword ? (
+            <Typography color="error">
+              {formik.errors.confirmPassword}
+            </Typography>
+          ) : null}
+        </Box>
+
+        {/* Sign-up Button */}
+        <Box>
+          <Button
+            onClick={formik.handleSubmit}
+            sx={{
+              width: "303px",
+              border: "1px solid #1C4771", // Change to the desired color
+              borderRadius: "4px",
+              color: "#1C4771", // Button text color
+              mt: 2,
+              fontSize: "18px",
+              textTransform: "capitalize",
+              "&:hover": {
+                backgroundColor: "#1C4771", // Hover background color
+                color: "white", // Hover text color
+              },
+              "&:active": {
+                backgroundColor: "#1C4771", // Active background color
+                color: "white", // Active text color
+              },
+            }}
+          >
+            Sign Up
+          </Button>
+        </Box>
+        <ToastContainer />
       </Box>
-      <ToastContainer />
     </Box>
   );
 };
