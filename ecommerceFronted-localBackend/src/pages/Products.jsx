@@ -29,6 +29,7 @@ const Products = ({ showModal }) => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const { id } = useParams();
   const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
 
   //     image: "https://via.placeholder.com/150",
 
@@ -64,6 +65,7 @@ const Products = ({ showModal }) => {
             : `store/products/category/${selectedCategory}`;
         const response = await api.get(endpoint);
         const data = response.data;
+        setProducts(data);
         setProductsList(data);
         localStorage.setItem("products", JSON.stringify(data));
         toast.success("Products fetched successfully!");
@@ -170,7 +172,9 @@ const Products = ({ showModal }) => {
             >
               All
             </MenuItem>
-            {loadingCategories ? (
+            {!loadingCategories ? (
+              <MenuItem disabled>Loading categories...</MenuItem>
+            ) : (
               categories.map((category) => (
                 <MenuItem
                   key={category}
@@ -185,8 +189,6 @@ const Products = ({ showModal }) => {
                   {category.charAt(0).toUpperCase() + category.slice(1)}
                 </MenuItem>
               ))
-            ) : (
-              <MenuItem disabled>Loading categories...</MenuItem>
             )}
           </Select>
         </FormControl>
@@ -216,7 +218,7 @@ const Products = ({ showModal }) => {
           </Box>
         ) : (
           <Grid container spacing={4}>
-            {productsList.map((product) => (
+            {products.map((product) => (
               <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={product.id}>
                 <Card
                   sx={{
