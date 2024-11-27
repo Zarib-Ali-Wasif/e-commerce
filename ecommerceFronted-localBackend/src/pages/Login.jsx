@@ -36,7 +36,7 @@ const Login = () => {
   };
 
   const handleForgetPassword = () => {
-    navigate("/forgetpassword");
+    navigate("/forget-password");
   };
 
   const [showPassword, setShowPassword] = useState(true);

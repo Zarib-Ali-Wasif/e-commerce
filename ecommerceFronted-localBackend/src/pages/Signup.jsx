@@ -16,7 +16,6 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
 import api from "../../lib/services/api";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const Signup = () => {
@@ -108,7 +107,7 @@ const Signup = () => {
         console.log(response.data);
         if (typeof window !== "undefined") {
           localStorage.setItem("userEmail", data.email);
-          navigate("/otp");
+          navigate("/otp-verification");
         }
         resetForm();
         toast.success("Sign up successful!");

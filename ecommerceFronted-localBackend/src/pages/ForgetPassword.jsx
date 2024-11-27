@@ -31,7 +31,7 @@ const ForgetPassword = () => {
           "OTP has been sent to your email. Please check your inbox."
         );
         resetForm();
-        navigate("/login"); // Use navigate to redirect
+        navigate("/otp-verification"); // Use navigate to redirect
       } catch (error) {
         console.error("An error occurred:", error.message);
         toast.error("Something went wrong, please try again.");
@@ -54,11 +54,11 @@ const ForgetPassword = () => {
         sx={{
           fontSize: { xs: "32px", sm: "54px" },
           fontWeight: 500,
-          mb: 2,
+          m: 2,
           color: "#1C4771",
         }}
       >
-        Reset Password
+        Reset Your Password
       </Typography>
       <Typography sx={{ width: "280px" }}>
         Enter your login email and we’ll send you a OTP to reset your password.
@@ -101,7 +101,7 @@ const ForgetPassword = () => {
             },
           }}
         >
-          Reset Password
+          Send OTP
         </Button>
       </Box>
     </Box>
