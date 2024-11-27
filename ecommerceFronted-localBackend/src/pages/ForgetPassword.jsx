@@ -1,14 +1,18 @@
 import React from "react";
-import { Typography, Box, TextField, Checkbox, Button } from "@mui/material";
-import { useRouter } from "next/navigation";
+import { Typography, Box, TextField, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom"; // Use React Router's useNavigate
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const ForgetPassword = () => {
-  const router = useRouter();
+  const navigate = useNavigate(); // Initialize navigate
 
   const validationSchema = Yup.object({
-    email: Yup.string().email().required("Email is required"),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
   });
 
   const formik = useFormik({
@@ -16,20 +20,22 @@ const ForgetPassword = () => {
       email: "",
     },
     validationSchema,
-    onSubmit: (data, { resetForm }) => {
-      axios
-        .post("https://jsonplaceholder.typicode.com/posts", data)
-        .then((response) => {
-          console.log(response.data);
-          toast.success(
-            "Password reset link sent to your email. Please check your email to reset your password."
-          );
-          router.push("/login");
-          resetForm();
-        })
-        .catch((error) => {
-          console.error("An error occurred:", error.message);
-        });
+    onSubmit: async (data, { resetForm }) => {
+      try {
+        const response = await axios.post(
+          "https://jsonplaceholder.typicode.com/posts",
+          data
+        );
+        console.log(response.data);
+        toast.success(
+          "OTP has been sent to your email. Please check your inbox."
+        );
+        resetForm();
+        navigate("/login"); // Use navigate to redirect
+      } catch (error) {
+        console.error("An error occurred:", error.message);
+        toast.error("Something went wrong, please try again.");
+      }
     },
   });
 
@@ -45,10 +51,10 @@ const ForgetPassword = () => {
       }}
     >
       <Typography sx={{ fontSize: "54px", fontWeight: 500, mb: 2 }}>
-        Reset password
+        Reset Password
       </Typography>
       <Typography sx={{ width: "280px" }}>
-        Enter your login email and we’ll send you a link to reset your password
+        Enter your login email and we’ll send you a OTP to reset your password.
       </Typography>
       <Box sx={{ mt: 4, width: "300px" }}>
         <Typography sx={{ textAlign: "start" }}>Email</Typography>

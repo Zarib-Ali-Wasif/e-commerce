@@ -1,36 +1,37 @@
 import React, { useState } from "react";
 import { Typography, Box, Button, TextField, Avatar } from "@mui/material";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router-dom"; // Use useNavigate for routing
+import { useSearchParams } from "react-router-dom"; // Correct import
 import { useFormik } from "formik";
-import { toast } from "react-toastify";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
-import api from "../../../../lib/services/api";
+import api from "../../lib/services/api";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { useSearchParams } from "next/navigation";
 
 const Signup = () => {
-  const router = useRouter();
+  const navigate = useNavigate(); // Initialize navigate
   const searchParams = useSearchParams();
-  const value = searchParams.get("name");
+  // If the user is redirected from the login page and the email is present in the URL as a search parameter, use that email as the initial value for the email field in the signup form. Otherwise, use an empty string.
+  const initialEmail = "";
+  // const initialEmail = searchParams.get("name") || "";
   const [showPassword, setShowPassword] = useState(true);
   const [patientProfilePicture, setPatientProfilePicture] = useState();
-  const [file, setFile] = useState();
+  const [file, setFile] = useState(null);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
   const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    setFile(file);
-    const imageUrl = URL.createObjectURL(file);
+    const uploadedFile = e.target.files[0];
+    setFile(uploadedFile);
+    const imageUrl = URL.createObjectURL(uploadedFile);
     setPatientProfilePicture(imageUrl);
   };
 
   const clickhandle = () => {
-    router.push("/login");
+    navigate("/login");
   };
 
   const validationSchema = Yup.object({
@@ -48,8 +49,8 @@ const Signup = () => {
       .required("Password is required")
       .min(8, "Password must be at least 8 characters")
       .matches(
-        /^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[@$!%?&])[A-Za-z\d@$!%?&]+$/,
-        "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character"
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%?&])[A-Za-z\d@$!%?&]+$/,
+        "Password must contain one uppercase, one lowercase, one digit, and one special character"
       ),
   });
 
@@ -57,7 +58,7 @@ const Signup = () => {
     initialValues: {
       profilePic: "",
       name: "",
-      email: value,
+      email: initialEmail,
       contactNumber: "",
       password: "",
     },
@@ -65,28 +66,29 @@ const Signup = () => {
     onSubmit: async (data, { resetForm }) => {
       try {
         const formData = new FormData();
-        formData.append("image", file);
+        if (file) {
+          formData.append("image", file);
+        }
 
-        const imageResponse = await api.post("image/upload/single", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-
+        const imageResponse = file
+          ? await api.post("image/upload/single", formData, {
+              headers: { "Content-Type": "multipart/form-data" },
+            })
+          : { data: "" }; // Fallback if no image is uploaded
         console.log("Image Upload Response:", imageResponse.data);
 
         const imageUrl = imageResponse.data;
 
         const patientData = {
           ...data,
-          profilePic: imageUrl,
+          profilePic: imageUrl || "",
         };
 
         const response = await api.post("patient", patientData);
         console.log(response.data);
         if (typeof window !== "undefined") {
           localStorage.setItem("userEmail", data.email);
-          router.push("/otp");
+          navigate("/otp");
         }
         resetForm();
         toast.success("Sign up successful!");

@@ -7,36 +7,36 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router-dom"; // Use useNavigate for routing
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUserAsync } from "../../../../lib/redux/slices/authSlice";
-import { ToastContainer } from "react-toastify";
+import { loginUserAsync } from "../../lib/redux/slices/authSlice";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const Login = () => {
   const data = useSelector((state) => state.auth);
-  const router = useRouter();
+  const navigate = useNavigate(); // Initialize navigate
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (data.token && data.role) {
       if (data.role === "Admin") {
-        router.push("/adminpanel");
-      } else if (data.role === "Patient") {
-        router.push("/");
+        navigate("/adminpanel");
+      } else if (data.role === "User") {
+        navigate("/");
       }
     }
-  }, [data]);
+  }, [data, navigate]);
 
   const clickhandle = () => {
-    router.push("/signup");
+    navigate("/signup");
   };
 
   const handleForgetPassword = () => {
-    router.push("/forgetpassword");
+    navigate("/forgetpassword");
   };
 
   const [showPassword, setShowPassword] = useState(true);
@@ -56,8 +56,8 @@ const Login = () => {
       .required("Password is required")
       .min(8, "Password must be at least 8 characters")
       .matches(
-        /^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[@$!%?&])[A-Za-z\d@$!%?&]+$/,
-        "Password must be correct"
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
       ),
   });
 
@@ -71,8 +71,10 @@ const Login = () => {
     onSubmit: (data, { resetForm }) => {
       try {
         dispatch(loginUserAsync(data));
+        toast.success("Login successful!");
         resetForm();
       } catch (e) {
+        toast.error("Login failed, please try again.");
         console.log(e.message);
       }
     },
@@ -158,7 +160,7 @@ const Login = () => {
             value={formik.values.role}
           >
             <MenuItem value="Admin">Admin</MenuItem>
-            <MenuItem value="Patient">Patient</MenuItem>
+            <MenuItem value="User">User</MenuItem>
           </Select>
           {formik.touched.role && formik.errors.role ? (
             <Typography color="error">{formik.errors.role}</Typography>
@@ -166,11 +168,12 @@ const Login = () => {
         </Box>
       </Box>
       <Box sx={{ cursor: "pointer" }} onClick={handleForgetPassword}>
-        <Typography sx={{ textAlign: "start", textDecoration: "underline" }}>
+        <Typography sx={{ textDecoration: "underline" }}>
           Forget Password?
         </Typography>
       </Box>
       <Button
+        type="submit"
         onClick={formik.handleSubmit}
         sx={{
           width: "303px",
