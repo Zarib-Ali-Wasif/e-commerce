@@ -136,7 +136,7 @@ const Signup = () => {
       {/* Sign-up Heading */}
       <Typography
         sx={{
-          fontSize: "64px",
+          fontSize: { xs: "42px", sm: "64px" },
           fontWeight: 500,
           mb: 2,
           mt: 12,
@@ -235,7 +235,7 @@ const Signup = () => {
           sx={{
             display: "flex",
             gap: "10px",
-            mb: 2,
+            mb: 1,
             mt: 2,
             alignItems: "center",
             justifyContent: "space-between",
@@ -340,7 +340,6 @@ const Signup = () => {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.confirmPassword}
-            placeholder="Confirm Password"
           />
           <Box
             sx={{

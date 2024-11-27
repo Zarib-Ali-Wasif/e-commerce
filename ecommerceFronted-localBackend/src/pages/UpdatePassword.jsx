@@ -82,7 +82,12 @@ const UpdatePassword = () => {
       }}
     >
       <Typography
-        sx={{ fontSize: "54px", fontWeight: 500, mb: 2, color: "#1C4771" }}
+        sx={{
+          fontSize: { xs: "32px", sm: "54px" },
+          fontWeight: 500,
+          mb: 2,
+          color: "#1C4771",
+        }}
       >
         Update Password
       </Typography>
