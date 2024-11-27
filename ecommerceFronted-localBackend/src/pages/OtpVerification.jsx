@@ -51,8 +51,9 @@ const OtpVerification = () => {
   const handleResendOtp = async () => {
     setResendDisabled(true);
     try {
-      await axios.post("https://jsonplaceholder.typicode.com/posts", {
-        action: "resendOtp",
+      const email = localStorage.getItem("email");
+      await axios.post(`${import.meta.env.VITE_API_URL}auth/resendEmailOTP`, {
+        email,
       });
       toast.success("OTP has been resent to your email.");
       setTimeout(() => setResendDisabled(false), 60000); // Re-enable after 1 min
