@@ -17,6 +17,7 @@ import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
 import api from "../../lib/services/api";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -295,65 +296,75 @@ const Signup = () => {
 
         {/* Password Section */}
         <Typography sx={{ textAlign: "start" }}>Password</Typography>
+
         <Box sx={{ mb: 1, position: "relative" }}>
           <TextField
             name="password"
             variant="standard"
             fullWidth
-            type={showPassword ? "password" : "text"}
+            type={showPassword ? "text" : "password"}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.password}
           />
-          <VisibilityIcon
+          <Box
             sx={{
               position: "absolute",
               right: "5px",
               top: "35%",
               transform: "translateY(-50%)",
-              border: "none",
               cursor: "pointer",
               color: "gray",
             }}
             onClick={togglePasswordVisibility}
           >
-            {showPassword ? "Hide" : "Show"}
-          </VisibilityIcon>
+            {showPassword ? (
+              <VisibilityOff sx={{ color: "gray" }} />
+            ) : (
+              <Visibility sx={{ color: "gray" }} />
+            )}
+          </Box>
           {formik.touched.password && formik.errors.password ? (
             <Typography color="error">{formik.errors.password}</Typography>
           ) : null}
         </Box>
 
         <Typography sx={{ textAlign: "start" }}>Confirm Password</Typography>
+
         <Box sx={{ mb: 2, position: "relative" }}>
           <TextField
             name="confirmPassword"
             variant="standard"
             fullWidth
-            type={showConfirmPassword ? "password" : "text"}
+            type={showConfirmPassword ? "text" : "password"}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.confirmPassword}
+            placeholder="Confirm Password"
           />
-          <VisibilityIcon
+          <Box
             sx={{
               position: "absolute",
               right: "5px",
               top: "35%",
               transform: "translateY(-50%)",
-              border: "none",
               cursor: "pointer",
               color: "gray",
             }}
             onClick={toggleConfirmPasswordVisibility}
-          />
+          >
+            {showConfirmPassword ? (
+              <VisibilityOff sx={{ color: "gray" }} />
+            ) : (
+              <Visibility sx={{ color: "gray" }} />
+            )}
+          </Box>
           {formik.touched.confirmPassword && formik.errors.confirmPassword ? (
             <Typography color="error">
               {formik.errors.confirmPassword}
             </Typography>
           ) : null}
         </Box>
-
         {/* Sign-up Button */}
         <Box>
           <Button

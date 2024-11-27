@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUserAsync } from "../../lib/redux/slices/authSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import VisibilityIcon from "@mui/icons-material/Visibility";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const Login = () => {
   const data = useSelector((state) => state.auth);
@@ -122,7 +122,7 @@ const Login = () => {
           ) : null}
         </Box>
         <Typography sx={{ textAlign: "start" }}>Password</Typography>
-        <Box sx={{ mb: 2, position: "relative" }}>
+        {/* <Box sx={{ mb: 2, position: "relative" }}>
           <TextField
             name="password"
             variant="standard"
@@ -144,6 +144,36 @@ const Login = () => {
             }}
             onClick={togglePasswordVisibility}
           />
+          {formik.touched.password && formik.errors.password ? (
+            <Typography color="error">{formik.errors.password}</Typography>
+          ) : null}
+        </Box> */}
+        <Box sx={{ mb: 2, position: "relative" }}>
+          <TextField
+            name="password"
+            variant="standard"
+            fullWidth
+            type={showPassword ? "text" : "password"}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.password}
+          />
+          <Box
+            sx={{
+              position: "absolute",
+              right: "5px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              cursor: "pointer",
+            }}
+            onClick={togglePasswordVisibility}
+          >
+            {showPassword ? (
+              <VisibilityOff sx={{ color: "gray" }} />
+            ) : (
+              <Visibility sx={{ color: "gray" }} />
+            )}
+          </Box>
           {formik.touched.password && formik.errors.password ? (
             <Typography color="error">{formik.errors.password}</Typography>
           ) : null}

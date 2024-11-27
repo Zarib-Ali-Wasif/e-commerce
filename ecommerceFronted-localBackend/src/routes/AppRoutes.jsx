@@ -14,6 +14,8 @@ import Login from "../pages/Login";
 import Signup from "../pages/Signup"; // Import Signup page
 import ForgetPassword from "../pages/ForgetPassword";
 import AddProduct from "../pages/AddProduct";
+import OtpVerification from "../pages/OtpVerification";
+import UpdatePassword from "../pages/UpdatePassword";
 // import { AuthContext } from "../context/AuthContext";
 
 // ProtectedRoute Component
@@ -42,6 +44,8 @@ function AppRoutes() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgetpassword" element={<ForgetPassword />} />
             <Route path="/addproduct" element={<AddProduct />} />
+            <Route path="/otpverification" element={<OtpVerification />} />
+            <Route path="/updatepassword" element={<UpdatePassword />} />
             <Route path="*" element={<NotFound />} />
 
             {/* Protected Routes */}
