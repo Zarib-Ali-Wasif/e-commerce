@@ -105,12 +105,24 @@ const Signup = () => {
         // Send the request to create the user
         const response = await api.post("user", userData);
         console.log(response.data);
+
         if (typeof window !== "undefined") {
+          // Save user email in localStorage
           localStorage.setItem("userEmail", data.email);
-          navigate("/otp-verification");
+
+          // Notify user about OTP sent to email
+          toast.success(
+            "Sign up successful. OTP has been sent to your email for verification."
+          );
+
+          // Reset the form after submission
+          resetForm();
+
+          // Pass `redirectTo` as 'login' to indicate the flow context
+          navigate("/otp-verification", {
+            state: { redirectTo: "login" },
+          });
         }
-        resetForm();
-        toast.success("Sign up successful!");
       } catch (error) {
         console.error("An error occurred:", error.message);
         toast.error("Error: Failed to sign up. Please try again later.");

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Typography, Box, TextField, Button } from "@mui/material";
-import { useNavigate } from "react-router-dom"; // React Router's useNavigate
+import { useNavigate, useLocation } from "react-router-dom"; // React Router's useNavigate and useLocation
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
@@ -9,6 +9,15 @@ import { toast } from "react-toastify";
 const OtpVerification = () => {
   const [resendDisabled, setResendDisabled] = useState(false); // For resend button state
   const navigate = useNavigate(); // Initialize navigate
+  const location = useLocation(); // Get current location
+  const [redirectTo, setRedirectTo] = useState("/login"); // Default redirect to login
+
+  // Check if redirectTo exists in the state passed during navigation
+  useEffect(() => {
+    if (location.state && location.state.redirectTo) {
+      setRedirectTo(location.state.redirectTo); // Set the redirect destination if provided
+    }
+  }, [location]);
 
   // OTP validation schema (4 digits)
   const validationSchema = Yup.object({
@@ -30,7 +39,7 @@ const OtpVerification = () => {
         );
         console.log(response.data);
         toast.success("OTP verified successfully.");
-        navigate("/dashboard"); // Redirect after successful verification
+        navigate(redirectTo); // Redirect based on the flow (e.g., reset-password or login)
       } catch (error) {
         console.error("An error occurred:", error.message);
         toast.error("Invalid OTP, please try again.");

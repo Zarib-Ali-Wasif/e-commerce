@@ -31,7 +31,11 @@ const ForgetPassword = () => {
           "OTP has been sent to your email. Please check your inbox."
         );
         resetForm();
-        navigate("/otp-verification"); // Use navigate to redirect
+
+        // Pass `redirectTo` as 'reset-password' to know the flow context
+        navigate("/otp-verification", {
+          state: { redirectTo: "reset-password" },
+        });
       } catch (error) {
         console.error("An error occurred:", error.message);
         toast.error("Something went wrong, please try again.");
@@ -61,7 +65,7 @@ const ForgetPassword = () => {
         Reset Your Password
       </Typography>
       <Typography sx={{ width: "280px" }}>
-        Enter your login email and we’ll send you a OTP to reset your password.
+        Enter your login email and we’ll send you an OTP to reset your password.
       </Typography>
       <Box sx={{ mt: 4, width: "300px" }}>
         <Typography sx={{ textAlign: "start", color: "#1C4771" }}>
