@@ -82,25 +82,27 @@ const Signup = () => {
     validationSchema,
     onSubmit: async (data, { resetForm }) => {
       try {
-        const formData = new FormData();
-        if (file) {
-          formData.append("image", file);
-        }
+        // const formData = new FormData();
+        // if (file) {
+        //   formData.append("image", file);
+        // }
 
-        const imageResponse = file
-          ? await api.post("image/upload/single", formData, {
-              headers: { "Content-Type": "multipart/form-data" },
-            })
-          : { data: "" };
-        console.log("Image Upload Response:", imageResponse.data);
+        // const imageResponse = file
+        //   ? await api.post("image/upload/single", formData, {
+        //       headers: { "Content-Type": "multipart/form-data" },
+        //     })
+        //   : { data: "" };
+        // console.log("Image Upload Response:", imageResponse.data);
+        // const imageUrl = imageResponse.data;
+        // Prepare user data, excluding 'confirmPassword' field
+        const { confirmPassword, ...userData } = data; // Exclude confirmPassword
 
-        const imageUrl = imageResponse.data;
+        // const userDataWithImage = {
+        //   ...userData,
+        //   profilePic: imageUrl || "", // Attach the uploaded image URL if available
+        // };
 
-        const userData = {
-          ...data,
-          profilePic: imageUrl || "",
-        };
-
+        // Send the request to create the user
         const response = await api.post("user", userData);
         console.log(response.data);
         if (typeof window !== "undefined") {
@@ -123,9 +125,11 @@ const Signup = () => {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        height: "90vh",
+        height: "80vh",
         textAlign: "center",
-        padding: 10, // Add some padding to the container for better spacing
+        maxWidth: "400px",
+        margin: "auto",
+        padding: "100px 20px", // Add some padding to the container for better spacing
       }}
     >
       {/* Sign-up Heading */}
@@ -151,7 +155,7 @@ const Signup = () => {
       </Typography>
 
       {/* Profile Picture Section */}
-      <Box sx={{ mt: 2 }}>
+      {/* <Box sx={{ mt: 2 }}>
         <label htmlFor="avatarInput">
           <Avatar
             alt="User Profile"
@@ -171,10 +175,16 @@ const Signup = () => {
           style={{ display: "none" }}
           onChange={handleFileUpload}
         />
-      </Box>
+      </Box> */}
 
       {/* Form Fields */}
-      <Box sx={{ width: "300px", mt: 3 }}>
+      <Box
+        sx={{
+          maxWidth: "380px",
+          width: "100%",
+          mt: 3,
+        }}
+      >
         <Typography sx={{ textAlign: "start" }}>Name</Typography>
         <Box sx={{ mb: 1 }}>
           <TextField
@@ -263,13 +273,14 @@ const Signup = () => {
                 fullWidth
                 sx={{
                   height: "45px", // Set height for the select component
+                  textAlign: "start",
                   "& .MuiSelect-select": {
                     paddingTop: "10px", // Adjust padding if needed to center the text vertically
                   },
                 }}
               >
-                <MenuItem value="" disabled>
-                  Gender
+                <MenuItem value="" disabled sx={{ display: "none" }}>
+                  <Typography color="textSecondary">Gender</Typography>
                 </MenuItem>
                 <MenuItem value="Male">Male</MenuItem>
                 <MenuItem value="Female">Female</MenuItem>
@@ -348,7 +359,8 @@ const Signup = () => {
           <Button
             onClick={formik.handleSubmit}
             sx={{
-              width: "303px",
+              maxWidth: "303px",
+              width: "100%",
               border: "1px solid #1C4771", // Change to the desired color
               borderRadius: "4px",
               color: "#1C4771", // Button text color

@@ -13,6 +13,7 @@ import OrderConfirmation from "../components/OrderConfirmation";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup"; // Import Signup page
 import ForgetPassword from "../pages/ForgetPassword";
+import AddProduct from "../pages/AddProduct";
 // import { AuthContext } from "../context/AuthContext";
 
 // ProtectedRoute Component
@@ -40,6 +41,7 @@ function AppRoutes() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgetpassword" element={<ForgetPassword />} />
+            <Route path="/addproduct" element={<AddProduct />} />
             <Route path="*" element={<NotFound />} />
 
             {/* Protected Routes */}

@@ -148,17 +148,21 @@ const Login = () => {
             <Typography color="error">{formik.errors.password}</Typography>
           ) : null}
         </Box>
-        <Typography sx={{ textAlign: "start" }}>Role</Typography>
-        <Box sx={{ mb: 2 }}>
+        {/* <Typography sx={{ textAlign: "start" }}>Role</Typography> */}
+        <Box sx={{ mb: 2, mt: 4.6, textAlign: "start" }}>
           <Select
-            textAlign="start"
+            // textAlign="start"
             name="role"
             variant="standard"
             fullWidth
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.role}
+            displayEmpty
           >
+            <MenuItem value="" disabled sx={{ display: "none" }}>
+              <Typography color="textSecondary">Role</Typography>
+            </MenuItem>
             <MenuItem value="Admin">Admin</MenuItem>
             <MenuItem value="User">User</MenuItem>
           </Select>
