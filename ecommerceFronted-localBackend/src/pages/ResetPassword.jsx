@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // Use navigate
 import { Box, TextField, Typography, Button } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -9,8 +9,8 @@ import { toast } from "react-toastify";
 
 const ResetPassword = () => {
   const navigate = useNavigate(); // Initialize navigate
-  const [showPassword, setShowPassword] = useState(true);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };

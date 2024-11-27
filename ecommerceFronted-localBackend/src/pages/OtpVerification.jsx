@@ -82,7 +82,7 @@ const OtpVerification = () => {
           color: "#1C4771",
         }}
       >
-        Enter OTP
+        OTP Verification
       </Typography>
       <Typography sx={{ width: "280px" }}>
         Enter the 4-digit OTP sent to your email to verify your identity.

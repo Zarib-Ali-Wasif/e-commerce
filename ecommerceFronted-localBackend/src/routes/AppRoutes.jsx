@@ -45,7 +45,7 @@ function AppRoutes() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/forget-password" element={<ForgetPassword />} />
             <Route path="/add-product" element={<AddProduct />} />
-            <Route path="/otp-verification" element={<OtpVerification />} />
+            <Route path="/verify-otp" element={<OtpVerification />} />
             <Route path="/update-password" element={<UpdatePassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="*" element={<NotFound />} />
