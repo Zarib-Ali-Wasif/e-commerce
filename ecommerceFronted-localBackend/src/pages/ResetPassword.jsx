@@ -20,14 +20,14 @@ const ResetPassword = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  useEffect(() => {
-    // Check if OTP has been verified before allowing access to this page
-    const otpVerified = localStorage.getItem("otpVerified");
-    if (otpVerified !== "true") {
-      // If OTP not verified, redirect to OTP verification page
-      navigate("/verify-otp");
-    }
-  }, [navigate]);
+  // useEffect(() => {
+  //   // Check if OTP has been verified before allowing access to this page
+  //   const otpVerified = localStorage.getItem("otpVerified");
+  //   if (otpVerified !== "true") {
+  //     // If OTP not verified, redirect to OTP verification page
+  //     navigate("/verify-otp");
+  //   }
+  // }, [navigate]);
 
   const validationSchema = Yup.object({
     newPassword: Yup.string()
@@ -82,7 +82,7 @@ const ResetPassword = () => {
         sx={{
           fontSize: { xs: "32px", sm: "54px" },
           fontWeight: 500,
-          mb: 2,
+          m: 2,
           color: "#1C4771",
         }}
       >

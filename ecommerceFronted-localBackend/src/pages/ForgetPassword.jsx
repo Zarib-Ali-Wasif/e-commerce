@@ -59,11 +59,11 @@ const ForgetPassword = () => {
         sx={{
           fontSize: { xs: "32px", sm: "54px" },
           fontWeight: 500,
-          m: 2,
+          mb: 2,
           color: "#1C4771",
         }}
       >
-        Reset Your Password
+        Forget Password
       </Typography>
       <Typography sx={{ width: "280px" }}>
         Enter your login email and we’ll send you an OTP to reset your password.
