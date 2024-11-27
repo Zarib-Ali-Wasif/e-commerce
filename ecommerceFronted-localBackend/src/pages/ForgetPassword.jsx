@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { toast } from "react-toastify";
+import api from "../../lib/services/api";
 
 // The ForgetPassword component allows users to request a password reset and receive an OTP for verification
 const ForgetPassword = () => {
@@ -23,10 +24,8 @@ const ForgetPassword = () => {
     validationSchema,
     onSubmit: async (data, { resetForm }) => {
       try {
-        const response = await axios.post(
-          "https://jsonplaceholder.typicode.com/posts",
-          data
-        );
+        localStorage.setItem("email", data.email);
+        const response = await api.post("auth/forgetPassword", data);
         console.log(response.data);
         toast.success(
           "OTP has been sent to your email. Please check your inbox."

@@ -18,15 +18,15 @@ import { Role } from 'src/auth/enums/role.enum';
 import { RolesGuard } from 'src/auth/guards/role.guard';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 
-@UseGuards(JwtGuard, RolesGuard)
-@Roles(Role.Admin)
+// @UseGuards(JwtGuard, RolesGuard)
+// @Roles(Role.Admin)
 @Controller('store/products')
 export class ProductController {
   constructor(private productService: ProductService) {}
 
-  @UseGuards(JwtGuard, RolesGuard)
-  @Roles(Role.User, Role.Admin)
   @Get('/')
+  // @UseGuards(JwtGuard, RolesGuard)
+  // @Roles(Role.User, Role.Admin)
   async getProducts(@Query() filterProductDTO: FilterProductDTO) {
     if (Object.keys(filterProductDTO).length) {
       const filteredProducts = await this.productService.getFilteredProducts(
@@ -39,38 +39,9 @@ export class ProductController {
     }
   }
 
-  @UseGuards(JwtGuard, RolesGuard)
-  @Roles(Role.User, Role.Admin)
-  @Get('/:id')
-  async getProduct(@Param('id') id: string) {
-    const product = await this.productService.getProduct(id);
-    if (!product) throw new NotFoundException('Product does not exist!');
-    return product;
-  }
-
   @Post('/')
   async addProduct(@Body() createProductDTO: CreateProductDTO) {
     const product = await this.productService.addProduct(createProductDTO);
-    return product;
-  }
-
-  @Put('/:id')
-  async updateProduct(
-    @Param('id') id: string,
-    @Body() createProductDTO: CreateProductDTO,
-  ) {
-    const product = await this.productService.updateProduct(
-      id,
-      createProductDTO,
-    );
-    if (!product) throw new NotFoundException('Product does not exist!');
-    return product;
-  }
-
-  @Delete('/:id')
-  async deleteProduct(@Param('id') id: string) {
-    const product = await this.productService.deleteProduct(id);
-    if (!product) throw new NotFoundException('Product does not exist');
     return product;
   }
 
@@ -112,5 +83,34 @@ export class ProductController {
   async getAllCategories() {
     const categories = await this.productService.getAllCategories();
     return categories;
+  }
+
+  @Get('/:id')
+  // @UseGuards(JwtGuard, RolesGuard)
+  // @Roles(Role.User, Role.Admin)
+  async getProduct(@Param('id') id: string) {
+    const product = await this.productService.getProduct(id);
+    if (!product) throw new NotFoundException('Product does not exist!');
+    return product;
+  }
+
+  @Put('/:id')
+  async updateProduct(
+    @Param('id') id: string,
+    @Body() createProductDTO: CreateProductDTO,
+  ) {
+    const product = await this.productService.updateProduct(
+      id,
+      createProductDTO,
+    );
+    if (!product) throw new NotFoundException('Product does not exist!');
+    return product;
+  }
+
+  @Delete('/:id')
+  async deleteProduct(@Param('id') id: string) {
+    const product = await this.productService.deleteProduct(id);
+    if (!product) throw new NotFoundException('Product does not exist');
+    return product;
   }
 }

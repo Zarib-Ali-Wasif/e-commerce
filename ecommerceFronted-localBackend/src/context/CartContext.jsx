@@ -58,29 +58,35 @@ const CartProvider = ({ children }) => {
 
   const addToCart = (product) => {
     setCart((prevCart) => {
-      const existingProduct = prevCart.find((item) => item.id === product.id);
+      const existingProduct = prevCart.find(
+        (item) => item.cartItemId === product._id
+      );
       if (existingProduct) {
         return prevCart.map((item) =>
-          item.id === product.id
+          item.cartItemId === product._id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       }
-      return [...prevCart, { id: product.id, quantity: 1 }];
+      return [...prevCart, { cartItemId: product._id, quantity: 1 }];
     });
   };
 
   // Update quantity in the cart
-  const updateQuantity = (id, quantity) => {
+  const updateQuantity = (productId, quantity) => {
     setCart((prevCart) =>
       prevCart.map((item) =>
-        item.id === id ? { ...item, quantity: Math.max(1, quantity) } : item
+        item.cartItemId === productId
+          ? { ...item, quantity: Math.max(1, quantity) }
+          : item
       )
     );
   };
 
   const removeFromCart = (productId) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+    setCart((prevCart) =>
+      prevCart.filter((item) => item.cartItemId !== productId)
+    );
   };
 
   const clearCart = () => {
@@ -89,8 +95,8 @@ const CartProvider = ({ children }) => {
 
   const calculateSubtotal = () =>
     cart.reduce((total, item) => {
-      const product = getProductDetails(item.id);
-      return total + (product.price || 0) * item.quantity;
+      const cartProduct = getCartProductDetails(item.cartItemId);
+      return total + (cartProduct.price || 0) * item.quantity;
     }, 0);
 
   const calculateTotal = (subtotal) => {
@@ -116,8 +122,8 @@ const CartProvider = ({ children }) => {
     setCartSummary(summary);
   };
 
-  const getProductDetails = (productId) =>
-    productsList.find((product) => product.id === productId) || {};
+  const getCartProductDetails = (cartProductId) =>
+    productsList.find((product) => product._id === cartProductId) || {};
 
   return (
     <CartContext.Provider

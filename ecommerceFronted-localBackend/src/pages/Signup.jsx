@@ -108,7 +108,7 @@ const Signup = () => {
 
         if (typeof window !== "undefined") {
           // Save user email in localStorage
-          localStorage.setItem("userEmail", data.email);
+          localStorage.setItem("email", data.email);
 
           // Notify user about OTP sent to email
           toast.success(

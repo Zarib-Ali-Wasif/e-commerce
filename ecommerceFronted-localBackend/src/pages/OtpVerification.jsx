@@ -3,8 +3,8 @@ import { Typography, Box, TextField, Button } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom"; // React Router's useNavigate and useLocation
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import { toast } from "react-toastify";
+import api from "../../lib/services/api";
 
 const OtpVerification = () => {
   const [resendDisabled, setResendDisabled] = useState(false); // For resend button state
@@ -33,10 +33,20 @@ const OtpVerification = () => {
     validationSchema,
     onSubmit: async (data) => {
       try {
-        const response = await axios.post(
-          "https://jsonplaceholder.typicode.com/posts",
-          data
-        );
+        const email = localStorage.getItem("email");
+        const fullData = {
+          email,
+          ...data,
+        };
+
+        // Determine the correct API endpoint
+        const endpoint =
+          redirectTo === "reset-password"
+            ? "auth/verifyForgetPasswordOTP"
+            : "auth/verifyUser";
+
+        // Make the request to the selected endpoint
+        const response = await api.post(endpoint, fullData);
         console.log(response.data);
         toast.success("OTP verified successfully.");
         navigate(redirectTo); // Redirect based on the flow (e.g., reset-password or login)
@@ -52,7 +62,7 @@ const OtpVerification = () => {
     setResendDisabled(true);
     try {
       const email = localStorage.getItem("email");
-      await axios.post(`${import.meta.env.VITE_API_URL}auth/resendEmailOTP`, {
+      await api.post("auth/resendEmailOTP", {
         email,
       });
       toast.success("OTP has been resent to your email.");

@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../lib/services/api";
 
 const Checkout = () => {
   const { cart, clearCart, cartSummary, productsList } = useCart();
@@ -23,10 +23,15 @@ const Checkout = () => {
   const navigate = useNavigate();
 
   // User details (Replace with actual context or state values)
-  const user = JSON.parse(localStorage.getItem("user"));
+  // const user = JSON.parse(localStorage.getItem("user"));
+  const user = {
+    userId: "user123",
+    name: "John Doe",
+    email: "3Tt9t@example.com",
+  };
 
-  const getProductDetails = (productId) =>
-    productsList.find((product) => product.id === productId) || {};
+  const getCartProductDetails = (productId) =>
+    productsList.find((product) => product._id === productId) || {};
 
   // Generate a unique order number
   const generateOrderNumber = () => {
@@ -59,14 +64,14 @@ const Checkout = () => {
       address,
       paymentMethod,
       orderItems: cart.map((item) => {
-        const product = getProductDetails(item.id);
+        const cartProduct = getCartProductDetails(item.cartItemId);
         return {
-          productId: item.id,
-          productName: product.title,
-          productCategory: product.category,
+          productId: item.cartItemId,
+          productName: cartProduct.title,
+          productCategory: cartProduct.category,
           quantity: item.quantity,
-          price: product.price,
-          total: item.quantity * product.price,
+          price: cartProduct.price,
+          total: item.quantity * cartProduct.price,
         };
       }),
       summary: {
@@ -80,10 +85,7 @@ const Checkout = () => {
 
     try {
       setLoading(true); // Show loader
-      const response = await axios.post(
-        "http://localhost:3000/orders",
-        orderDetails
-      );
+      const response = await api.post(`orders`, orderDetails);
       console.log("Order saved successfully:", response.data);
 
       clearCart();
@@ -116,7 +118,7 @@ const Checkout = () => {
               </Typography>
               <Divider sx={{ my: 2 }} />
               {cart.map((cartItem, index) => {
-                const product = getProductDetails(cartItem.id);
+                const cartproduct = getCartProductDetails(cartItem.cartItemId);
                 return (
                   <Box
                     key={index}
@@ -128,8 +130,8 @@ const Checkout = () => {
                     }}
                   >
                     <img
-                      src={product.image}
-                      alt={product.title}
+                      src={cartproduct.image}
+                      alt={cartproduct.title}
                       style={{ width: "50px", height: "50px" }}
                     />
                     <Box
@@ -153,7 +155,7 @@ const Checkout = () => {
                           color="textSecondary"
                           textAlign="justify"
                         >
-                          {product.title}
+                          {cartproduct.title}
                         </Typography>
                         <Typography
                           color="textSecondary"
@@ -162,11 +164,11 @@ const Checkout = () => {
                           fontWeight="bold"
                           fontFamily="Rubik"
                         >
-                          {product.category}
+                          {cartproduct.category}
                         </Typography>
                       </Box>
                       <Typography variant="body2">
-                        ${product.price} x {cartItem.quantity}
+                        ${cartproduct.price} x {cartItem.quantity}
                       </Typography>
                     </Box>{" "}
                   </Box>

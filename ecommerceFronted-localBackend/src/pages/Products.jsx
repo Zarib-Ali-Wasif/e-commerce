@@ -40,9 +40,10 @@ const Products = ({ showModal }) => {
     const fetchCategories = async () => {
       try {
         setLoadingCategories(true);
-
         const response = await api.get("store/products/categories");
-        const data = response;
+        // Ensure the response data is an array
+        // const data = Array.isArray(response.data) ? response.data : [];
+        const data = response.data;
         setCategories(data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -62,7 +63,7 @@ const Products = ({ showModal }) => {
         const endpoint =
           selectedCategory === "all"
             ? "store/products"
-            : `store/products/category/${selectedCategory}`;
+            : `store/products?category=${selectedCategory}`;
         const response = await api.get(endpoint);
         const data = response.data;
         setProducts(data);
@@ -88,7 +89,7 @@ const Products = ({ showModal }) => {
   // Open modal when `showModal` is true and `id` is valid
   useEffect(() => {
     if (showModal && id) {
-      setSelectedProductId(parseInt(id));
+      setSelectedProductId(id);
       setModalOpen(true);
     }
   }, [id, showModal]);
@@ -172,12 +173,12 @@ const Products = ({ showModal }) => {
             >
               All
             </MenuItem>
-            {!loadingCategories ? (
+            {loadingCategories ? (
               <MenuItem disabled>Loading categories...</MenuItem>
             ) : (
-              categories.map((category) => (
+              categories.map((category, index) => (
                 <MenuItem
-                  key={category}
+                  key={index}
                   value={category}
                   sx={{
                     fontSize: "0.9rem",
@@ -219,7 +220,7 @@ const Products = ({ showModal }) => {
         ) : (
           <Grid container spacing={4}>
             {products.map((product) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={product.id}>
+              <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={product._id}>
                 <Card
                   sx={{
                     maxWidth: 345,
@@ -252,7 +253,8 @@ const Products = ({ showModal }) => {
                       color="primary"
                       onClick={() => {
                         addToCart(product); // Add product to cart
-                        setSelectedProductId(product.id); // Set selected product ID
+                        setSelectedProductId(product._id); // Set selected product ID
+                        console.log("productId is:", product._id);
                       }}
                       sx={{
                         textTransform: "none",
@@ -269,7 +271,7 @@ const Products = ({ showModal }) => {
                         textTransform: "none",
                         borderColor: "#387DA3",
                       }}
-                      onClick={() => handleOpenModal(product.id)}
+                      onClick={() => handleOpenModal(product._id)}
                     >
                       View Details
                     </Button>
@@ -288,7 +290,7 @@ const Products = ({ showModal }) => {
           open={modalOpen}
           handleClose={handleCloseModal}
           productId={selectedProductId}
-          products={productsList}
+          products={products}
         />
       )}
 

@@ -17,7 +17,6 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
 import api from "../../lib/services/api";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -70,8 +69,8 @@ const AddProduct = () => {
         };
 
         // Send the request to create the product
-        const response = await api.post("product", productData);
-        console.log(response.data);
+        const response = await api.post("store/products", productData);
+        console.log(response);
 
         toast.success("Product added successfully!");
         resetForm();

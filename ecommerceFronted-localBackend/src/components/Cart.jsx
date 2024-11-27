@@ -24,8 +24,8 @@ const Cart = () => {
   } = useCart();
   const navigate = useNavigate();
 
-  const getProductDetails = (productId) =>
-    productsList.find((product) => product.id === productId) || {};
+  const getCartProductDetails = (productId) =>
+    productsList.find((product) => product._id === productId) || {};
 
   const handleAddMoreItems = () => {
     navigate("/products");
@@ -70,16 +70,23 @@ const Cart = () => {
           <Grid item xs={12} md={8}>
             <Grid container spacing={2}>
               {cart.map((cartItem) => {
-                const product = getProductDetails(cartItem.id);
+                const cartProduct = getCartProductDetails(cartItem.cartItemId);
                 return (
-                  <Grid item xs={12} sm={6} lg={4} xl={2} key={cartItem.id}>
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    lg={4}
+                    xl={2}
+                    key={cartItem.cartItemId}
+                  >
                     <Card sx={{ display: "flex", height: "100%" }}>
                       <Grid container>
                         {/* Image Section */}
                         <Grid item xs={12}>
                           <img
-                            src={product.image}
-                            alt={product.title}
+                            src={cartProduct.image}
+                            alt={cartProduct.title}
                             style={{
                               width: "100%",
                               height: "150px",
@@ -105,14 +112,14 @@ const Cart = () => {
                               fontWeight="bold"
                               gutterBottom
                             >
-                              {product.title}
+                              {cartProduct.title}
                             </Typography>
                             <Typography
                               variant="body2"
                               color="text.secondary"
                               gutterBottom
                             >
-                              {product.category}
+                              {cartProduct.category}
                             </Typography>
                           </CardContent>
 
@@ -133,8 +140,9 @@ const Cart = () => {
                               color="primary"
                             >
                               $
-                              {(product.price * cartItem.quantity).toFixed(2) ||
-                                0}
+                              {(cartProduct.price * cartItem.quantity).toFixed(
+                                2
+                              ) || 0}
                             </Typography>
                             <Box
                               sx={{
@@ -150,7 +158,7 @@ const Cart = () => {
                                 <IconButton
                                   onClick={() =>
                                     handleUpdateQuantity(
-                                      cartItem.id,
+                                      cartItem.cartItemId,
                                       cartItem.quantity - 1
                                     )
                                   }
@@ -159,7 +167,9 @@ const Cart = () => {
                                 </IconButton>
                               ) : (
                                 <IconButton
-                                  onClick={() => removeFromCart(cartItem.id)}
+                                  onClick={() =>
+                                    removeFromCart(cartItem.cartItemId)
+                                  }
                                   color="error"
                                 >
                                   <DeleteIcon />
@@ -171,7 +181,7 @@ const Cart = () => {
                               <IconButton
                                 onClick={() =>
                                   handleUpdateQuantity(
-                                    cartItem.id,
+                                    cartItem.cartItemId,
                                     cartItem.quantity + 1
                                   )
                                 }

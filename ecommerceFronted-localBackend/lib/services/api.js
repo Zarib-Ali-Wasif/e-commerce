@@ -1,5 +1,5 @@
 import Axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 class API {
@@ -7,7 +7,8 @@ class API {
 
   constructor() {
     this.instance = Axios.create({
-      baseURL: "https://booking-engine-be-1b9158ed8a8a.herokuapp.com/",
+      baseURL: import.meta.env.VITE_API_URL, // Correct for Vite
+      // timeout: 10000, // Optional: Set timeout for requests
     });
 
     this.instance.interceptors.request.use(
@@ -75,6 +76,9 @@ class API {
   }
 
   handleApiResponse(response) {
+    if (response.data.success) {
+      toast.success("Request successful!");
+    }
     return response;
   }
 }

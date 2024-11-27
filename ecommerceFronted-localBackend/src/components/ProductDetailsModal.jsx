@@ -12,7 +12,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useCart } from "../context/CartContext";
 
 const ProductDetailsModal = ({ open, handleClose, productId, products }) => {
-  const product = products.find((p) => p.id === productId);
+  console.log("open: ", open);
+  console.log("productId: ", productId);
+  // console.log("products: ", products);
+  const product = products.find((p) => p._id === productId);
   const { addToCart } = useCart(); // Access addToCart function
   if (!product) {
     return (

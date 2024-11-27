@@ -4,8 +4,8 @@ import { Box, TextField, Typography, Button } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import { toast } from "react-toastify";
+import api from "../../lib/services/api";
 
 // This ResetPassword component allows users to reset their password after OTP verification
 const ResetPassword = () => {
@@ -50,10 +50,11 @@ const ResetPassword = () => {
     validationSchema,
     onSubmit: async (data) => {
       try {
-        const response = await axios.post(
-          "https://jsonplaceholder.typicode.com/posts", // Replace with your actual API endpoint
+        const email = localStorage.getItem("email");
+        const response = await api.post(
+          `auth/resetPassword`, // Replace with your actual API endpoint
           {
-            email: "user-email@example.com", // This should be passed from the previous page or session
+            email: email,
             newPassword: data.newPassword,
           }
         );
