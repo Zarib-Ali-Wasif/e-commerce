@@ -50,14 +50,18 @@ const ForgetPassword = () => {
         textAlign: "center",
       }}
     >
-      <Typography sx={{ fontSize: "54px", fontWeight: 500, mb: 2 }}>
+      <Typography
+        sx={{ fontSize: "54px", fontWeight: 500, mb: 2, color: "#1C4771" }}
+      >
         Reset Password
       </Typography>
       <Typography sx={{ width: "280px" }}>
         Enter your login email and we’ll send you a OTP to reset your password.
       </Typography>
       <Box sx={{ mt: 4, width: "300px" }}>
-        <Typography sx={{ textAlign: "start" }}>Email</Typography>
+        <Typography sx={{ textAlign: "start", color: "#1C4771" }}>
+          Email
+        </Typography>
         <Box sx={{ mb: 2 }}>
           <TextField
             name="email"
@@ -78,17 +82,17 @@ const ForgetPassword = () => {
           sx={{
             width: "303px",
             borderRadius: "10px",
-            backgroundColor: "black",
+            backgroundColor: "#1C4771", // Primary color for button background
             color: "white",
             mt: 2,
             height: "54px",
             fontSize: "18px",
             textTransform: "capitalize",
             "&:hover": {
-              backgroundColor: "black",
+              backgroundColor: "#1C4771", // Hover state with primary color
             },
             "&:active": {
-              backgroundColor: "black",
+              backgroundColor: "#1C4771", // Active state with primary color
             },
           }}
         >

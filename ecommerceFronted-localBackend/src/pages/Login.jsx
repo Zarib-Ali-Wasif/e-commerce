@@ -7,7 +7,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom"; // Use useNavigate for routing
+import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,7 +18,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const Login = () => {
   const data = useSelector((state) => state.auth);
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -91,7 +91,9 @@ const Login = () => {
         textAlign: "center",
       }}
     >
-      <Typography sx={{ fontSize: "64px", fontWeight: 500, mb: 2 }}>
+      <Typography
+        sx={{ fontSize: "64px", fontWeight: 500, mb: 2, color: "#1C4771" }}
+      >
         Log In
       </Typography>
       <Typography>
@@ -141,9 +143,7 @@ const Login = () => {
               color: "gray",
             }}
             onClick={togglePasswordVisibility}
-          >
-            {showPassword ? "Hide" : "Show"}
-          </VisibilityIcon>
+          />
           {formik.touched.password && formik.errors.password ? (
             <Typography color="error">{formik.errors.password}</Typography>
           ) : null}
@@ -178,23 +178,22 @@ const Login = () => {
         sx={{
           width: "303px",
           borderRadius: "10px",
-          backgroundColor: "black",
+          backgroundColor: "#1C4771",
           color: "white",
           mt: 2,
           height: "54px",
           fontSize: "18px",
           textTransform: "capitalize",
           "&:hover": {
-            backgroundColor: "black",
+            backgroundColor: "#1C4771",
           },
           "&:active": {
-            backgroundColor: "black",
+            backgroundColor: "#1C4771",
           },
         }}
       >
-        Login
+        Log In
       </Button>
-
       <ToastContainer />
     </Box>
   );

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Typography, Box, Button, TextField, Avatar } from "@mui/material";
-import { useNavigate } from "react-router-dom"; // Use useNavigate for routing
-import { useSearchParams } from "react-router-dom"; // Correct import
+import { useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useFormik } from "formik";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -10,11 +10,8 @@ import api from "../../lib/services/api";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const Signup = () => {
-  const navigate = useNavigate(); // Initialize navigate
-  const searchParams = useSearchParams();
-  // If the user is redirected from the login page and the email is present in the URL as a search parameter, use that email as the initial value for the email field in the signup form. Otherwise, use an empty string.
-  const initialEmail = "";
-  // const initialEmail = searchParams.get("name") || "";
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(true);
   const [patientProfilePicture, setPatientProfilePicture] = useState();
   const [file, setFile] = useState(null);
@@ -58,7 +55,7 @@ const Signup = () => {
     initialValues: {
       profilePic: "",
       name: "",
-      email: initialEmail,
+      email: "",
       contactNumber: "",
       password: "",
     },
@@ -74,7 +71,7 @@ const Signup = () => {
           ? await api.post("image/upload/single", formData, {
               headers: { "Content-Type": "multipart/form-data" },
             })
-          : { data: "" }; // Fallback if no image is uploaded
+          : { data: "" };
         console.log("Image Upload Response:", imageResponse.data);
 
         const imageUrl = imageResponse.data;
@@ -108,12 +105,22 @@ const Signup = () => {
         justifyContent: "center",
         height: "90vh",
         textAlign: "center",
+        padding: 2, // Add some padding to the container for better spacing
       }}
     >
-      <Typography sx={{ fontSize: "64px", fontWeight: 500, mb: 2 }}>
+      {/* Sign-up Heading */}
+      <Typography
+        sx={{
+          fontSize: "64px",
+          fontWeight: 500,
+          mb: 2,
+          mt: 12,
+          color: "#1C4771", //  replace with your desired color code
+        }}
+      >
         Sign Up
       </Typography>
-      <Typography>
+      <Typography sx={{ mb: 2 }}>
         Already a member?{" "}
         <span
           onClick={clickhandle}
@@ -122,6 +129,8 @@ const Signup = () => {
           Log In
         </span>{" "}
       </Typography>
+
+      {/* Profile Picture Section */}
       <Box sx={{ mt: 2 }}>
         <label htmlFor="avatarInput">
           <Avatar
@@ -143,7 +152,9 @@ const Signup = () => {
           onChange={handleFileUpload}
         />
       </Box>
-      <Box sx={{ width: "300px" }}>
+
+      {/* Form Fields */}
+      <Box sx={{ width: "300px", mt: 3 }}>
         <Typography sx={{ textAlign: "start" }}>Name</Typography>
         <Box sx={{ mb: 1 }}>
           <TextField
@@ -220,22 +231,25 @@ const Signup = () => {
         </Box>
       </Box>
 
+      {/* Sign-up Button */}
       <Box>
         <Button
           onClick={formik.handleSubmit}
           sx={{
             width: "303px",
-            border: "1px solid black",
+            border: "1px solid #1C4771", // Change to the desired color
             borderRadius: "4px",
-            color: "black",
+            color: "#1C4771", // Button text color
             mt: 2,
             fontSize: "18px",
             textTransform: "capitalize",
             "&:hover": {
-              backgroundColor: "white",
+              backgroundColor: "#1C4771", // Hover background color
+              color: "white", // Hover text color
             },
             "&:active": {
-              backgroundColor: "white",
+              backgroundColor: "#1C4771", // Active background color
+              color: "white", // Active text color
             },
           }}
         >
