@@ -3,7 +3,6 @@ import { Typography, Box, TextField, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom"; // Use React Router's useNavigate
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import { toast } from "react-toastify";
 import api from "../../lib/services/api";
 

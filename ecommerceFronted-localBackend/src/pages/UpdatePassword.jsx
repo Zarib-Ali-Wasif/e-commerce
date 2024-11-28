@@ -12,6 +12,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { toast } from "react-toastify";
+import api from "../../lib/services/api";
 
 const UpdatePassword = () => {
   const [showPassword, setShowPassword] = useState({
@@ -56,10 +57,7 @@ const UpdatePassword = () => {
     validationSchema,
     onSubmit: async (data, { resetForm }) => {
       try {
-        const response = await axios.post(
-          "https://jsonplaceholder.typicode.com/posts",
-          data
-        );
+        const response = await api.post("auth/updatePassword", data);
         console.log(response.data);
         toast.success("Password updated successfully.");
         resetForm();

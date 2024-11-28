@@ -3,18 +3,15 @@ import { toast } from "react-toastify";
 import api from "../../services/api";
 import { jwtDecode } from "jwt-decode";
 
-export const loginUserAsync = createAsyncThunk(
-  "auth/loginUser",
-  async (data) => {
-    try {
-      const response = await api.post("auth/login", data);
-      return response.data;
-    } catch (error) {
-      console.error("An error occurred:", error.message);
-      throw error; // Rethrow the error to let the rejection case handle it
-    }
+export const loginUserAsync = createAsyncThunk("auth/login", async (data) => {
+  try {
+    const response = await api.post("auth/login", data);
+    return response.data;
+  } catch (error) {
+    console.error("An error occurred:", error.message);
+    throw error; // Rethrow the error to let the rejection case handle it
   }
-);
+});
 
 const authSlice = createSlice({
   name: "auth",
@@ -22,6 +19,8 @@ const authSlice = createSlice({
     token: "",
     loading: false,
     role: "",
+    userId: "",
+    email: "",
   },
   reducers: {
     setState: (state) => {
@@ -43,9 +42,13 @@ const authSlice = createSlice({
           state.token = response.access_token;
           localStorage.setItem("token", state.token);
           const decodedToken = jwtDecode(state.token);
+          state.userId = decodedToken.userId;
+          state.email = decodedToken.email;
           state.role = decodedToken.role;
-          localStorage.setItem("role", decodedToken.role);
-          localStorage.setItem("customerId", decodedToken.id);
+          localStorage.setItem("user", JSON.stringify(decodedToken));
+          localStorage.setItem("userId", JSON.stringify(decodedToken.userId));
+          localStorage.setItem("email", JSON.stringify(decodedToken.email));
+          localStorage.setItem("role", JSON.stringify(decodedToken.role));
           toast.success("Login successful!");
         } else {
           toast.error("Error: Failed to Login. Please try again later.");

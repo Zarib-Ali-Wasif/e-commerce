@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsString, Matches } from 'class-validator';
+import { Role } from '../enums/role.enum';
 
 export class LogInDto {
   @ApiProperty()
@@ -17,4 +18,10 @@ export class LogInDto {
       'Invalid Password: Password should have at least 1 uppercase letter, 1 lowercase letter, 1 special character, 1 digit, and should have more than 8 characters',
   })
   password: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @Transform(({ value }) => value.toLowerCase())
+  role: Role;
 }

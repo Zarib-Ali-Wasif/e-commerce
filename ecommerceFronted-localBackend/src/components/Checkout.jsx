@@ -14,6 +14,7 @@ import {
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import api from "../../lib/services/api";
+import { jwtDecode } from "jwt-decode";
 
 const Checkout = () => {
   const { cart, clearCart, cartSummary, productsList } = useCart();
@@ -23,12 +24,13 @@ const Checkout = () => {
   const navigate = useNavigate();
 
   // User details (Replace with actual context or state values)
-  // const user = JSON.parse(localStorage.getItem("user"));
-  const user = {
-    userId: "user123",
-    name: "John Doe",
-    email: "3Tt9t@example.com",
-  };
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  // const user = {
+  //   userId: "user123",
+  //   name: "John Doe",
+  //   email: "3Tt9t@example.com",
+  // };
 
   const getCartProductDetails = (productId) =>
     productsList.find((product) => product._id === productId) || {};

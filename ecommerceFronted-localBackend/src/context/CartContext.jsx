@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
 
 const CartContext = createContext();
 
@@ -33,28 +32,6 @@ const CartProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem("cartSummary", JSON.stringify(cartSummary));
   }, [cartSummary]);
-
-  // useEffect(() => {
-  //   async function fetchUserDetails() {
-  //     const token =
-  //       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidXNlciIsImVtYWlsIjoidXNlckBlbWFpbC5jb20iLCJzdWIiOiI2NzNiMTQ5Mzc1Mzg0YWFlY2JlZjBhNjEiLCJyb2xlcyI6InVzZXIiLCJpYXQiOjE3MzIzODQyNjcsImV4cCI6MTczMjk4OTA2N30.mbOaGzRZa5yuVtd_o5KxVdMEsDMzd5oFlmYsiIlgHb0";
-
-  //     try {
-  //       const response = await axios.get(`http://localhost:3000/auth/user`, {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`, // Add token to Authorization header
-  //         },
-  //       });
-  //       const user = response.data;
-  //       localStorage.setItem("user", JSON.stringify(user));
-  //       return response.data;
-  //     } catch (error) {
-  //       console.error("Error fetching user details", error);
-  //     }
-  //   }
-
-  //   fetchUserDetails();
-  // }, []);
 
   const addToCart = (product) => {
     setCart((prevCart) => {

@@ -46,30 +46,30 @@ const Login = () => {
   };
 
   const validationSchema = Yup.object({
-    username: Yup.string()
+    email: Yup.string()
       .matches(
         /^([0-9]+|[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/,
         "Invalid email or phone number format"
       )
       .required("Username is required"),
-    password: Yup.string()
-      .required("Password is required")
-      .min(8, "Password must be at least 8 characters")
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
-      ),
+    password: Yup.string().required("Password is required"),
+    // .min(8, "Password must be at least 8 characters")
+    // .matches(
+    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+    //   "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+    // ),
   });
 
   const formik = useFormik({
     initialValues: {
-      username: "",
+      email: "",
       password: "",
       role: "",
     },
     validationSchema,
     onSubmit: (data, { resetForm }) => {
       try {
+        console.log("credentials: ", data);
         dispatch(loginUserAsync(data));
         toast.success("Login successful!");
         resetForm();
@@ -115,15 +115,15 @@ const Login = () => {
         <Typography sx={{ textAlign: "start" }}>Username</Typography>
         <Box sx={{ mb: 2 }}>
           <TextField
-            name="username"
+            name="email"
             variant="standard"
             fullWidth
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            value={formik.values.username}
+            value={formik.values.email}
           />
-          {formik.touched.username && formik.errors.username ? (
-            <Typography color="error">{formik.errors.username}</Typography>
+          {formik.touched.email && formik.errors.email ? (
+            <Typography color="error">{formik.errors.email}</Typography>
           ) : null}
         </Box>
         <Typography sx={{ textAlign: "start" }}>Password</Typography>

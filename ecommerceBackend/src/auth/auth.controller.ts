@@ -21,6 +21,7 @@ import { ForgetPassword } from './dto/forgetPassword.dto';
 import { ResendEmailOTP } from './dto/resendEmailOTP.dto';
 import { GetUser } from './decorators/get-user.decorator';
 import { User } from './entities/user.entity';
+import { log } from 'console';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -62,11 +63,13 @@ export class AuthController {
       properties: {
         email: { type: 'string' },
         password: { type: 'string' },
+        role: { type: 'string' },
       },
-      required: ['email', 'password'],
+      required: ['email', 'password', 'role'],
     },
   })
   login(@Body() loginDto: LogInDto) {
+    console.log('loginDto :', loginDto);
     return this.authService.login(loginDto);
   }
 
