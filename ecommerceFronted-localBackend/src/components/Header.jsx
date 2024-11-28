@@ -18,6 +18,8 @@ import {
   ListItemText,
   Drawer,
   Badge,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import InfoIcon from "@mui/icons-material/Info";
@@ -26,7 +28,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { useCart } from "../context/CartContext"; // Import "; // Adjust path as needed
+import { useCart } from "../context/CartContext"; // Import context for cart
 
 function Header() {
   const location = useLocation();
@@ -43,9 +45,25 @@ function Header() {
   ];
 
   const [open, setOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null); // For account dropdown
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  // Toggle drawer for small screens
   function toggleDrawer(newOpen) {
     return () => setOpen(newOpen);
   }
+
+  // Handle account dropdown menu open/close
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+    setDropdownOpen(true);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setDropdownOpen(false);
+  };
+
   const drawerList = (
     <Box
       sx={{
@@ -69,19 +87,9 @@ function Header() {
             </ListItemButton>
           </ListItem>
         ))}
-
-        <Divider
-          // orientation="vertical"
-          sx={{
-            // height: "100px",
-            // width: "1px",
-            border: "0.5px solid #1C4771",
-            display: { xs: "flex" },
-          }}
-        />
-
+        <Divider sx={{ border: "0.5px solid #1C4771" }} />
         <ListItem sx={{ display: { xs: "flex" } }}>
-          <ListItemButton>
+          <ListItemButton onClick={handleClick}>
             <ListItemIcon sx={{ color: "#1C4771" }}>
               <AccountCircleIcon />
             </ListItemIcon>
@@ -97,10 +105,7 @@ function Header() {
       {/* Main AppBar */}
       <AppBar
         position="fixed"
-        sx={{
-          backgroundColor: "#dfe5f2",
-          display: { xs: "none", md: "flex" },
-        }}
+        sx={{ backgroundColor: "#dfe5f2", display: { xs: "none", md: "flex" } }}
       >
         <Toolbar>
           <Typography
@@ -130,7 +135,7 @@ function Header() {
                   (name === "Home" ? "/" : `/${name.toLowerCase()}`)
               )
                 ? location.pathname
-                : false // Default to false if no match
+                : false
             }
             textColor="inherit"
           >
@@ -153,8 +158,8 @@ function Header() {
             ))}
           </Tabs>
 
-          {/* Account Icon */}
-          <IconButton>
+          {/* Account Icon with Dropdown */}
+          <IconButton onClick={handleClick}>
             <AccountCircleIcon sx={{ color: "#1C4771", fontSize: 35, ml: 1 }} />
           </IconButton>
 
@@ -182,10 +187,7 @@ function Header() {
       {/* Small Screen AppBar */}
       <AppBar
         position="fixed"
-        sx={{
-          backgroundColor: "#dfe5f2",
-          display: { xs: "flex", md: "none" },
-        }}
+        sx={{ backgroundColor: "#dfe5f2", display: { xs: "flex", md: "none" } }}
       >
         <Toolbar sx={{ justifyContent: "space-between" }}>
           <IconButton onClick={toggleDrawer(true)}>
@@ -222,12 +224,19 @@ function Header() {
         anchor="left"
         open={open}
         onClose={toggleDrawer(false)}
-        PaperProps={{
-          sx: { backgroundColor: "#dfe5f2" },
-        }}
+        PaperProps={{ sx: { backgroundColor: "#dfe5f2" } }}
       >
         {drawerList}
       </Drawer>
+
+      {/* Account Dropdown Menu */}
+      <Menu anchorEl={anchorEl} open={dropdownOpen} onClose={handleClose}>
+        <MenuItem onClick={() => navigate("/login")}>Login</MenuItem>
+        <MenuItem onClick={() => navigate("/signup")}>Signup</MenuItem>
+        <MenuItem onClick={() => navigate("/update-password")}>
+          Update Password
+        </MenuItem>
+      </Menu>
     </Grid>
   );
 }
