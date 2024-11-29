@@ -104,6 +104,14 @@ const Products = ({ showModal }) => {
     navigate(`/products/${id}`);
   };
 
+  //Testing Code
+  const redux = JSON.parse(localStorage.getItem("persist:root"));
+  const cartSummary = redux?.cartSummary;
+  const productsLists = redux?.productsList;
+  console.log("redux: ", redux);
+  console.log("cartSummary: ", cartSummary);
+  console.log("productsList: ", productsLists);
+
   return (
     <>
       <Box sx={{ padding: "20px", minHeight: "100vh", height: "100%", mt: 18 }}>

@@ -24,7 +24,7 @@ const Cart = () => {
   const navigate = useNavigate();
 
   const { cart, cartSummary, productsList } = useSelector(
-    (state) => state.cartState
+    (state) => state.cart
   );
 
   const getCartProductDetails = (productId) =>
@@ -306,7 +306,7 @@ const Cart = () => {
                   }}
                 >
                   <Typography color="text.secondary" fontWeight="bold">
-                    GST (Tax):
+                    GST (16%):
                   </Typography>
                   <Typography color="black">${cartSummary.gst || 0}</Typography>
                 </Box>
