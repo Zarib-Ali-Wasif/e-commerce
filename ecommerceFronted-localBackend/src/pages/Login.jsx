@@ -10,26 +10,28 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { loginUserAsync } from "../../lib/redux/slices/authSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const Login = () => {
-  const data = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const storedUser = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
-    if (data.token && data.role) {
-      if (data.role === "Admin") {
+    if (storedUser?.token && storedUser?.role) {
+      if (storedUser.role === "Admin") {
         navigate("/adminpanel");
-      } else if (data.role === "User") {
+      } else if (storedUser.role === "User") {
         navigate("/");
       }
     }
-  }, [data, navigate]);
+  }, [storedUser, navigate]);
 
   const clickhandle = () => {
     navigate("/signup");
@@ -38,8 +40,6 @@ const Login = () => {
   const handleForgetPassword = () => {
     navigate("/forget-password");
   };
-
-  const [showPassword, setShowPassword] = useState(true);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -53,11 +53,7 @@ const Login = () => {
       )
       .required("Username is required"),
     password: Yup.string().required("Password is required"),
-    // .min(8, "Password must be at least 8 characters")
-    // .matches(
-    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-    //   "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
-    // ),
+    role: Yup.string().required("Role is required"),
   });
 
   const formik = useFormik({
@@ -67,15 +63,16 @@ const Login = () => {
       role: "",
     },
     validationSchema,
-    onSubmit: (data, { resetForm }) => {
+    onSubmit: async (data, { resetForm }) => {
       try {
-        console.log("credentials: ", data);
-        dispatch(loginUserAsync(data));
-        toast.success("Login successful!");
-        resetForm();
-      } catch (e) {
-        toast.error("Login failed, please try again.");
-        console.log(e.message);
+        const resultAction = await dispatch(loginUserAsync(data)).unwrap();
+        if (resultAction) {
+          toast.success("Login successful!");
+          resetForm();
+          navigate(storedUser?.role === "Admin" ? "/adminpanel" : "/");
+        }
+      } catch (error) {
+        toast.error("Login failed. Please check your credentials.");
       }
     },
   });
@@ -127,32 +124,7 @@ const Login = () => {
           ) : null}
         </Box>
         <Typography sx={{ textAlign: "start" }}>Password</Typography>
-        {/* <Box sx={{ mb: 2, position: "relative" }}>
-          <TextField
-            name="password"
-            variant="standard"
-            fullWidth
-            type={showPassword ? "password" : "text"}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.password}
-          />
-          <VisibilityIcon
-            sx={{
-              position: "absolute",
-              right: "5px",
-              top: "35%",
-              transform: "translateY(-50%)",
-              border: "none",
-              cursor: "pointer",
-              color: "gray",
-            }}
-            onClick={togglePasswordVisibility}
-          />
-          {formik.touched.password && formik.errors.password ? (
-            <Typography color="error">{formik.errors.password}</Typography>
-          ) : null}
-        </Box> */}
+
         <Box sx={{ mb: 2, position: "relative" }}>
           <TextField
             name="password"
@@ -186,7 +158,6 @@ const Login = () => {
         {/* <Typography sx={{ textAlign: "start" }}>Role</Typography> */}
         <Box sx={{ mb: 2, mt: 4.6, textAlign: "start" }}>
           <Select
-            // textAlign="start"
             name="role"
             variant="standard"
             fullWidth
@@ -208,9 +179,10 @@ const Login = () => {
       </Box>
       <Box sx={{ cursor: "pointer" }} onClick={handleForgetPassword}>
         <Typography sx={{ textDecoration: "underline" }}>
-          Forget Password?
+          Forgot Password?
         </Typography>
       </Box>
+
       <Button
         type="submit"
         onClick={formik.handleSubmit}

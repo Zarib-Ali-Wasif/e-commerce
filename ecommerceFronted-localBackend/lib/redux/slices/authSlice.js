@@ -3,33 +3,50 @@ import { toast } from "react-toastify";
 import api from "../../services/api";
 import { jwtDecode } from "jwt-decode";
 
-export const loginUserAsync = createAsyncThunk("auth/login", async (data) => {
-  try {
-    const response = await api.post("auth/login", data);
-    return response.data;
-  } catch (error) {
-    console.error("An error occurred:", error.message);
-    throw error; // Rethrow the error to let the rejection case handle it
+// Async thunk to handle user login
+export const loginUserAsync = createAsyncThunk(
+  "auth/login",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await api.post("auth/login", data);
+      return response.data;
+    } catch (error) {
+      console.error("An error occurred:", error.message);
+      return rejectWithValue(error.response.data); // Return error payload
+    }
   }
-});
+);
+
+// Load initial state from localStorage
+const initialState = {
+  token: localStorage.getItem("token") || "",
+  loading: false,
+  role: localStorage.getItem("role") || "",
+  userId: localStorage.getItem("userId") || "",
+  email: localStorage.getItem("email") || "",
+};
 
 const authSlice = createSlice({
   name: "auth",
-  initialState: {
-    token: "",
-    loading: false,
-    role: "",
-    userId: "",
-    email: "",
-  },
+  initialState,
   reducers: {
-    setState: (state) => {
-      state.loading = false;
+    logout: (state) => {
+      // Clear Redux state
       state.token = "";
       state.role = "";
+      state.userId = "";
+      state.email = "";
+      state.loading = false;
+
+      // Clear localStorage
+      localStorage.removeItem("token");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("email");
+      localStorage.removeItem("role");
+
+      toast.info("Logged out successfully!");
     },
   },
-
   extraReducers: (builder) => {
     builder
       .addCase(loginUserAsync.pending, (state) => {
@@ -38,28 +55,36 @@ const authSlice = createSlice({
       .addCase(loginUserAsync.fulfilled, (state, action) => {
         state.loading = false;
         const response = action.payload;
+
         if (response) {
           state.token = response.access_token;
-          localStorage.setItem("token", state.token);
-          const decodedToken = jwtDecode(state.token);
+          const decodedToken = jwtDecode(response.access_token);
+
+          // Set Redux state
           state.userId = decodedToken.userId;
           state.email = decodedToken.email;
           state.role = decodedToken.role;
-          localStorage.setItem("user", JSON.stringify(decodedToken));
-          localStorage.setItem("userId", JSON.stringify(decodedToken.userId));
-          localStorage.setItem("email", JSON.stringify(decodedToken.email));
-          localStorage.setItem("role", JSON.stringify(decodedToken.role));
+
+          // Store in localStorage
+          localStorage.setItem("token", response.access_token);
+          localStorage.setItem("userId", decodedToken.userId);
+          localStorage.setItem("email", decodedToken.email);
+          localStorage.setItem("role", decodedToken.role);
+
           toast.success("Login successful!");
         } else {
-          toast.error("Error: Failed to Login. Please try again later.");
+          toast.error("Login failed. Please try again.");
         }
       })
       .addCase(loginUserAsync.rejected, (state, action) => {
         state.loading = false;
-        toast.error("An error occurred: " + action.error.message);
+        toast.error(
+          "An error occurred: " +
+            (action.payload?.message || action.error.message)
+        );
       });
   },
 });
 
+export const { logout } = authSlice.actions;
 export default authSlice.reducer;
-export const { setState } = authSlice.actions;
