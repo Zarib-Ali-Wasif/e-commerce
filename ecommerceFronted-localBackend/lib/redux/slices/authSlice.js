@@ -21,6 +21,7 @@ export const loginUserAsync = createAsyncThunk(
 const initialState = {
   token: localStorage.getItem("token") || "",
   loading: false,
+  user: localStorage.getItem("user") || "",
   role: localStorage.getItem("role") || "",
   userId: localStorage.getItem("userId") || "",
   email: localStorage.getItem("email") || "",
@@ -39,6 +40,7 @@ const authSlice = createSlice({
       state.loading = false;
 
       // Clear localStorage
+      localStorage.removeItem("user");
       localStorage.removeItem("token");
       localStorage.removeItem("userId");
       localStorage.removeItem("email");
@@ -61,11 +63,13 @@ const authSlice = createSlice({
           const decodedToken = jwtDecode(response.access_token);
 
           // Set Redux state
+          state.user = decodedToken;
           state.userId = decodedToken.userId;
           state.email = decodedToken.email;
           state.role = decodedToken.role;
 
           // Store in localStorage
+          localStorage.setItem("user", JSON.stringify(decodedToken));
           localStorage.setItem("token", response.access_token);
           localStorage.setItem("userId", decodedToken.userId);
           localStorage.setItem("email", decodedToken.email);
