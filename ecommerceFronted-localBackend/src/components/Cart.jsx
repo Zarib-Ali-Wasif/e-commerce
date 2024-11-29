@@ -1,5 +1,5 @@
 import React from "react";
-import { useCart } from "../context/CartContext";
+import { useSelector, useDispatch } from "react-redux";
 import {
   Box,
   Card,
@@ -13,17 +13,19 @@ import {
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ToastContainer, toast } from "react-toastify";
+import {
+  removeFromCart,
+  clearCart,
+  updateQuantity,
+} from "../../lib/redux/slices/cartSlice";
 
 const Cart = () => {
-  const {
-    cart,
-    cartSummary,
-    productsList,
-    removeFromCart,
-    clearCart,
-    updateQuantity,
-  } = useCart();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const { cart, cartSummary, productsList } = useSelector(
+    (state) => state.cartState
+  );
 
   const getCartProductDetails = (productId) =>
     productsList.find((product) => product._id === productId) || {};
@@ -34,7 +36,7 @@ const Cart = () => {
 
   const handleUpdateQuantity = (productId, quantity) => {
     if (quantity < 1) return; // Prevent quantity from going below 1
-    updateQuantity(productId, quantity); // Call updateQuantity function from context
+    dispatch(updateQuantity(productId, quantity)); // Call updateQuantity function from context
   };
 
   const handleCheckout = () => {
@@ -43,7 +45,7 @@ const Cart = () => {
       toast.error("Please login to checkout.");
       setTimeout(() => {
         navigate("/login");
-      }, 2500); // Delay navigation by 2.5 seconds (adjust as needed)
+      }, 2500);
     } else {
       navigate("/checkout");
     }
@@ -177,7 +179,9 @@ const Cart = () => {
                               ) : (
                                 <IconButton
                                   onClick={() =>
-                                    removeFromCart(cartItem.cartItemId)
+                                    dispatch(
+                                      removeFromCart(cartItem.cartItemId)
+                                    )
                                   }
                                   color="error"
                                 >
@@ -302,7 +306,7 @@ const Cart = () => {
                   }}
                 >
                   <Typography color="text.secondary" fontWeight="bold">
-                    GST (16%):
+                    GST (Tax):
                   </Typography>
                   <Typography color="black">${cartSummary.gst || 0}</Typography>
                 </Box>
@@ -326,7 +330,6 @@ const Cart = () => {
               <Button
                 variant="contained"
                 color="secondary"
-                onClick={handleCheckout}
                 sx={{
                   display: "block",
                   margin: "20px auto 0 auto",
@@ -337,13 +340,14 @@ const Cart = () => {
                     backgroundColor: "#163b56",
                   },
                 }}
+                onClick={handleCheckout}
               >
                 Proceed to Checkout
               </Button>
               <Button
                 variant="outlined"
                 color="error"
-                onClick={clearCart}
+                onClick={() => dispatch(clearCart())}
                 sx={{
                   display: "block",
                   margin: "15px auto 0 auto",
