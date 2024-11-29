@@ -21,7 +21,6 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
-
 import LockResetIcon from "@mui/icons-material/LockReset";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import LoginIcon from "@mui/icons-material/Login";
@@ -36,7 +35,6 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useCart } from "../context/CartContext"; // Import context for cart
 import { useDispatch } from "react-redux";
 import { logout } from "../../lib/redux/slices/authSlice";
-import { orange } from "@mui/material/colors";
 
 function Header() {
   const location = useLocation();
