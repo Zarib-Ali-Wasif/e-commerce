@@ -21,6 +21,11 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
+
+import LockResetIcon from "@mui/icons-material/LockReset";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import LoginIcon from "@mui/icons-material/Login";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import InfoIcon from "@mui/icons-material/Info";
 import PhoneIcon from "@mui/icons-material/Phone";
@@ -31,6 +36,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useCart } from "../context/CartContext"; // Import context for cart
 import { useDispatch } from "react-redux";
 import { logout } from "../../lib/redux/slices/authSlice";
+import { orange } from "@mui/material/colors";
 
 function Header() {
   const location = useLocation();
@@ -38,6 +44,7 @@ function Header() {
   const dispatch = useDispatch();
   const { cart } = useCart(); // Access the cart context
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0); // Calculate total items in the cart
+  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
 
   const tabsName = ["Home", "Products", "About", "Contact"];
   const drawerIconsComponent = [
@@ -96,14 +103,50 @@ function Header() {
           </ListItem>
         ))}
         <Divider sx={{ border: "0.5px solid #1C4771" }} />
-        <ListItem sx={{ display: { xs: "flex" } }}>
-          <ListItemButton onClick={handleClick}>
-            <ListItemIcon sx={{ color: "#1C4771" }}>
-              <AccountCircleIcon />
-            </ListItemIcon>
-            <ListItemText primary="Account" sx={{ color: "#1C4771" }} />
-          </ListItemButton>
-        </ListItem>
+
+        {/* Show different menu items based on authentication status */}
+        {isAuthenticated ? (
+          <Box mt={2}>
+            <ListItem>
+              <ListItemButton onClick={() => navigate("/update-password")}>
+                <ListItemIcon sx={{ color: "#1C4771" }}>
+                  <LockResetIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Update Password"
+                  sx={{ color: "#1C4771" }}
+                />
+              </ListItemButton>
+            </ListItem>
+            <ListItem>
+              <ListItemButton onClick={handleLogout}>
+                <ListItemIcon sx={{ color: "#1C4771" }}>
+                  <ExitToAppIcon />
+                </ListItemIcon>
+                <ListItemText primary="Logout" sx={{ color: "#1C4771" }} />
+              </ListItemButton>
+            </ListItem>
+          </Box>
+        ) : (
+          <Box mt={2}>
+            <ListItem>
+              <ListItemButton onClick={() => navigate("/login")}>
+                <ListItemIcon sx={{ color: "#1C4771" }}>
+                  <LoginIcon />
+                </ListItemIcon>
+                <ListItemText primary="Login" sx={{ color: "#1C4771" }} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem>
+              <ListItemButton onClick={() => navigate("/signup")}>
+                <ListItemIcon sx={{ color: "#1C4771" }}>
+                  <PersonAddIcon />
+                </ListItemIcon>
+                <ListItemText primary="Signup" sx={{ color: "#1C4771" }} />
+              </ListItemButton>
+            </ListItem>
+          </Box>
+        )}
       </List>
     </Box>
   );
@@ -166,11 +209,6 @@ function Header() {
             ))}
           </Tabs>
 
-          {/* Account Icon with Dropdown */}
-          <IconButton onClick={handleClick}>
-            <AccountCircleIcon sx={{ color: "#1C4771", fontSize: 35, ml: 1 }} />
-          </IconButton>
-
           {/* Cart Icon with Badge */}
           <IconButton component={NavLink} to="/cart">
             <Badge
@@ -185,9 +223,14 @@ function Header() {
               }}
             >
               <ShoppingCartIcon
-                sx={{ color: "#1C4771", fontSize: 28, ml: 1 }}
+                sx={{ color: "#1C4771", fontSize: 28, ml: 2 }}
               />
             </Badge>
+          </IconButton>
+
+          {/* Account Icon with Dropdown */}
+          <IconButton onClick={handleClick}>
+            <AccountCircleIcon sx={{ color: "#1C4771", fontSize: 35, ml: 2 }} />
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -238,8 +281,15 @@ function Header() {
       </Drawer>
 
       {/* Account Dropdown Menu */}
-      <Menu anchorEl={anchorEl} open={dropdownOpen} onClose={handleClose}>
-        {localStorage.getItem("isAuthenticated") === "true"
+      <Menu
+        sx={{
+          "& .MuiMenu-paper": { backgroundColor: "#dfe5f2" },
+        }}
+        anchorEl={anchorEl}
+        open={dropdownOpen}
+        onClose={handleClose}
+      >
+        {isAuthenticated
           ? [
               <MenuItem
                 key="update-password"
@@ -248,6 +298,9 @@ function Header() {
                   handleClose();
                 }}
               >
+                <ListItemIcon>
+                  <LockResetIcon sx={{ color: "#1C4771" }} />
+                </ListItemIcon>
                 Update Password
               </MenuItem>,
               <MenuItem
@@ -257,6 +310,9 @@ function Header() {
                   handleClose();
                 }}
               >
+                <ListItemIcon>
+                  <ExitToAppIcon sx={{ color: "#1C4771" }} />
+                </ListItemIcon>
                 Logout
               </MenuItem>,
             ]
@@ -268,6 +324,9 @@ function Header() {
                   handleClose();
                 }}
               >
+                <ListItemIcon>
+                  <LoginIcon sx={{ color: "#1C4771" }} />
+                </ListItemIcon>
                 Login
               </MenuItem>,
               <MenuItem
@@ -277,6 +336,9 @@ function Header() {
                   handleClose();
                 }}
               >
+                <ListItemIcon>
+                  <PersonAddIcon sx={{ color: "#1C4771" }} />
+                </ListItemIcon>
                 Signup
               </MenuItem>,
             ]}

@@ -47,7 +47,7 @@ const authSlice = createSlice({
       localStorage.removeItem("userId");
       localStorage.removeItem("email");
       localStorage.removeItem("role");
-      localStorage.removeItem("isAuthenticated");
+      localStorage.setItem("isAuthenticated", false);
 
       setTimeout(() => {
         toast.info("Logged out successfully!");
