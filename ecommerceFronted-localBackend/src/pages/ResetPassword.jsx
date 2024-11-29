@@ -4,30 +4,21 @@ import { Box, TextField, Typography, Button } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import api from "../../lib/services/api";
 
 // This ResetPassword component allows users to reset their password after OTP verification
 const ResetPassword = () => {
   const navigate = useNavigate(); // Initialize navigate
-  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+    setShowNewPassword(!showNewPassword);
   };
 
   const toggleConfirmPasswordVisibility = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
-
-  // useEffect(() => {
-  //   // Check if OTP has been verified before allowing access to this page
-  //   const otpVerified = localStorage.getItem("otpVerified");
-  //   if (otpVerified !== "true") {
-  //     // If OTP not verified, redirect to OTP verification page
-  //     navigate("/verify-otp");
-  //   }
-  // }, [navigate]);
 
   const validationSchema = Yup.object({
     newPassword: Yup.string()
@@ -39,7 +30,7 @@ const ResetPassword = () => {
       ),
     confirmPassword: Yup.string()
       .required("Confirm password is required")
-      .oneOf([Yup.ref("password"), null], "Passwords must match"), // Validation to check if passwords match
+      .oneOf([Yup.ref("newPassword"), null], "Passwords must match"), // Validation to check if passwords match
   });
 
   const formik = useFormik({
@@ -48,7 +39,7 @@ const ResetPassword = () => {
       confirmPassword: "",
     },
     validationSchema,
-    onSubmit: async (data) => {
+    onSubmit: async (data, { resetForm }) => {
       try {
         const email = localStorage.getItem("email");
         const response = await api.post(
@@ -58,9 +49,11 @@ const ResetPassword = () => {
             newPassword: data.newPassword,
           }
         );
-        console.log(response.data);
+        resetForm();
         toast.success("Password reset successful. Please log in.");
-        navigate("/login"); // Redirect to login page after successful password reset
+        setTimeout(() => {
+          navigate("/login"); // Redirect to login page after successful password reset
+        }, 2000);
       } catch (error) {
         console.error("An error occurred:", error.message);
         toast.error("Something went wrong. Please try again.");
@@ -98,13 +91,13 @@ const ResetPassword = () => {
 
         <Box sx={{ mb: 1, position: "relative" }}>
           <TextField
-            name="password"
+            name="newPassword"
             variant="standard"
             fullWidth
-            type={showPassword ? "text" : "password"}
+            type={showNewPassword ? "text" : "password"}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            value={formik.values.password}
+            value={formik.values.newPassword}
           />
           <Box
             sx={{
@@ -117,14 +110,14 @@ const ResetPassword = () => {
             }}
             onClick={togglePasswordVisibility}
           >
-            {showPassword ? (
+            {showNewPassword ? (
               <VisibilityOff sx={{ color: "gray" }} />
             ) : (
               <Visibility sx={{ color: "gray" }} />
             )}
           </Box>
-          {formik.touched.password && formik.errors.password ? (
-            <Typography color="error">{formik.errors.password}</Typography>
+          {formik.touched.newPassword && formik.errors.newPassword ? (
+            <Typography color="error">{formik.errors.newPassword}</Typography>
           ) : null}
         </Box>
 
@@ -187,6 +180,7 @@ const ResetPassword = () => {
           Reset Password
         </Button>
       </Box>
+      <ToastContainer />
     </Box>
   );
 };

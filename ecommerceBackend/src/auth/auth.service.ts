@@ -86,7 +86,6 @@ export class AuthService {
   async verifyUser(email: string, otp: string) {
     try {
       const verifyUser: any = await this.verifyService.verifyOTP(email, otp);
-      console.log(verifyUser.role);
       const token = await this.generateToken(
         verifyUser.id,
         verifyUser.email,
@@ -104,8 +103,6 @@ export class AuthService {
 
   async updateUserPassword(updatePasswordDto: UpdatePasswordDto, user) {
     try {
-      console.log('User:', user);
-
       // Ensure new and confirm passwords match
       if (updatePasswordDto.newPassword !== updatePasswordDto.confirmPassword) {
         throw new BadRequestException('Passwords did not match');
@@ -179,11 +176,14 @@ export class AuthService {
     const getUserDetails = await this.userModel.findOne({ email: email });
 
     const content = forgetPasswordTemplate(getUserDetails.name, verifyData.otp);
-    const sendEmail = await this.mailerService.sendEmail(
-      isUser.email,
-      process.env.PASSWOR_RESET_EMAIL_SUBJECT,
-      content,
-    );
+
+    //ToDo: uncomment these below lines to send email
+
+    // const sendEmail = await this.mailerService.sendEmail(
+    //   isUser.email,
+    //   'OTP for password reset',
+    //   content,
+    // );
 
     return { message: `Email sent to ${isUser.email}` };
   }
@@ -218,7 +218,6 @@ export class AuthService {
     try {
       const { email, otp } = verifyForgetPasswordOTP;
       const verifyUser: any = await this.verifyService.verifyOTP(email, otp);
-      console.log(verifyUser.role);
       const token = await this.generateToken(
         verifyUser.id,
         verifyUser.email,

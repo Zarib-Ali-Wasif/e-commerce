@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Logo from "../assets/ShopEasy-logo.png";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -29,10 +29,13 @@ import MenuIcon from "@mui/icons-material/Menu";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useCart } from "../context/CartContext"; // Import context for cart
+import { useDispatch } from "react-redux";
+import { logout } from "../../lib/redux/slices/authSlice";
 
 function Header() {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { cart } = useCart(); // Access the cart context
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0); // Calculate total items in the cart
 
@@ -47,7 +50,7 @@ function Header() {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null); // For account dropdown
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
+  // const { isAuthenticated } = useSelector((state) => state.auth);
   // Toggle drawer for small screens
   function toggleDrawer(newOpen) {
     return () => setOpen(newOpen);
@@ -62,6 +65,11 @@ function Header() {
   const handleClose = () => {
     setAnchorEl(null);
     setDropdownOpen(false);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
   };
 
   const drawerList = (
@@ -231,11 +239,47 @@ function Header() {
 
       {/* Account Dropdown Menu */}
       <Menu anchorEl={anchorEl} open={dropdownOpen} onClose={handleClose}>
-        <MenuItem onClick={() => navigate("/login")}>Login</MenuItem>
-        <MenuItem onClick={() => navigate("/signup")}>Signup</MenuItem>
-        <MenuItem onClick={() => navigate("/update-password")}>
-          Update Password
-        </MenuItem>
+        {localStorage.getItem("isAuthenticated") === "true"
+          ? [
+              <MenuItem
+                key="update-password"
+                onClick={() => {
+                  navigate("/update-password");
+                  handleClose();
+                }}
+              >
+                Update Password
+              </MenuItem>,
+              <MenuItem
+                key="logout"
+                onClick={() => {
+                  handleLogout();
+                  handleClose();
+                }}
+              >
+                Logout
+              </MenuItem>,
+            ]
+          : [
+              <MenuItem
+                key="login"
+                onClick={() => {
+                  navigate("/login");
+                  handleClose();
+                }}
+              >
+                Login
+              </MenuItem>,
+              <MenuItem
+                key="signup"
+                onClick={() => {
+                  navigate("/signup");
+                  handleClose();
+                }}
+              >
+                Signup
+              </MenuItem>,
+            ]}
       </Menu>
     </Grid>
   );

@@ -33,6 +33,15 @@ const CartProvider = ({ children }) => {
     localStorage.setItem("cartSummary", JSON.stringify(cartSummary));
   }, [cartSummary]);
 
+  useEffect(() => {
+    if (
+      localStorage.getItem("isAuthenticated") !== "true" ||
+      !localStorage.getItem("isAuthenticated")
+    ) {
+      localStorage.setItem("isAuthenticated", false);
+    }
+  }, []);
+
   const addToCart = (product) => {
     setCart((prevCart) => {
       const existingProduct = prevCart.find(

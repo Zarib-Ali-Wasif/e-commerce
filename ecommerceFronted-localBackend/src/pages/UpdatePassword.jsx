@@ -11,10 +11,13 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import api from "../../lib/services/api";
+import { useNavigate } from "react-router-dom";
 
 const UpdatePassword = () => {
+  const navigate = useNavigate();
+  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   const [showPassword, setShowPassword] = useState({
     oldPassword: false,
     newPassword: false,
@@ -31,12 +34,7 @@ const UpdatePassword = () => {
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\s]).{8,}$/;
 
   const validationSchema = Yup.object({
-    oldPassword: Yup.string()
-      .matches(passwordRegex, {
-        message:
-          "Password should have at least 1 uppercase, 1 lowercase, 1 digit, 1 special character, and be at least 8 characters long.",
-      })
-      .required("Old Password is required"),
+    oldPassword: Yup.string().required("Old Password is required"),
     newPassword: Yup.string()
       .matches(passwordRegex, {
         message:
@@ -61,12 +59,43 @@ const UpdatePassword = () => {
         console.log(response.data);
         toast.success("Password updated successfully.");
         resetForm();
+        setTimeout(() => navigate("/"), 2000);
       } catch (error) {
         console.error("Error updating password:", error.message);
         toast.error("Failed to update password. Please try again.");
       }
     },
   });
+
+  if (!isAuthenticated) {
+    toast.error("You are not authenticated!");
+
+    // UI component to display when User is not authenticated
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "90vh",
+          textAlign: "center",
+        }}
+      >
+        <Typography
+          sx={{
+            fontSize: { xs: "32px", sm: "54px" },
+            fontWeight: 500,
+            mb: 2,
+            color: "#1C4771",
+          }}
+        >
+          You are not authenticated!
+        </Typography>
+        <ToastContainer />;
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -205,6 +234,7 @@ const UpdatePassword = () => {
       >
         Update Password
       </Button>
+      <ToastContainer />
     </Box>
   );
 };

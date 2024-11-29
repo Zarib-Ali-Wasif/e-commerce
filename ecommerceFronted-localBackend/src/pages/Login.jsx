@@ -24,6 +24,7 @@ const Login = () => {
   const storedUser = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
+    // Check if user is already logged in
     if (storedUser?.token && storedUser?.role) {
       if (storedUser.role === "Admin") {
         navigate("/adminpanel");
@@ -65,11 +66,17 @@ const Login = () => {
     validationSchema,
     onSubmit: async (data, { resetForm }) => {
       try {
+        localStorage.setItem("role", data.role);
         const resultAction = await dispatch(loginUserAsync(data)).unwrap();
         if (resultAction) {
-          toast.success("Login successful!");
           resetForm();
-          navigate(storedUser?.role === "Admin" ? "/adminpanel" : "/");
+          setTimeout(() => {
+            navigate(
+              localStorage.getItem("role")?.role === "Admin"
+                ? "/adminpanel"
+                : "/"
+            );
+          }, 1000);
         }
       } catch (error) {
         toast.error("Login failed. Please check your credentials.");

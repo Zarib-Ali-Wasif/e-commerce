@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { ToastContainer, toast } from "react-toastify";
 
 const Cart = () => {
   const {
@@ -37,7 +38,15 @@ const Cart = () => {
   };
 
   const handleCheckout = () => {
-    navigate("/checkout");
+    const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+    if (!isAuthenticated) {
+      toast.error("Please login to checkout.");
+      setTimeout(() => {
+        navigate("/login");
+      }, 2500); // Delay navigation by 2.5 seconds (adjust as needed)
+    } else {
+      navigate("/checkout");
+    }
   };
 
   return (
@@ -351,6 +360,7 @@ const Cart = () => {
               </Button>
             </Card>
           </Grid>
+          <ToastContainer />
         </Grid>
       )}
     </Box>

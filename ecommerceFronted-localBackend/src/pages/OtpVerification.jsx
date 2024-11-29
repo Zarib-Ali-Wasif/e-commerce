@@ -3,14 +3,14 @@ import { Typography, Box, TextField, Button } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom"; // React Router's useNavigate and useLocation
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import api from "../../lib/services/api";
 
 const OtpVerification = () => {
   const [resendDisabled, setResendDisabled] = useState(false); // For resend button state
   const navigate = useNavigate(); // Initialize navigate
   const location = useLocation(); // Get current location
-  const [redirectTo, setRedirectTo] = useState("/login"); // Default redirect to login
+  const [redirectTo, setRedirectTo] = useState("login"); // Default redirect to login
 
   // Check if redirectTo exists in the state passed during navigation
   useEffect(() => {
@@ -31,7 +31,7 @@ const OtpVerification = () => {
       otp: "",
     },
     validationSchema,
-    onSubmit: async (data) => {
+    onSubmit: async (data, { resetForm }) => {
       try {
         const email = localStorage.getItem("email");
         const fullData = {
@@ -49,7 +49,8 @@ const OtpVerification = () => {
         const response = await api.post(endpoint, fullData);
         console.log(response.data);
         toast.success("OTP verified successfully.");
-        navigate(redirectTo); // Redirect based on the flow (e.g., reset-password or login)
+        resetForm();
+        setTimeout(() => navigate(`/${redirectTo}`), 1000); // Redirect based on the flow (e.g., reset-password or login)
       } catch (error) {
         console.error("An error occurred:", error.message);
         toast.error("Invalid OTP, please try again.");
@@ -156,6 +157,7 @@ const OtpVerification = () => {
           </Button>
         </Typography>
       </Box>
+      <ToastContainer />
     </Box>
   );
 };

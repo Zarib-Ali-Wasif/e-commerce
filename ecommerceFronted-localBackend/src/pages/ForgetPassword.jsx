@@ -3,7 +3,7 @@ import { Typography, Box, TextField, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom"; // Use React Router's useNavigate
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import api from "../../lib/services/api";
 
 // The ForgetPassword component allows users to request a password reset and receive an OTP for verification
@@ -32,9 +32,11 @@ const ForgetPassword = () => {
         resetForm();
 
         // Pass `redirectTo` as 'reset-password' to know the flow context
-        navigate("/otp-verification", {
-          state: { redirectTo: "reset-password" },
-        });
+        setTimeout(() => {
+          navigate("/otp-verification", {
+            state: { redirectTo: "reset-password" },
+          });
+        }, 2500);
       } catch (error) {
         console.error("An error occurred:", error.message);
         toast.error("Something went wrong, please try again.");
@@ -107,6 +109,7 @@ const ForgetPassword = () => {
           Send OTP
         </Button>
       </Box>
+      <ToastContainer />
     </Box>
   );
 };

@@ -48,6 +48,7 @@ function AppRoutes() {
             <Route path="/verify-otp" element={<OtpVerification />} />
             <Route path="/update-password" element={<UpdatePassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/otp-verification" element={<OtpVerification />} />
             <Route path="*" element={<NotFound />} />
 
             {/* Protected Routes */}

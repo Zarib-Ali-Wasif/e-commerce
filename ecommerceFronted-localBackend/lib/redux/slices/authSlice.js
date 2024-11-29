@@ -25,6 +25,7 @@ const initialState = {
   role: localStorage.getItem("role") || "",
   userId: localStorage.getItem("userId") || "",
   email: localStorage.getItem("email") || "",
+  isAuthenticated: false,
 };
 
 const authSlice = createSlice({
@@ -38,6 +39,7 @@ const authSlice = createSlice({
       state.userId = "";
       state.email = "";
       state.loading = false;
+      state.isAuthenticated = false;
 
       // Clear localStorage
       localStorage.removeItem("user");
@@ -45,8 +47,11 @@ const authSlice = createSlice({
       localStorage.removeItem("userId");
       localStorage.removeItem("email");
       localStorage.removeItem("role");
+      localStorage.removeItem("isAuthenticated");
 
-      toast.info("Logged out successfully!");
+      setTimeout(() => {
+        toast.info("Logged out successfully!");
+      }, 500);
     },
   },
   extraReducers: (builder) => {
@@ -67,6 +72,7 @@ const authSlice = createSlice({
           state.userId = decodedToken.userId;
           state.email = decodedToken.email;
           state.role = decodedToken.role;
+          state.isAuthenticated = true;
 
           // Store in localStorage
           localStorage.setItem("user", JSON.stringify(decodedToken));
@@ -74,6 +80,7 @@ const authSlice = createSlice({
           localStorage.setItem("userId", decodedToken.userId);
           localStorage.setItem("email", decodedToken.email);
           localStorage.setItem("role", decodedToken.role);
+          localStorage.setItem("isAuthenticated", true);
 
           toast.success("Login successful!");
         } else {

@@ -38,7 +38,6 @@ export class AuthController {
     },
   })
   verifyUser(@Body() request) {
-    console.log(request);
     const { email, otp } = request;
     return this.authService.verifyUser(email, otp);
   }
@@ -69,7 +68,6 @@ export class AuthController {
     },
   })
   login(@Body() loginDto: LogInDto) {
-    console.log('loginDto :', loginDto);
     return this.authService.login(loginDto);
   }
 

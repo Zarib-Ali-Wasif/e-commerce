@@ -21,8 +21,8 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 const Signup = () => {
   const navigate = useNavigate();
 
-  const [showPassword, setShowPassword] = useState(true);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [userProfilePicture, setUserProfilePicture] = useState();
   const [file, setFile] = useState(null);
 
@@ -56,6 +56,8 @@ const Signup = () => {
         "Contact number must contain only digits, '+' or '_'"
       )
       .required("Contact number is required"),
+    gender: Yup.string().required("Gender is required"),
+    age: Yup.number().required("Age is required"),
     password: Yup.string()
       .required("Password is required")
       .min(8, "Password must be at least 8 characters")
@@ -70,7 +72,6 @@ const Signup = () => {
 
   const formik = useFormik({
     initialValues: {
-      profilePic: "",
       name: "",
       email: "",
       contactNumber: "",
@@ -103,7 +104,7 @@ const Signup = () => {
         // };
 
         // Send the request to create the user
-        const response = await api.post("user", userData);
+        const response = await api.post("user/signUp", userData);
         console.log(response.data);
 
         if (typeof window !== "undefined") {
@@ -112,16 +113,21 @@ const Signup = () => {
 
           // Notify user about OTP sent to email
           toast.success(
-            "Sign up successful. OTP has been sent to your email for verification."
+            "Sign up successful. OTP has been sent to your email for verification.",
+            {
+              autoClose: 1500, // Close after 1.5 seconds
+            }
           );
 
           // Reset the form after submission
           resetForm();
 
           // Pass `redirectTo` as 'login' to indicate the flow context
-          navigate("/otp-verification", {
-            state: { redirectTo: "login" },
-          });
+          setTimeout(() => {
+            navigate("/otp-verification", {
+              state: { redirectTo: "login" },
+            });
+          }, 2000);
         }
       } catch (error) {
         console.error("An error occurred:", error.message);

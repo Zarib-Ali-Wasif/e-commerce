@@ -2,6 +2,7 @@ import React from "react";
 import { Typography, Button, Box, Toolbar } from "@mui/material";
 import { NavLink } from "react-router-dom";
 import hero from "../assets/hero1.jpg"; // Replace this with an appropriate e-commerce banner image
+import { ToastContainer } from "react-toastify";
 
 function Home() {
   return (
