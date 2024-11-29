@@ -46,21 +46,18 @@ export class VerifyUserService {
       }
       if (userToVerify.verificationTries >= 3) {
         await this.verifyUserModel.deleteOne({ email: userToVerify.email });
-        await this.userModel.deleteOne({ email: userToVerify.email });
-        throw new NotAcceptableException(`Too many tries. User deleted`);
+        throw new NotAcceptableException(
+          `Too many tries, Please try again later`,
+        );
       }
-      console.log('testing1');
       const createdAt = new Date(userToVerify.createdAt).getTime();
       const currentTime = new Date().getTime();
       const fiveMinutesInMilliseconds = 5 * 60 * 1000;
-      console.log('testing11');
 
       if (currentTime - createdAt > fiveMinutesInMilliseconds) {
         await this.verifyUserModel.deleteOne({ email: userToVerify.email });
-        await this.userModel.deleteOne({ email: userToVerify.email });
         throw new BadRequestException(`OTP expired for email : ${email}`);
       }
-      console.log('testing111');
 
       if (userToVerify.otp !== otp) {
         await this.verifyUserModel.updateOne(
@@ -69,9 +66,7 @@ export class VerifyUserService {
         );
         throw new BadRequestException(`Incorrect OTP`);
       }
-      console.log('testing1111');
 
-      console.log('test2');
       const verifyemail = await this.userModel.updateOne(
         { email: userToVerify.email },
         { is_emailVerified: true },

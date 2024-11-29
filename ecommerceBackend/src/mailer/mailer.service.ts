@@ -32,19 +32,19 @@ export class MailerService {
 
   getTransporter() {
     return nodemailer.createTransport({
-      service: process.env.SMTP_SERVICE,
-      host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
+      service: process.env.SMTP_SHOPEASY_SERVICE,
+      host: process.env.SMTP_SHOPEASY_HOST,
+      port: process.env.SMTP_SHOPEASY_PORT,
       auth: {
-        user: process.env.SMTP_USERNAME,
-        pass: process.env.SMTP_ECHELON_PASS,
+        user: process.env.SMTP__SHOPEASY_USERNAME,
+        pass: process.env.SMTP_SHOPEASY_PASS,
       },
     });
   }
 
   getMailOptions(recepient: string, subject: string, email_body: string) {
     const mailOptions = {
-      from: process.env.EMAIL_FROM,
+      from: 'ShopEasy <' + process.env.EMAIL_FROM_SHOPEASY + '>',
       to: recepient,
       subject: subject,
       html: email_body,

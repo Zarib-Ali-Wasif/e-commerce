@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { LogInDto } from './dto/login.dto';
@@ -45,7 +46,31 @@ export class AuthService {
   async login(loginDto: LogInDto) {
     try {
       const userData = await this.userModel.findOne({ email: loginDto.email });
+
+      if (!userData) {
+        throw new BadRequestException('User not found');
+      }
+      if (!userData.is_emailVerified) {
+        await this.userModel.deleteOne({ email: loginDto.email });
+        throw new BadRequestException(
+          'Your email address has not been verified. Please sign up again and verify your email address.',
+        );
+      }
+
       await comparePassword(loginDto.password, userData.password);
+
+      if (loginDto.role !== userData.role) {
+        throw new BadRequestException(
+          'You are not authorized to login with this role.',
+        );
+      }
+
+      if (!userData.is_Active) {
+        throw new BadRequestException(
+          'Your account has been deactivated. Please contact support.',
+        );
+      }
+
       const token = await this.generateToken(
         userData.id,
         userData.email,
@@ -79,21 +104,37 @@ export class AuthService {
 
   async updateUserPassword(updatePasswordDto: UpdatePasswordDto, user) {
     try {
+      console.log('User:', user);
+
+      // Ensure new and confirm passwords match
       if (updatePasswordDto.newPassword !== updatePasswordDto.confirmPassword) {
         throw new BadRequestException('Passwords did not match');
       }
 
-      const userData = await this.userModel.findOne(user.id);
-      await comparePassword(updatePasswordDto.oldPassword, userData.password);
-      const updatedHashedPassword = await hashPassword(
-        updatePasswordDto.newPassword,
-      );
-      await this.userModel.updateOne(
-        { _id: user.id },
-        { $set: { password: updatedHashedPassword } },
+      // Retrieve the current user by ID
+      const userData = await this.userModel.findById(user.userId).exec();
+      if (!userData) {
+        throw new BadRequestException('User not found');
+      }
+
+      // Compare old password with the stored hashed password
+      const isPasswordValid = await comparePassword(
+        updatePasswordDto.oldPassword,
+        userData.password,
       );
 
-      return { message: 'Password update successfully' };
+      // Hash the new password before updating
+      const hashedPassword = await hashPassword(updatePasswordDto.newPassword);
+
+      await this.userModel
+        .findByIdAndUpdate(
+          user.userId,
+          { password: hashedPassword },
+          { new: true, useFindAndModify: false },
+        )
+        .exec();
+
+      return 'Password updated successfully';
     } catch (error) {
       throw error;
     }
@@ -157,11 +198,14 @@ export class AuthService {
 
     const verifyData = await this.verifyService.generateAndStoreOTP(email);
     const content = forgetPasswordTemplate(userFound.name, verifyData.otp);
-    await this.mailerService.sendEmail(
-      email,
-      process.env.PASSWOR_RESET_EMAIL_SUBJECT,
-      content,
-    );
+
+    //ToDo: uncomment these below lines to send email
+
+    // await this.mailerService.sendEmail(
+    //   email,
+    //   "OTP for password reset",
+    //   content,
+    // );
 
     return {
       message: 'An OTP code has been sent to your email for password reset',

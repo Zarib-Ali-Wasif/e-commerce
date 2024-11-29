@@ -46,11 +46,14 @@ export class UsersService {
 
       // Inside your mailer service method
       const content = otpSendTemplate(userCreated.name, verifyData.otp);
-      const sendEmail = await this.mailerService.sendEmail(
-        userCreated.email,
-        process.env.EMAIL_SUBJECT,
-        content,
-      );
+
+      //ToDo: uncomment these below lines to send email
+
+      // const sendEmail = await this.mailerService.sendEmail(
+      //   userCreated.email,
+      //   'OTP for account verification',
+      //   content,
+      // );
 
       return {
         message: 'User created. Verify your account',
@@ -105,11 +108,14 @@ export class UsersService {
       if (!userFound.is_emailVerified) {
         const verifyData = await this.verifyService.generateAndStoreOTP(email);
         const content = otpSendTemplate(userFound.name, verifyData.otp);
-        await this.mailerService.sendEmail(
-          email,
-          process.env.EMAIL_SUBJECT,
-          content,
-        );
+
+        //ToDo: uncomment these below lines to send email
+
+        // await this.mailerService.sendEmail(
+        //   email,
+        //   "OTP for account verification",
+        //   content,
+        // );
         throw new UnauthorizedException(
           'Email found, but user not verified. Resent verification email.',
         );
