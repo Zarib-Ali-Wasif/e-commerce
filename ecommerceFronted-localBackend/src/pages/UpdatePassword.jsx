@@ -56,7 +56,6 @@ const UpdatePassword = () => {
     onSubmit: async (data, { resetForm }) => {
       try {
         const response = await api.post("auth/updatePassword", data);
-        console.log(response.data);
         toast.success("Password updated successfully.");
         resetForm();
         setTimeout(() => navigate("/"), 2000);

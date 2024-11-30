@@ -105,7 +105,6 @@ const Signup = () => {
 
         // Send the request to create the user
         const response = await api.post("user/signUp", userData);
-        console.log(response.data);
 
         if (typeof window !== "undefined") {
           // Save user email in localStorage

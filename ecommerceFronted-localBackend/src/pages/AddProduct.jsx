@@ -70,7 +70,6 @@ const AddProduct = () => {
 
         // Send the request to create the product
         const response = await api.post("store/products", productData);
-        console.log(response);
 
         toast.success("Product added successfully!");
         resetForm();

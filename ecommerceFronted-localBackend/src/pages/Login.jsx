@@ -40,7 +40,6 @@ const Login = () => {
   const handleRedirectTo = () => {
     if (location.state?.redirectTo) {
       setRedirectTo(location.state.redirectTo); // Set the redirect destination
-      console.log("RedirectTo set to:", location.state.redirectTo);
     }
   };
 
@@ -86,7 +85,6 @@ const Login = () => {
           resetForm();
           setTimeout(() => {
             if (redirectTo) {
-              console.log("redirectTo", redirectTo);
               navigate(`/${redirectTo}`); // Navigate to the passed redirectTo path
             } else {
               navigate(

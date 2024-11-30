@@ -47,7 +47,6 @@ const OtpVerification = () => {
 
         // Make the request to the selected endpoint
         const response = await api.post(endpoint, fullData);
-        console.log(response.data);
         toast.success("OTP verified successfully.");
         resetForm();
         setTimeout(() => navigate(`/${redirectTo}`), 1000); // Redirect based on the flow (e.g., reset-password or login)

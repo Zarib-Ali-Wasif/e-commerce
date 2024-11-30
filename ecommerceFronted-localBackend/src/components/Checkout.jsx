@@ -124,12 +124,10 @@ const Checkout = () => {
               </Typography>
               <Divider sx={{ my: 2 }} />
               {cart.map((cartItem, index) => {
-                console.log("cartItem", cartItem.cartItemId);
                 const cartproduct = getProductDetails(
                   cartItem.cartItemId,
                   productsList
                 );
-                console.log("cartproduct", cartproduct);
                 return (
                   <Box
                     key={index}

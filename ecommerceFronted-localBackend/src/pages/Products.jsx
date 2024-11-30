@@ -215,11 +215,9 @@ const Products = ({ showModal }) => {
                       variant="contained"
                       color="primary"
                       onClick={() => {
-                        console.log("product in AddToCart", product);
                         dispatch(addToCart(product)); // Dispatch addToCart action
                         dispatch(updateCartSummary(productsList));
                         setSelectedProductId(product._id); // Set selected product ID
-                        console.log("productId is:", product._id);
                       }}
                       sx={{
                         textTransform: "none",

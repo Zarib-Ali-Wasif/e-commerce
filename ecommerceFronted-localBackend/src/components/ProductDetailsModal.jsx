@@ -21,15 +21,9 @@ const ProductDetailsModal = ({
   productsList,
 }) => {
   const dispatch = useDispatch();
-  console.log("open: ", open);
-  console.log("productId: ", productId);
-  console.log("productsList: ", productsList);
-  console.log("handleClose: ", handleClose);
-
   const product = useSelector((state) =>
     getProductDetails(productId, state.cart.productsList)
   );
-  console.log("product-Details: ", product);
 
   if (!product) {
     return (

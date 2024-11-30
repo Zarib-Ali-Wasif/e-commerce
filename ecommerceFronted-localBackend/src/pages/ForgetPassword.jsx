@@ -25,7 +25,6 @@ const ForgetPassword = () => {
       try {
         localStorage.setItem("email", data.email);
         const response = await api.post("auth/forgetPassword", data);
-        console.log(response.data);
         toast.success(
           "OTP has been sent to your email. Please check your inbox."
         );
