@@ -10,7 +10,7 @@ import {
   Divider,
   IconButton,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ToastContainer, toast } from "react-toastify";
 import {
@@ -61,7 +61,9 @@ const Cart = () => {
     } else {
       toast.error("Please login to checkout.");
       setTimeout(() => {
-        navigate("/login");
+        navigate("/login", {
+          state: { redirectTo: "checkout" },
+        });
       }, 2500);
     }
   };

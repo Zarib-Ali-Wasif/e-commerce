@@ -7,7 +7,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
@@ -19,7 +19,9 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation(); // Get current location
   const [showPassword, setShowPassword] = useState(false);
+  const [redirectTo, setRedirectTo] = useState("");
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
 
@@ -33,6 +35,18 @@ const Login = () => {
       }
     }
   }, [storedUser, navigate]);
+
+  // Check if redirectTo exists in the state passed during navigation
+  const handleRedirectTo = () => {
+    if (location.state?.redirectTo) {
+      setRedirectTo(location.state.redirectTo); // Set the redirect destination
+      console.log("RedirectTo set to:", location.state.redirectTo);
+    }
+  };
+
+  useEffect(() => {
+    handleRedirectTo();
+  }, [location.state]);
 
   const clickhandle = () => {
     navigate("/signup");
@@ -71,11 +85,16 @@ const Login = () => {
         if (resultAction) {
           resetForm();
           setTimeout(() => {
-            navigate(
-              localStorage.getItem("role")?.role === "Admin"
-                ? "/adminpanel"
-                : "/"
-            );
+            if (redirectTo) {
+              console.log("redirectTo", redirectTo);
+              navigate(`/${redirectTo}`); // Navigate to the passed redirectTo path
+            } else {
+              navigate(
+                localStorage.getItem("role")?.role === "Admin"
+                  ? "/adminpanel"
+                  : "/"
+              );
+            }
           }, 1000);
         }
       } catch (error) {
@@ -209,6 +228,7 @@ const Login = () => {
             backgroundColor: "#1C4771",
           },
         }}
+        // ToDo: Add redirectTo state
       >
         Log In
       </Button>
