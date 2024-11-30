@@ -50,9 +50,14 @@ const cartSlice = createSlice({
 
     // Update Quantity
     updateQuantity: (state, action) => {
+      console.log("action", action);
+      console.log("action.payload", action.payload);
+
       const { productId, quantity } = action.payload;
+      console.log("productId in slice", productId);
       const item = state.cart.find((item) => item.cartItemId === productId);
       if (item) {
+        console.log("quantity", quantity);
         item.quantity = quantity;
       }
     },
@@ -71,6 +76,7 @@ export const {
   clearCart,
   updateQuantity,
   setProductsList,
+  updateCartSummary,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

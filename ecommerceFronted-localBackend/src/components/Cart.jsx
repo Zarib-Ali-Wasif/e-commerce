@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   Box,
@@ -17,6 +17,7 @@ import {
   removeFromCart,
   clearCart,
   updateQuantity,
+  updateCartSummary,
 } from "../../lib/redux/slices/cartSlice";
 import { fetchProducts } from "../../lib/redux/slices/productsSlice";
 import { getProductDetails } from "../../lib/utils/helperFunctions";
@@ -26,7 +27,14 @@ const Cart = () => {
   const navigate = useNavigate();
 
   const { cart, cartSummary } = useSelector((state) => state.cart);
+  console.log("cartSummary", cartSummary);
+  console.log("cart", cart);
   const { productsList, categories } = useSelector((state) => state.products);
+
+  // Optional: log or handle side effects if needed
+  useEffect(() => {
+    console.log("Cart or cart summary updated:", cart, cartSummary);
+  }, [cart, cartSummary]); // Run whenever cart or cartSummary changes
 
   useEffect(() => {
     dispatch(fetchProducts("all"));
@@ -37,13 +45,17 @@ const Cart = () => {
   };
 
   const handleUpdateQuantity = (productId, quantity) => {
+    console.log("productId", productId);
+    console.log("quantity", quantity);
     if (quantity < 1) return; // Prevent quantity from going below 1
-    dispatch(updateQuantity(productId, quantity)); // Call updateQuantity function from context
+    console.log("quantityafter", quantity);
+    dispatch(updateQuantity({ productId, quantity })); // Call updateQuantity function from context
+    dispatch(updateCartSummary(productsList));
   };
 
   const handleCheckout = () => {
-    // const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
-    const { isAuthenticated } = useSelector((state) => state.auth);
+    const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+    console.log(isAuthenticated);
     if (isAuthenticated || isAuthenticated === "true") {
       navigate("/checkout");
     } else {
@@ -183,11 +195,12 @@ const Cart = () => {
                                 </IconButton>
                               ) : (
                                 <IconButton
-                                  onClick={() =>
+                                  onClick={() => {
                                     dispatch(
                                       removeFromCart(cartItem.cartItemId)
-                                    )
-                                  }
+                                    );
+                                    dispatch(updateCartSummary(productsList));
+                                  }}
                                   color="error"
                                 >
                                   <DeleteIcon />

@@ -32,15 +32,14 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { useCart } from "../context/CartContext"; // Import context for cart
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../lib/redux/slices/authSlice";
 
 function Header() {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { cart } = useCart(); // Access the cart context
+  const { cart } = useSelector((state) => state.cart);
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0); // Calculate total items in the cart
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
 
@@ -55,7 +54,6 @@ function Header() {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null); // For account dropdown
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  // const { isAuthenticated } = useSelector((state) => state.auth);
   // Toggle drawer for small screens
   function toggleDrawer(newOpen) {
     return () => setOpen(newOpen);
@@ -167,6 +165,7 @@ function Header() {
               alt="logo"
               height="auto"
               width="100"
+              style={{ cursor: "pointer" }}
               onClick={() => navigate("/")}
             />
           </Typography>
@@ -248,6 +247,7 @@ function Header() {
               alt="logo"
               height="auto"
               width="100"
+              style={{ cursor: "pointer" }}
               onClick={() => navigate("/")}
             />
           </Typography>

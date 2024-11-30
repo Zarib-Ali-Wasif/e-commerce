@@ -22,7 +22,7 @@ import {
   fetchProducts,
   fetchCategories,
 } from "../../lib/redux/slices/productsSlice";
-import { addToCart } from "../../lib/redux/slices/cartSlice";
+import { addToCart, updateCartSummary } from "../../lib/redux/slices/cartSlice";
 
 const Products = ({ showModal }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -35,6 +35,7 @@ const Products = ({ showModal }) => {
   // Accessing products and categories from the Redux store
   const { productsList, categories, loading, loadingCategories, error } =
     useSelector((state) => state.products);
+  const { cart } = useSelector((state) => state.cart);
 
   // Fetch products and categories on component mount
   useEffect(() => {
@@ -214,7 +215,9 @@ const Products = ({ showModal }) => {
                       variant="contained"
                       color="primary"
                       onClick={() => {
+                        console.log("product in AddToCart", product);
                         dispatch(addToCart(product)); // Dispatch addToCart action
+                        dispatch(updateCartSummary(productsList));
                         setSelectedProductId(product._id); // Set selected product ID
                         console.log("productId is:", product._id);
                       }}

@@ -12,7 +12,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
-import { clearCart } from "../redux/cartSlice"; // Import your clearCart action
+import { clearCart } from "../../lib/redux/slices/cartSlice"; // Import your clearCart action
 import { useNavigate } from "react-router-dom";
 import api from "../../lib/services/api";
 import { getProductDetails } from "../../lib/utils/helperFunctions";

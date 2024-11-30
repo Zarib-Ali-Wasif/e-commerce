@@ -8,7 +8,7 @@ const calculateCartSummary = (cart, productsList) => {
     discount: 0, // You can update this with dynamic discount logic
     gst: 16, // Static GST for now, you can change it dynamically
     total,
-    totalItems: state.cart.reduce((sum, item) => sum + item.quantity, 0),
+    totalItems: cart.reduce((sum, item) => sum + item.quantity, 0),
   };
 };
 
@@ -27,7 +27,11 @@ const calculateTotal = (subtotal) => {
   return (subtotal - discountAmount + gstAmount).toFixed(2);
 };
 
-const getProductDetails = (productId, productsList) =>
-  productsList.find((product) => product._id === productId) || {};
+const getProductDetails = (productId, productsList) => {
+  if (!productId || !Array.isArray(productsList)) {
+    return {}; // Return an empty object if input is invalid
+  }
+  return productsList.find((product) => product._id === productId) || {};
+};
 
 export { calculateCartSummary, getProductDetails };
