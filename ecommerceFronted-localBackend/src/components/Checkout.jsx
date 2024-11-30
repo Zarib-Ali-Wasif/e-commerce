@@ -35,9 +35,6 @@ const Checkout = () => {
     email: "guest@example.com",
   };
 
-  const getCartProductDetails = (productId) =>
-    productsList.find((product) => product._id === productId) || {};
-
   // Generate a unique order number
   const generateOrderNumber = () => {
     const timestamp = new Date().toISOString().replace(/[-:.TZ]/g, "");
