@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -16,6 +16,7 @@ import { clearCart } from "../../lib/redux/slices/cartSlice"; // Import your cle
 import { useNavigate } from "react-router-dom";
 import api from "../../lib/services/api";
 import { getProductDetails } from "../../lib/utils/helperFunctions";
+import { fetchProducts } from "../../lib/redux/slices/productsSlice";
 
 const Checkout = () => {
   const dispatch = useDispatch();
@@ -23,6 +24,10 @@ const Checkout = () => {
 
   const { cart, cartSummary } = useSelector((state) => state.cart);
   const { productsList } = useSelector((state) => state.products);
+
+  useEffect(() => {
+    dispatch(fetchProducts("all"));
+  }, [dispatch]);
 
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -119,7 +124,12 @@ const Checkout = () => {
               </Typography>
               <Divider sx={{ my: 2 }} />
               {cart.map((cartItem, index) => {
-                const cartproduct = getProductDetails(cartItem.cartItemId);
+                console.log("cartItem", cartItem.cartItemId);
+                const cartproduct = getProductDetails(
+                  cartItem.cartItemId,
+                  productsList
+                );
+                console.log("cartproduct", cartproduct);
                 return (
                   <Box
                     key={index}
@@ -187,10 +197,7 @@ const Checkout = () => {
               </Typography>
               <Divider sx={{ my: 2 }} />
               <Typography variant="h6" fontWeight="bold" textAlign="right">
-                Total: $
-                {isNaN(cartSummary.total)
-                  ? "0.00"
-                  : cartSummary.total.toFixed(2)}
+                Total: ${isNaN(cartSummary.total) ? "0.00" : cartSummary.total}
               </Typography>
             </CardContent>
           </Card>
