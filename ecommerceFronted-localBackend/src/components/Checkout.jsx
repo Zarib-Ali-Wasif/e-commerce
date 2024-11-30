@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../../lib/services/api";
 import { getProductDetails } from "../../lib/utils/helperFunctions";
 import { fetchProducts } from "../../lib/redux/slices/productsSlice";
+import { toast } from "react-toastify";
 
 const Checkout = () => {
   const dispatch = useDispatch();
@@ -94,11 +95,13 @@ const Checkout = () => {
       setLoading(true); // Show loader
       const response = await api.post(`orders`, orderDetails);
       console.log("Order saved successfully:", response.data);
+      localStorage.setItem("order", JSON.stringify(orderDetails));
       dispatch(clearCart()); // Clear cart via Redux
+      toast.success("Order placed successfully!");
       navigate("/order-confirmation", { state: { orderNumber } });
     } catch (error) {
       console.error("Error placing order:", error);
-      alert("Failed to place order. Please try again.");
+      toast.error("Failed to place order. Please try again.");
     } finally {
       setLoading(false); // Hide loader
     }

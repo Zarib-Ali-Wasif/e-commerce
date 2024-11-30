@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
 const OrderConfirmation = () => {
   const navigate = useNavigate();
@@ -33,6 +34,7 @@ const OrderConfirmation = () => {
       >
         Continue Shopping
       </Button>
+      <ToastContainer />
     </Box>
   );
 };
