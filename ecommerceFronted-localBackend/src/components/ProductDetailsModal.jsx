@@ -9,14 +9,28 @@ import {
   Rating,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useCart } from "../context/CartContext";
+import { useSelector } from "react-redux";
+import { getProductDetails } from "../../lib/utils/helperFunctions";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../lib/redux/slices/cartSlice";
 
-const ProductDetailsModal = ({ open, handleClose, productId, products }) => {
+const ProductDetailsModal = ({
+  open,
+  handleClose,
+  productId,
+  productsList,
+}) => {
+  const dispatch = useDispatch();
   console.log("open: ", open);
   console.log("productId: ", productId);
-  // console.log("products: ", products);
-  const product = products.find((p) => p._id === productId);
-  const { addToCart } = useCart(); // Access addToCart function
+  console.log("productsList: ", productsList);
+  console.log("handleClose: ", handleClose);
+
+  const product = useSelector((state) =>
+    getProductDetails(productId, state.cart.productsList)
+  );
+  console.log("product-Details: ", product);
+
   if (!product) {
     return (
       <Modal
@@ -162,7 +176,7 @@ const ProductDetailsModal = ({ open, handleClose, productId, products }) => {
               variant="contained"
               color="primary"
               onClick={() => {
-                addToCart(product);
+                dispatch(addToCart(product)); // Dispatch addToCart action
                 handleClose();
               }} // Add product to cart and close the modal
               sx={{ mt: 3, backgroundColor: "#1C4771" }}

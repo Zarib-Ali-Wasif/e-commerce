@@ -18,17 +18,19 @@ import {
   clearCart,
   updateQuantity,
 } from "../../lib/redux/slices/cartSlice";
+import { fetchProducts } from "../../lib/redux/slices/productsSlice";
+import { getProductDetails } from "../../lib/utils/helperFunctions";
 
 const Cart = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { cart, cartSummary, productsList } = useSelector(
-    (state) => state.cart
-  );
+  const { cart, cartSummary } = useSelector((state) => state.cart);
+  const { productsList, categories } = useSelector((state) => state.products);
 
-  const getCartProductDetails = (productId) =>
-    productsList.find((product) => product._id === productId) || {};
+  useEffect(() => {
+    dispatch(fetchProducts("all"));
+  }, [dispatch]);
 
   const handleAddMoreItems = () => {
     navigate("/products");
@@ -40,17 +42,17 @@ const Cart = () => {
   };
 
   const handleCheckout = () => {
-    const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
-    if (!isAuthenticated) {
+    // const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+    const { isAuthenticated } = useSelector((state) => state.auth);
+    if (isAuthenticated || isAuthenticated === "true") {
+      navigate("/checkout");
+    } else {
       toast.error("Please login to checkout.");
       setTimeout(() => {
         navigate("/login");
       }, 2500);
-    } else {
-      navigate("/checkout");
     }
   };
-
   return (
     <Box sx={{ padding: "20px", minHeight: "100vh", mt: 15 }}>
       <Typography variant="h4" textAlign="center" fontWeight={"bold"} mb={4}>
@@ -81,7 +83,10 @@ const Cart = () => {
           <Grid item xs={12} md={8}>
             <Grid container spacing={2}>
               {cart.map((cartItem) => {
-                const cartProduct = getCartProductDetails(cartItem.cartItemId);
+                const cartProduct = getProductDetails(
+                  cartItem.cartItemId,
+                  productsList
+                );
                 return (
                   <Grid
                     item

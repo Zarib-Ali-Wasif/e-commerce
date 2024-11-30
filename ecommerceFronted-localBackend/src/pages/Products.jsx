@@ -15,75 +15,37 @@ import {
   InputLabel,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
-import ProductDetailsModal from "../components/ProductDetailsModal";
-import { useCart } from "../context/CartContext";
-import api from "../../lib/services/api";
 import { toast, ToastContainer } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import ProductDetailsModal from "../components/ProductDetailsModal";
+import {
+  fetchProducts,
+  fetchCategories,
+} from "../../lib/redux/slices/productsSlice";
+import { addToCart } from "../../lib/redux/slices/cartSlice";
 
 const Products = ({ showModal }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [loadingCategories, setLoadingCategories] = useState(false);
-  const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const { id } = useParams();
   const navigate = useNavigate();
-  const [products, setProducts] = useState([]);
+  const dispatch = useDispatch();
 
-  //     image: "https://via.placeholder.com/150",
+  // Accessing products and categories from the Redux store
+  const { productsList, categories, loading, loadingCategories, error } =
+    useSelector((state) => state.products);
 
-  const { addToCart, productsList, setProductsList } = useCart(); // Access addToCart function
-
-  // Fetch categories on component mount
+  // Fetch products and categories on component mount
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setLoadingCategories(true);
-        const response = await api.get("store/products/categories");
-        // Ensure the response data is an array
-        // const data = Array.isArray(response.data) ? response.data : [];
-        const data = response.data;
-        setCategories(data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      } finally {
-        setLoadingCategories(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
-  // Fetch products based on selected category
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const endpoint =
-          selectedCategory === "all"
-            ? "store/products"
-            : `store/products?category=${selectedCategory}`;
-        const response = await api.get(endpoint);
-        const data = response.data;
-        setProducts(data);
-        setProductsList(data);
-        localStorage.setItem("products", JSON.stringify(data));
-        toast.success("Products fetched successfully!");
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        toast.error("Error fetching products");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, [selectedCategory]);
+    dispatch(fetchProducts("all")); // Fetch all products initially
+    dispatch(fetchCategories()); // Fetch product categories
+  }, [dispatch]);
 
   // Handle category change
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
+    dispatch(fetchProducts(event.target.value)); // Fetch products based on selected category on change of category selection in dropdown list.
   };
 
   // Open modal when `showModal` is true and `id` is valid
@@ -103,14 +65,6 @@ const Products = ({ showModal }) => {
   const handleOpenModal = (id) => {
     navigate(`/products/${id}`);
   };
-
-  //Testing Code
-  const redux = JSON.parse(localStorage.getItem("persist:root"));
-  const cartSummary = redux?.cartSummary;
-  const productsLists = redux?.productsList;
-  console.log("redux: ", redux);
-  console.log("cartSummary: ", cartSummary);
-  console.log("productsList: ", productsLists);
 
   return (
     <>
@@ -227,7 +181,7 @@ const Products = ({ showModal }) => {
           </Box>
         ) : (
           <Grid container spacing={4}>
-            {products.map((product) => (
+            {productsList.map((product) => (
               <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={product._id}>
                 <Card
                   sx={{
@@ -260,7 +214,7 @@ const Products = ({ showModal }) => {
                       variant="contained"
                       color="primary"
                       onClick={() => {
-                        addToCart(product); // Add product to cart
+                        dispatch(addToCart(product)); // Dispatch addToCart action
                         setSelectedProductId(product._id); // Set selected product ID
                         console.log("productId is:", product._id);
                       }}
@@ -298,11 +252,9 @@ const Products = ({ showModal }) => {
           open={modalOpen}
           handleClose={handleCloseModal}
           productId={selectedProductId}
-          products={products}
+          productsList={productsList}
         />
       )}
-
-      <Toolbar />
     </>
   );
 };

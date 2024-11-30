@@ -11,26 +11,29 @@ import {
   MenuItem,
   CircularProgress,
 } from "@mui/material";
-import { useCart } from "../context/CartContext";
+import { useSelector, useDispatch } from "react-redux";
+import { clearCart } from "../redux/cartSlice"; // Import your clearCart action
 import { useNavigate } from "react-router-dom";
 import api from "../../lib/services/api";
-import { jwtDecode } from "jwt-decode";
+import { getProductDetails } from "../../lib/utils/helperFunctions";
 
 const Checkout = () => {
-  const { cart, clearCart, cartSummary, productsList } = useCart();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { cart, cartSummary } = useSelector((state) => state.cart);
+  const { productsList } = useSelector((state) => state.products);
+
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
-  // User details (Replace with actual context or state values)
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  // const user = {
-  //   userId: "user123",
-  //   name: "John Doe",
-  //   email: "3Tt9t@example.com",
-  // };
+  // Retrieve user details from localStorage or Redux (modify as needed)
+  const user = JSON.parse(localStorage.getItem("user")) || {
+    userId: "guest",
+    name: "Guest User",
+    email: "guest@example.com",
+  };
 
   const getCartProductDetails = (productId) =>
     productsList.find((product) => product._id === productId) || {};
@@ -66,7 +69,7 @@ const Checkout = () => {
       address,
       paymentMethod,
       orderItems: cart.map((item) => {
-        const cartProduct = getCartProductDetails(item.cartItemId);
+        const cartProduct = getProductDetails(item.cartItemId);
         return {
           productId: item.cartItemId,
           productName: cartProduct.title,
@@ -89,8 +92,7 @@ const Checkout = () => {
       setLoading(true); // Show loader
       const response = await api.post(`orders`, orderDetails);
       console.log("Order saved successfully:", response.data);
-
-      clearCart();
+      dispatch(clearCart()); // Clear cart via Redux
       navigate("/order-confirmation", { state: { orderNumber } });
     } catch (error) {
       console.error("Error placing order:", error);
@@ -120,7 +122,7 @@ const Checkout = () => {
               </Typography>
               <Divider sx={{ my: 2 }} />
               {cart.map((cartItem, index) => {
-                const cartproduct = getCartProductDetails(cartItem.cartItemId);
+                const cartproduct = getProductDetails(cartItem.cartItemId);
                 return (
                   <Box
                     key={index}
@@ -172,7 +174,7 @@ const Checkout = () => {
                       <Typography variant="body2">
                         ${cartproduct.price} x {cartItem.quantity}
                       </Typography>
-                    </Box>{" "}
+                    </Box>
                   </Box>
                 );
               })}
@@ -188,7 +190,10 @@ const Checkout = () => {
               </Typography>
               <Divider sx={{ my: 2 }} />
               <Typography variant="h6" fontWeight="bold" textAlign="right">
-                Total: ${isNaN(cartSummary.total) ? "0.00" : cartSummary.total}
+                Total: $
+                {isNaN(cartSummary.total)
+                  ? "0.00"
+                  : cartSummary.total.toFixed(2)}
               </Typography>
             </CardContent>
           </Card>
