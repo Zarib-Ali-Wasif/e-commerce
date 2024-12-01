@@ -48,7 +48,9 @@ const Checkout = () => {
       .toString(36)
       .substring(2, 6)
       .toUpperCase();
-    return `ORD-${user.userId.slice(-4)}-${timestamp}-${randomSuffix}`;
+    return `ORD-${user.userId.slice(-4)}-${timestamp.slice(
+      -11
+    )}-${randomSuffix}`;
   };
 
   const handlePlaceOrder = async () => {
