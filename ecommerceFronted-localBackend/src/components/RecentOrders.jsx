@@ -11,7 +11,13 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
+  Chip,
+  IconButton,
+  Grid,
+  Paper,
 } from "@mui/material";
+import { ShoppingCart, AccessTime, LocalShipping } from "@mui/icons-material";
 import api from "../../lib/services/api";
 
 const RecentOrders = () => {
@@ -46,77 +52,112 @@ const RecentOrders = () => {
     setSelectedOrder(null); // Reset selected order
   };
 
-  if (loading) return <CircularProgress />;
-  if (error) return <Typography color="error">{error}</Typography>;
+  if (loading)
+    return <CircularProgress sx={{ display: "block", margin: "0 auto" }} />;
+  if (error)
+    return (
+      <Typography color="error" align="center">
+        {error}
+      </Typography>
+    );
 
   return (
-    <Box mt={18}>
-      <Typography variant="h5" gutterBottom>
+    <Box mt={18} mb={8} p={2}>
+      <Typography
+        variant="h4"
+        textAlign={"center"}
+        fontWeight={"bold"}
+        color="primary"
+        mb={5}
+      >
         Recent Orders
       </Typography>
       {orders.length === 0 ? (
-        <Typography>No recent orders found.</Typography>
+        <Typography align="center" variant="body1" color="textSecondary">
+          No recent orders found.
+        </Typography>
       ) : (
-        orders.map((order) => (
-          <Card
-            key={order._id}
-            sx={{ mb: 2 }}
-            onClick={() => handleOrderClick(order)}
-          >
-            <CardContent>
-              <Typography variant="h6">Order #{order.orderNumber}</Typography>
-              <Typography>
-                Date: {new Date(order.orderDate).toLocaleString()}
-              </Typography>
-              <Typography>Total: ${order.summary.total}</Typography>
-              <Typography>Status: {order.status}</Typography>
-            </CardContent>
-          </Card>
-        ))
+        <Grid container spacing={2}>
+          {orders.map((order) => (
+            <Grid item xs={12} md={6} lg={4} key={order._id}>
+              <Card
+                sx={{ mb: 2, boxShadow: 3, cursor: "pointer" }}
+                onClick={() => handleOrderClick(order)}
+              >
+                <CardContent>
+                  <Typography variant="h6" fontWeight="bold">
+                    Order #{order.orderNumber}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    {new Date(order.orderDate).toLocaleString()}
+                  </Typography>
+                  <Divider sx={{ my: 1 }} />
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Typography variant="h6" color="primary">
+                      ${order.summary.total}
+                    </Typography>
+                    <Chip
+                      label={order.status}
+                      color={order.status === "Pending" ? "warning" : "success"}
+                      size="small"
+                    />
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
       )}
 
       {/* Order Details Dialog/Modal */}
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle fontWeight={"bold"}>
-          #{selectedOrder?.orderNumber}{" "}
-        </DialogTitle>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle
+          fontWeight={"bold"}
+        >{`Order #${selectedOrder?.orderNumber}`}</DialogTitle>
         <DialogContent>
           {selectedOrder ? (
             <Box>
-              <Typography variant="body1">
+              <Typography
+                variant="body1"
+                fontWeight="bold"
+                color="textSecondary"
+              >
                 Order Date: {new Date(selectedOrder.createdAt).toLocaleString()}
               </Typography>
               <Typography variant="body1">
-                Email: {selectedOrder.email}
+                <strong>Email:</strong> {selectedOrder.email}
               </Typography>
               <Typography variant="body1">
-                Address: {selectedOrder.address}
+                <strong>Address:</strong> {selectedOrder.address}
               </Typography>
               <Typography variant="body1">
-                Payment Method: {selectedOrder.paymentMethod}
-              </Typography>
-              <Typography variant="body1">
-                Total: ${selectedOrder.summary.total}
-              </Typography>
-              <Typography variant="body1">
-                Status: {selectedOrder.status}
+                <strong>Payment Method:</strong> {selectedOrder.paymentMethod}
               </Typography>
               <Typography variant="h6" sx={{ mt: 2, fontWeight: "bold" }}>
                 Items
               </Typography>
               {selectedOrder.orderItems.map((item) => (
-                <Box key={item.productId} sx={{ mb: 1 }}>
-                  <Typography variant="body2">
-                    productName: {item?.productName}
+                <Paper key={item.productId} sx={{ p: 2, mb: 1 }}>
+                  <Typography variant="body2" fontWeight="bold">
+                    {item.productName}
                   </Typography>
                   <Typography variant="body2">
-                    Quantity: {item?.quantity}
+                    Quantity: {item.quantity}
                   </Typography>
-                  <Typography variant="body2">
-                    Price: ${item?.price}{" "}
+                  <Typography variant="body2">Price: ${item.price}</Typography>
+                  <Typography variant="body2" color="primary">
+                    Total: ${item.total}
                   </Typography>
-                  <Typography variant="body2">Total: ${item?.total}</Typography>
-                </Box>
+                </Paper>
               ))}
             </Box>
           ) : (
