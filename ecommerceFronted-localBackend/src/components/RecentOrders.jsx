@@ -1,5 +1,6 @@
+// ToDo: Add this in the Header:
+
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import {
   Box,
   Typography,
@@ -52,27 +53,42 @@ const RecentOrders = () => {
     setSelectedOrder(null); // Reset selected order
   };
 
-  if (loading)
-    return <CircularProgress sx={{ display: "block", margin: "0 auto" }} />;
-  if (error)
-    return (
-      <Typography color="error" align="center">
-        {error}
-      </Typography>
-    );
+  // if (loading)
+  //   return <CircularProgress sx={{ display: "block", margin: "0 auto" }} />;
+  // if (error)
+  //   return (
+  //     <Typography color="error" align="center">
+  //       {error}
+  //     </Typography>
+  //   );
 
   return (
-    <Box mt={18} mb={8} p={2}>
+    <Box mt={18} mb={8} p={2} height="80vh">
       <Typography
         variant="h4"
-        textAlign={"center"}
-        fontWeight={"bold"}
-        color="primary"
-        mb={5}
+        sx={{
+          color: "#1C4771",
+          fontWeight: "bold",
+          textAlign: "center",
+          mb: 5,
+        }}
       >
         Recent Orders
       </Typography>
-      {orders.length === 0 ? (
+      {loading ? (
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          height="50vh"
+        >
+          <CircularProgress size={100} />
+          <Typography variant="body1" mt={2}>
+            Loading orders...
+          </Typography>
+        </Box>
+      ) : orders.length === 0 ? (
         <Typography align="center" variant="body1" color="textSecondary">
           No recent orders found.
         </Typography>
