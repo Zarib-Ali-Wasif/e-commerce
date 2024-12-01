@@ -175,7 +175,9 @@ const OrderConfirmation = () => {
             <strong>Discount:</strong> ${summary.discount}
           </Typography>
           <Typography variant="body2">
-            <strong>GST ({GST_PERCENT}%):</strong> {summary.gst}%
+            <strong>GST (</strong>
+            <span>{GST_PERCENT}%</span>
+            <strong>):</strong> ${summary.gst}
           </Typography>
           <Typography variant="h5" sx={{ mt: 2, fontWeight: "bold" }}>
             <strong>Total:</strong> ${summary.total}
