@@ -13,6 +13,7 @@ import {
   Select,
   FormControl,
   InputLabel,
+  Badge,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
@@ -190,14 +191,35 @@ const Products = ({ showModal }) => {
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",
+                    position: "relative",
                   }}
                 >
+                  {/* Conditional Rendering for Discount Badge */}
+                  {product.discount?.discountPercent > 0 && (
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        top: 16,
+                        left: 16,
+                        backgroundColor: "#387DA3",
+                        color: "white",
+                        borderRadius: "8px",
+                        px: 1.5,
+                        py: 0.5,
+                        fontSize: "0.75rem",
+                      }}
+                    >
+                      {product.discount.discountPercent}% OFF
+                    </Box>
+                  )}
+
                   <CardMedia
                     component="img"
                     sx={{
                       width: "100%",
                       height: "200px",
                       objectFit: "contain",
+                      mt: product.discount?.discountPercent > 0 ? 3 : 0,
                     }}
                     image={product.image}
                     alt={product.title}
@@ -206,27 +228,42 @@ const Products = ({ showModal }) => {
                     <Typography variant="h6" component="div" gutterBottom>
                       {product.title}
                     </Typography>
+
                     <Typography variant="body1" color="textSecondary">
-                      Price: ${product.price}
+                      Price: ${product.price.toFixed(2)}
                     </Typography>
+
+                    {/* Only show offer name if discount name exists and is valid */}
+                    {product.discount?.name &&
+                      product.discount.discountPercent > 0 && (
+                        <Typography
+                          variant="body2"
+                          sx={{ fontStyle: "italic", color: "#387DA3", mt: 1 }}
+                        >
+                          Offer: {product.discount.name}
+                        </Typography>
+                      )}
                   </CardContent>
+
                   <Box sx={{ textAlign: "center", mb: 2 }}>
                     <Button
                       variant="contained"
-                      color="primary"
                       onClick={() => {
-                        dispatch(addToCart(product)); // Dispatch addToCart action
+                        dispatch(addToCart(product));
                         dispatch(updateCartSummary(productsList));
-                        setSelectedProductId(product._id); // Set selected product ID
                       }}
                       sx={{
                         textTransform: "none",
                         marginRight: 1,
                         backgroundColor: "#1C4771",
+                        "&:hover": {
+                          backgroundColor: "#163b56",
+                        },
                       }}
                     >
                       Add to Cart
                     </Button>
+
                     <Button
                       variant="outlined"
                       sx={{
