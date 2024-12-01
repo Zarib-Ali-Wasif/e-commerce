@@ -306,7 +306,7 @@ const Cart = () => {
                     Discount:
                   </Typography>
                   <Typography color="black">
-                    {cartSummary.discount || 0}%
+                    ${cartSummary.discount || 0}
                   </Typography>
                 </Box>
 

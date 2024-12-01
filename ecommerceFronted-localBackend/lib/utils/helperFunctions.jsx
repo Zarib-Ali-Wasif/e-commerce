@@ -1,13 +1,14 @@
 const calculateCartSummary = (cart, productsList) => {
+  const GST_PERCENT = 16;
   const subtotal = calculateSubtotal(cart, productsList);
   const discount = calculateTotalDiscount(cart, productsList);
-  const gst = 16; // Static GST percentage
-  const total = calculateTotal(subtotal, discount, gst);
+  const gstAmount = calculateGstAmount(subtotal, discount, GST_PERCENT); // 16% GST
+  const total = calculateTotal(subtotal, discount, gstAmount);
 
   return {
     subtotal: subtotal.toFixed(2),
     discount: discount.toFixed(2),
-    gst,
+    gst: gstAmount.toFixed(2), // Return calculated GST amount
     total: total,
     totalItems: cart.reduce((sum, item) => sum + item.quantity, 0),
   };
@@ -30,8 +31,12 @@ const calculateTotalDiscount = (cart, productsList) => {
   }, 0);
 };
 
-const calculateTotal = (subtotal, discountAmount, gst) => {
-  const gstAmount = (subtotal * gst) / 100;
+const calculateGstAmount = (subtotal, discount, gstRate) => {
+  const taxableAmount = subtotal - discount;
+  return (taxableAmount * gstRate) / 100;
+};
+
+const calculateTotal = (subtotal, discountAmount, gstAmount) => {
   return (subtotal - discountAmount + gstAmount).toFixed(2);
 };
 
