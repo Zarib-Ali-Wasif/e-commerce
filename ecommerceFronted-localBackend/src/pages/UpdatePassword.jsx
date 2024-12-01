@@ -72,14 +72,19 @@ const UpdatePassword = () => {
     // UI component to display when User is not authenticated
     return (
       <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "90vh",
-          textAlign: "center",
-        }}
+        // sx={{
+        //   display: "flex",
+        //   flexDirection: "column",
+        //   alignItems: "center",
+        //   justifyContent: "center",
+        //   height: "90vh",
+        //   textAlign: "center",
+        // }}
+        mt={0}
+        mb={5}
+        p={2}
+        minHeight="90vh"
+        height="100%"
       >
         <Typography
           sx={{
@@ -103,7 +108,8 @@ const UpdatePassword = () => {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "start",
-        // minHeight: "90vh",
+        minHeight: "60vh",
+        height: "100%",
         textAlign: "center",
       }}
     >

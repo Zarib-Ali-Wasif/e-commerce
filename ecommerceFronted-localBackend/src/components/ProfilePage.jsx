@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   Button,
@@ -27,8 +27,12 @@ const ProfilePage = () => {
     updatedAt: "2024-11-29T21:13:54.299Z",
   });
 
-  // States to handle which section is active
-  const [activeSection, setActiveSection] = useState("profile");
+  const [activeSection, setActiveSection] = useState("");
+
+  //   // Update URL based on active section
+  //   useEffect(() => {
+  //     window.history.pushState({}, "", `/profile/${activeSection}`);
+  //   }, [activeSection]);
 
   return (
     <Box
@@ -51,10 +55,9 @@ const ProfilePage = () => {
       <Grid container spacing={4} justifyContent="center" marginBottom={10}>
         <Grid item>
           <Button
-            variant="contained"
-            color="primary"
+            variant="outlined"
             startIcon={<AccountCircle />}
-            onClick={() => setActiveSection("profile")}
+            onClick={() => setActiveSection("me")}
             sx={{
               minWidth: 180,
               borderRadius: "12px",
@@ -62,8 +65,12 @@ const ProfilePage = () => {
               textTransform: "none",
               fontWeight: 500,
               boxShadow: 4,
+              border: "1px solid #1C4771",
+              color: "#1C4771",
               "&:hover": {
-                backgroundColor: teal[600],
+                // backgroundColor: teal[200],
+                backgroundColor: "#1C4771",
+                color: "white",
                 boxShadow: 8,
               },
               transition: "all 0.3s ease",
@@ -74,8 +81,7 @@ const ProfilePage = () => {
         </Grid>
         <Grid item>
           <Button
-            variant="contained"
-            color="primary"
+            variant="outlined"
             startIcon={<ShoppingCart />}
             onClick={() => setActiveSection("orders")}
             sx={{
@@ -85,10 +91,15 @@ const ProfilePage = () => {
               textTransform: "none",
               fontWeight: 500,
               boxShadow: 4,
+              border: "1px solid #1C4771",
+              color: "#1C4771",
               "&:hover": {
-                backgroundColor: teal[600],
+                // backgroundColor: teal[200],
+                backgroundColor: "#1C4771",
+                color: "white",
                 boxShadow: 8,
               },
+
               transition: "all 0.3s ease",
             }}
           >
@@ -97,8 +108,7 @@ const ProfilePage = () => {
         </Grid>
         <Grid item>
           <Button
-            variant="contained"
-            color="secondary"
+            variant="outlined"
             startIcon={<Lock />}
             onClick={() => setActiveSection("password")}
             sx={{
@@ -108,8 +118,12 @@ const ProfilePage = () => {
               textTransform: "none",
               fontWeight: 500,
               boxShadow: 4,
+              border: "1px solid #1C4771",
+              color: "#1C4771",
               "&:hover": {
-                backgroundColor: deepOrange[700],
+                // backgroundColor: teal[200],
+                backgroundColor: "#1C4771",
+                color: "white",
                 boxShadow: 8,
               },
               transition: "all 0.3s ease",
@@ -120,7 +134,7 @@ const ProfilePage = () => {
         </Grid>
       </Grid>
       {/* Profile Section */}
-      {activeSection === "profile" && (
+      {activeSection === "me" && (
         <Paper sx={{ padding: 3, borderRadius: 3, boxShadow: 2 }}>
           {/* Profile Header */}
           <Box sx={{ display: "flex", alignItems: "center", marginBottom: 3 }}>
