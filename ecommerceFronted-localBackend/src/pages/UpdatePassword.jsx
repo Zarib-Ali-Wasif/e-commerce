@@ -102,8 +102,8 @@ const UpdatePassword = () => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
-        height: "90vh",
+        justifyContent: "start",
+        // minHeight: "90vh",
         textAlign: "center",
       }}
     >

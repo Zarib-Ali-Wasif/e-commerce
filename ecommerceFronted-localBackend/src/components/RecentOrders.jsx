@@ -54,7 +54,7 @@ const RecentOrders = () => {
   };
 
   return (
-    <Box mt={18} mb={5} p={2} minHeight="100vh" height="100%">
+    <Box mt={0} mb={5} p={2} minHeight="70vh" height="100%">
       <Typography
         variant="h4"
         sx={{
@@ -64,7 +64,7 @@ const RecentOrders = () => {
           mb: 5,
         }}
       >
-        Recent Orders
+        My Orders
       </Typography>
 
       {loading ? (
