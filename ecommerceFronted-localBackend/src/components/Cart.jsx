@@ -10,8 +10,9 @@ import {
   Divider,
   IconButton,
 } from "@mui/material";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { ToastContainer, toast } from "react-toastify";
 import {
   removeFromCart,
@@ -72,6 +73,7 @@ const Cart = () => {
           </Typography>
           <Button
             variant="contained"
+            startIcon={<ShoppingCartIcon />}
             color="primary"
             onClick={handleAddMoreItems}
             sx={{
@@ -82,7 +84,7 @@ const Cart = () => {
               },
             }}
           >
-            Go to Shop Now
+            Shop Now
           </Button>
         </Box>
       ) : (
