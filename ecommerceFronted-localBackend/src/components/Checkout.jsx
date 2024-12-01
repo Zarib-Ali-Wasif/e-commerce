@@ -75,7 +75,7 @@ const Checkout = () => {
       address,
       paymentMethod,
       orderItems: cart.map((item) => {
-        const cartProduct = getProductDetails(item.cartItemId);
+        const cartProduct = getProductDetails(item.cartItemId, productsList);
         return {
           productId: item.cartItemId,
           productName: cartProduct.title,

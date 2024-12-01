@@ -53,17 +53,8 @@ const RecentOrders = () => {
     setSelectedOrder(null); // Reset selected order
   };
 
-  // if (loading)
-  //   return <CircularProgress sx={{ display: "block", margin: "0 auto" }} />;
-  // if (error)
-  //   return (
-  //     <Typography color="error" align="center">
-  //       {error}
-  //     </Typography>
-  //   );
-
   return (
-    <Box mt={18} mb={8} p={2} height="80vh">
+    <Box mt={18} mb={5} p={2} minHeight="100vh" height="100%">
       <Typography
         variant="h4"
         sx={{
@@ -75,6 +66,7 @@ const RecentOrders = () => {
       >
         Recent Orders
       </Typography>
+
       {loading ? (
         <Box
           display="flex"
@@ -150,6 +142,9 @@ const RecentOrders = () => {
                 Order Date: {new Date(selectedOrder.createdAt).toLocaleString()}
               </Typography>
               <Typography variant="body1">
+                <strong>Status:</strong> {selectedOrder.status}
+              </Typography>
+              <Typography variant="body1">
                 <strong>Email:</strong> {selectedOrder.email}
               </Typography>
               <Typography variant="body1">
@@ -158,7 +153,14 @@ const RecentOrders = () => {
               <Typography variant="body1">
                 <strong>Payment Method:</strong> {selectedOrder.paymentMethod}
               </Typography>
-              <Typography variant="h6" sx={{ mt: 2, fontWeight: "bold" }}>
+              <Typography variant="body1">
+                <strong>Total:</strong> {selectedOrder.summary.total}
+              </Typography>
+
+              <Typography
+                variant="h6"
+                sx={{ mt: 2, fontWeight: "bold", textAlign: "center" }}
+              >
                 Items
               </Typography>
               {selectedOrder.orderItems.map((item) => (
