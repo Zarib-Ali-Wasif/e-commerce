@@ -196,7 +196,7 @@ const Products = ({ showModal }) => {
                 >
                   {/* Conditional Rendering for Discount Badge */}
                   {product.discount?.discountPercent > 0 && (
-                    <Box
+                    <Badge
                       sx={{
                         position: "absolute",
                         top: 16,
@@ -210,7 +210,7 @@ const Products = ({ showModal }) => {
                       }}
                     >
                       {product.discount.discountPercent}% OFF
-                    </Box>
+                    </Badge>
                   )}
 
                   <CardMedia
