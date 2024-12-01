@@ -8,7 +8,10 @@ import {
   Param,
   Patch,
   Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dtos/create-order.dto';
 
@@ -39,6 +42,12 @@ export class OrdersController {
       filter.orderDate = { $gte: new Date(startDate), $lte: new Date(endDate) };
     }
     return this.ordersService.findAll(filter);
+  }
+  @UseGuards(JwtGuard) // Protect the endpoint
+  @Get('/recent')
+  async getUserRecentOrders(@Req() req: any) {
+    const userEmail = req.user.email; // Extract user's email from JWT payload
+    return this.ordersService.findRecentOrdersByEmail(userEmail);
   }
 
   @Get('/:orderNumber')

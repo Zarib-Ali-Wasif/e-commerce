@@ -73,4 +73,19 @@ export class OrdersService {
 
     return { totalRevenue, orders };
   }
+
+  async findRecentOrdersByEmail(email: string) {
+    try {
+      // Fetch the most recent orders for a given user (email)
+      const recentOrders = await this.orderModel
+        .find({ userEmail: email })
+        .sort({ createdAt: -1 })
+        .limit(100);
+
+      return recentOrders;
+    } catch (err) {
+      console.error('Error fetching recent orders: ', err);
+      throw new Error('Failed to fetch recent orders.');
+    }
+  }
 }
