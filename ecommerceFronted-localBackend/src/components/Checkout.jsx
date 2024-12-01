@@ -18,6 +18,7 @@ import api from "../../lib/services/api";
 import { getProductDetails } from "../../lib/utils/helperFunctions";
 import { fetchProducts } from "../../lib/redux/slices/productsSlice";
 import { toast } from "react-toastify";
+import { GST_PERCENT } from "../../lib/utils/helperFunctions";
 
 const Checkout = () => {
   const dispatch = useDispatch();
@@ -190,13 +191,13 @@ const Checkout = () => {
               })}
               <Divider sx={{ my: 2 }} />
               <Typography variant="body1" color="textSecondary" sx={{ mb: 1 }}>
-                Subtotal: ${cartSummary.subtotal.toFixed(2)}
+                Subtotal: ${cartSummary.subtotal}
               </Typography>
               <Typography variant="body1" color="textSecondary" sx={{ mb: 1 }}>
-                Discount: ${cartSummary.discount.toFixed(2)}
+                Discount: ${cartSummary.discount}
               </Typography>
               <Typography variant="body1" color="textSecondary" sx={{ mb: 1 }}>
-                GST: ${cartSummary.gst.toFixed(2)}
+                GST ({GST_PERCENT}%): ${cartSummary.gst}
               </Typography>
               <Divider sx={{ my: 2 }} />
               <Typography variant="h6" fontWeight="bold" textAlign="right">

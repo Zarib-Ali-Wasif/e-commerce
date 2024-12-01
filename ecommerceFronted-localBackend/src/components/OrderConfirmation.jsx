@@ -14,6 +14,7 @@ import { ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { GST_PERCENT } from "../../lib/utils/helperFunctions";
 
 const OrderConfirmation = () => {
   const navigate = useNavigate();
@@ -174,7 +175,7 @@ const OrderConfirmation = () => {
             <strong>Discount:</strong> ${summary.discount}
           </Typography>
           <Typography variant="body2">
-            <strong>GST:</strong> {summary.gst}%
+            <strong>GST ({GST_PERCENT}%):</strong> {summary.gst}%
           </Typography>
           <Typography variant="h5" sx={{ mt: 2, fontWeight: "bold" }}>
             <strong>Total:</strong> ${summary.total}

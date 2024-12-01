@@ -21,6 +21,7 @@ import {
 } from "../../lib/redux/slices/cartSlice";
 import { fetchProducts } from "../../lib/redux/slices/productsSlice";
 import { getProductDetails } from "../../lib/utils/helperFunctions";
+import { GST_PERCENT } from "../../lib/utils/helperFunctions";
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -318,7 +319,7 @@ const Cart = () => {
                   }}
                 >
                   <Typography color="text.secondary" fontWeight="bold">
-                    GST (16%):
+                    GST ({GST_PERCENT}%):
                   </Typography>
                   <Typography color="black">${cartSummary.gst || 0}</Typography>
                 </Box>

@@ -1,5 +1,6 @@
+const GST_PERCENT = import.meta.env.VITE_GST_PERCENT;
+
 const calculateCartSummary = (cart, productsList) => {
-  const GST_PERCENT = 16;
   const subtotal = calculateSubtotal(cart, productsList);
   const discount = calculateTotalDiscount(cart, productsList);
   const gstAmount = calculateGstAmount(subtotal, discount, GST_PERCENT); // 16% GST
@@ -47,4 +48,4 @@ const getProductDetails = (productId, productsList) => {
   return productsList.find((product) => product._id === productId) || {};
 };
 
-export { calculateCartSummary, getProductDetails };
+export { calculateCartSummary, getProductDetails, GST_PERCENT };
