@@ -291,7 +291,7 @@ const Cart = () => {
                     Subtotal:
                   </Typography>
                   <Typography color="black">
-                    ${cartSummary.subtotal.toFixed(2) || 0}
+                    ${cartSummary.subtotal || 0}
                   </Typography>
                 </Box>
 
