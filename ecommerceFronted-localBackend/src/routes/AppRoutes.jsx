@@ -16,6 +16,7 @@ import AddProduct from "../pages/AddProduct";
 import OtpVerification from "../pages/OtpVerification";
 import UpdatePassword from "../pages/UpdatePassword";
 import ResetPassword from "../pages/ResetPassword";
+import RecentOrders from "../components/RecentOrders";
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ user, children }) => {
@@ -63,6 +64,14 @@ function AppRoutes() {
             element={
               <ProtectedRoute user={user}>
                 <OrderConfirmation />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/recent-orders"
+            element={
+              <ProtectedRoute user={user}>
+                <RecentOrders />
               </ProtectedRoute>
             }
           />
