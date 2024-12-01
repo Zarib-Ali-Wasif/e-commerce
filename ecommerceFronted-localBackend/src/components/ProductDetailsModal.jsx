@@ -86,13 +86,14 @@ const ProductDetailsModal = ({
           },
 
           backgroundColor: "#dfe5f2",
-          borderRadius: "8px",
+          borderRadius: "12px",
           outline: "none",
           position: "relative",
-          overflowY: "auto", // Allow scrolling if content overflows
+          overflowY: "auto",
+          boxShadow: 5,
         }}
       >
-        {/* Modal Content */}
+        {/* Close Button */}
         <IconButton
           sx={{ position: "absolute", top: 2, right: 4 }}
           onClick={handleClose}
@@ -100,7 +101,7 @@ const ProductDetailsModal = ({
           <CloseIcon />
         </IconButton>
 
-        <Grid container spacing={3}>
+        <Grid container spacing={4}>
           {/* Product Image */}
           <Grid item xs={12} md={6}>
             <Box
@@ -127,11 +128,31 @@ const ProductDetailsModal = ({
               {product.title}
             </Typography>
             <Typography variant="h6" color="textSecondary" gutterBottom>
-              Price: ${product.price}
+              Price: ${product.price.toFixed(2)}
             </Typography>
+
+            {/* Conditionally Display Discount Badge */}
+            {product.discount?.discountPercent > 0 && (
+              <Typography
+                variant="body1"
+                sx={{
+                  backgroundColor: "#387DA3", // Subtle orange for badge
+                  color: "white",
+                  display: "inline-block",
+                  padding: "4px 8px",
+                  borderRadius: "4px",
+                  mt: 1,
+                }}
+              >
+                {product.discount.discountPercent}% OFF -{" "}
+                {product.discount.name}
+              </Typography>
+            )}
+
             <Typography
               variant="body2"
               textAlign="justify"
+              mt={2}
               width={"95%"}
               paragraph
             >
@@ -172,8 +193,12 @@ const ProductDetailsModal = ({
               onClick={() => {
                 dispatch(addToCart(product)); // Dispatch addToCart action
                 handleClose();
-              }} // Add product to cart and close the modal
-              sx={{ mt: 3, backgroundColor: "#1C4771" }}
+              }}
+              sx={{
+                mt: 4,
+                backgroundColor: "#1C4771",
+                "&:hover": { backgroundColor: "#163b56" },
+              }}
             >
               Add to Cart
             </Button>
