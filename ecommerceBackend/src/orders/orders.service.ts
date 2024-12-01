@@ -74,13 +74,11 @@ export class OrdersService {
     return { totalRevenue, orders };
   }
 
-  async findRecentOrdersByEmail(email: string) {
+  async findRecentOrdersByEmail(userEmail: string) {
     try {
-      // Fetch the most recent orders for a given user (email)
       const recentOrders = await this.orderModel
-        .find({ userEmail: email })
-        .sort({ createdAt: -1 })
-        .limit(100);
+        .find({ email: userEmail })
+        .sort({ createdAt: -1 });
 
       return recentOrders;
     } catch (err) {
