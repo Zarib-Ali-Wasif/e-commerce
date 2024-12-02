@@ -15,7 +15,7 @@ import ForgetPassword from "../pages/ForgetPassword";
 import AddProduct from "../pages/AddProduct";
 import OtpVerification from "../pages/OtpVerification";
 import ResetPassword from "../pages/ResetPassword";
-import ProfilePage from "../components/ProfilePage";
+import ManageAccount from "../components/ManageAccount";
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ user, children }) => {
@@ -61,10 +61,10 @@ function AppRoutes() {
           />
 
           <Route
-            path="/profile"
+            path="/manage-account"
             element={
               <ProtectedRoute user={user}>
-                <ProfilePage />
+                <ManageAccount />
               </ProtectedRoute>
             }
           />

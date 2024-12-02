@@ -83,6 +83,9 @@ const AddProduct = () => {
 
   const categories = [
     "Electronics",
+    "Jewelry",
+    "Men's Clothing",
+    "Women's Clothing",
     "Fashion",
     "Home Appliances",
     "Books",

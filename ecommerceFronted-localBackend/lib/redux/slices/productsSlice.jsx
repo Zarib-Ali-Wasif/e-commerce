@@ -12,7 +12,7 @@ export const fetchProducts = createAsyncThunk(
           ? "store/products"
           : `store/products?category=${category}`;
       const response = await api.get(endpoint);
-      toast.success("Products fetched successfully");
+      // toast.success("Products fetched successfully");
       return response.data;
     } catch (error) {
       toast.error("Failed to fetch products");
@@ -29,7 +29,7 @@ export const fetchCategories = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await api.get("store/products/categories");
-      toast.success("Categories fetched successfully");
+      // toast.success("Categories fetched successfully");
       return response.data;
     } catch (error) {
       toast.error("Failed to fetch categories");

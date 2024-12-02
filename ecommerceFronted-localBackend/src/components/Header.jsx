@@ -20,6 +20,7 @@ import {
   Badge,
   Menu,
   MenuItem,
+  Avatar,
 } from "@mui/material";
 import LockResetIcon from "@mui/icons-material/LockReset";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
@@ -32,8 +33,11 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../lib/redux/slices/authSlice";
+import api from "../../lib/services/api";
 
 function Header() {
   const location = useLocation();
@@ -42,6 +46,21 @@ function Header() {
   const { cart } = useSelector((state) => state.cart);
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0); // Calculate total items in the cart
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+  const userId = localStorage.getItem("userId"); // Get userId from local storage
+  const [userInfo, setUserInfo] = useState({});
+
+  useEffect(() => {
+    // Fetch user info by userId
+    const fetchUserInfo = async () => {
+      try {
+        const response = await api.get(`user/findUserById/${userId}`);
+        setUserInfo(response.data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+    isAuthenticated ? fetchUserInfo() : setUserInfo({});
+  }, [isAuthenticated, userId]);
 
   const tabsName = ["Home", "Products", "About", "Contact"];
   const drawerIconsComponent = [
@@ -103,17 +122,34 @@ function Header() {
         {/* Show different menu items based on authentication status */}
         {isAuthenticated ? (
           <Box mt={2}>
+            {/* Role-Based Menu Item */}
             <ListItem>
-              <ListItemButton onClick={() => navigate("/update-password")}>
+              <ListItemButton
+                onClick={() =>
+                  navigate(
+                    userInfo.role === "Admin"
+                      ? "/admin-panel"
+                      : "/manage-account"
+                  )
+                }
+              >
                 <ListItemIcon sx={{ color: "#1C4771" }}>
-                  <LockResetIcon />
+                  {userInfo.role === "Admin" ? (
+                    <AdminPanelSettingsIcon />
+                  ) : (
+                    <ManageAccountsIcon />
+                  )}
                 </ListItemIcon>
                 <ListItemText
-                  primary="Update Password"
+                  primary={
+                    userInfo.role === "Admin" ? "Admin Panel" : "Manage Account"
+                  }
                   sx={{ color: "#1C4771" }}
                 />
               </ListItemButton>
             </ListItem>
+
+            {/* Logout Menu Item */}
             <ListItem>
               <ListItemButton onClick={handleLogout}>
                 <ListItemIcon sx={{ color: "#1C4771" }}>
@@ -225,10 +261,28 @@ function Header() {
             </Badge>
           </IconButton>
 
-          {/* Account Icon with Dropdown */}
-          <IconButton onClick={handleClick}>
-            <AccountCircleIcon sx={{ color: "#1C4771", fontSize: 35, ml: 2 }} />
-          </IconButton>
+          {/* Account  with Dropdown */}
+          {isAuthenticated ? (
+            <Avatar
+              sx={{
+                width: 35,
+                height: 35,
+                marginRight: 2,
+                border: "2px solid #1C4771",
+                cursor: "pointer",
+                ml: 2,
+              }}
+              alt="User Avatar"
+              src={userInfo.avatar}
+              onClick={handleClick} // Opens the dropdown
+            />
+          ) : (
+            <IconButton onClick={handleClick}>
+              <AccountCircleIcon
+                sx={{ color: "#1C4771", fontSize: 35, ml: 2 }}
+              />
+            </IconButton>
+          )}
         </Toolbar>
       </AppBar>
 
@@ -281,6 +335,7 @@ function Header() {
       {/* Account Dropdown Menu */}
       <Menu
         sx={{
+          mt: 2,
           "& .MuiMenu-paper": { backgroundColor: "#dfe5f2" },
         }}
         anchorEl={anchorEl}
@@ -290,16 +345,24 @@ function Header() {
         {isAuthenticated
           ? [
               <MenuItem
-                key="update-password"
+                key="role-specific"
                 onClick={() => {
-                  navigate("/update-password");
+                  navigate(
+                    userInfo.role === "Admin"
+                      ? "/admin-panel"
+                      : "/manage-account"
+                  );
                   handleClose();
                 }}
               >
                 <ListItemIcon>
-                  <LockResetIcon sx={{ color: "#1C4771" }} />
+                  {userInfo.role === "Admin" ? (
+                    <AdminPanelSettingsIcon sx={{ color: "#1C4771" }} />
+                  ) : (
+                    <ManageAccountsIcon sx={{ color: "#1C4771" }} />
+                  )}
                 </ListItemIcon>
-                Update Password
+                {userInfo.role === "Admin" ? "Admin Panel" : "Manage Account"}
               </MenuItem>,
               <MenuItem
                 key="logout"
