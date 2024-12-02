@@ -11,30 +11,15 @@ import {
   Box,
   Typography,
   CircularProgress,
+  TextField,
 } from "@mui/material";
 import api from "../../../lib/services/api";
 
 const OrdersManagement = () => {
-  // const orders = [
-  //   {
-  //     id: "12345",
-  //     customer: "John Doe",
-  //     status: "Processing",
-  //     total: "$250",
-  //     date: "2024-12-01",
-  //   },
-  //   {
-  //     id: "12346",
-  //     customer: "Jane Smith",
-  //     status: "Shipped",
-  //     total: "$180",
-  //     date: "2024-12-01",
-  //   },
-  // ];
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  console.log(orders);
+  const [statusUpdate, setStatusUpdate] = useState({}); // Track status updates
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -49,6 +34,26 @@ const OrdersManagement = () => {
     };
     fetchOrders();
   }, []);
+
+  const handleStatusChange = (orderNumber, value) => {
+    setStatusUpdate({ ...statusUpdate, [orderNumber]: value });
+  };
+
+  const updateOrderStatus = async (orderNumber) => {
+    const status = statusUpdate[orderNumber] || "";
+    if (!status) return alert("Please enter a valid status.");
+    try {
+      await api.patch(`orders/status/${orderNumber}`, { status });
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.orderNumber === orderNumber ? { ...order, status } : order
+        )
+      );
+      alert("Order status updated successfully.");
+    } catch (error) {
+      alert("Failed to update order status.");
+    }
+  };
 
   return (
     <Box sx={{ padding: "20px", maxWidth: "100%" }}>
@@ -142,9 +147,18 @@ const OrdersManagement = () => {
               {orders.map((order) => (
                 <TableRow key={order.orderNumber}>
                   <TableCell>{order.orderNumber}</TableCell>
-                  <TableCell>{order.userId.name}</TableCell>
+                  <TableCell>{order.userId?.name}</TableCell>
                   <TableCell>{order.address}</TableCell>
-                  <TableCell>{order.status}</TableCell>
+                  <TableCell>
+                    <TextField
+                      value={statusUpdate[order.orderNumber] || order.status}
+                      onChange={(e) =>
+                        handleStatusChange(order.orderNumber, e.target.value)
+                      }
+                      variant="outlined"
+                      size="small"
+                    />
+                  </TableCell>
                   <TableCell>{order.summary.total}</TableCell>
                   <TableCell>{order.paymentMethod}</TableCell>
                   <TableCell>{order.orderDate.slice(0, 10)}</TableCell>
@@ -152,6 +166,7 @@ const OrdersManagement = () => {
                     <Button
                       variant="contained"
                       style={{ marginRight: "8px", backgroundColor: "#1C4771" }}
+                      onClick={() => updateOrderStatus(order.orderNumber)}
                     >
                       Update
                     </Button>
