@@ -18,7 +18,6 @@ import {
   Grid,
   Paper,
 } from "@mui/material";
-import { ShoppingCart, AccessTime, LocalShipping } from "@mui/icons-material";
 import api from "../../lib/services/api";
 
 const RecentOrders = () => {

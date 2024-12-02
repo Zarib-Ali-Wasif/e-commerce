@@ -4,11 +4,13 @@ import DashboardOverview from "./DashboardOverview";
 import OrdersManagement from "./OrdersManagement";
 import ProductsManagement from "./ProductsManagement";
 import CustomerManagement from "./CustomerManagement";
+import UpdatePassword from "../../pages/UpdatePassword";
 import {
   Dashboard,
   ShoppingCart,
   Inventory,
   People,
+  Lock,
 } from "@mui/icons-material";
 
 const AdminPanel = () => {
@@ -129,6 +131,32 @@ const AdminPanel = () => {
             Customers
           </Button>
         </Grid>
+
+        <Grid item>
+          <Button
+            variant="outlined"
+            startIcon={<Lock />}
+            onClick={() => setActiveSection("UpdatePassword")}
+            sx={{
+              minWidth: 180,
+              borderRadius: "12px",
+              padding: "12px 24px",
+              textTransform: "none",
+              fontWeight: 500,
+              boxShadow: 4,
+              border: "1px solid #1C4771",
+              color: "#1C4771",
+              "&:hover": {
+                backgroundColor: "#1C4771",
+                color: "white",
+                boxShadow: 8,
+              },
+              transition: "all 0.3s ease",
+            }}
+          >
+            Update Password
+          </Button>
+        </Grid>
       </Grid>
 
       {/* Dynamic Section Rendering */}
@@ -136,6 +164,7 @@ const AdminPanel = () => {
       {activeSection === "OrdersManagement" && <OrdersManagement />}
       {activeSection === "ProductsManagement" && <ProductsManagement />}
       {activeSection === "CustomerManagement" && <CustomerManagement />}
+      {activeSection === "UpdatePassword" && <UpdatePassword />}
     </Box>
   );
 };
