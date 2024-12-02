@@ -3,7 +3,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Toolbar } from "@mui/material";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import MailIcon from "@mui/icons-material/Mail";
-import CallIcon from "@mui/icons-material/Call";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import {
   Box,
   Card,
@@ -244,7 +244,7 @@ const Contact = () => {
               }}
             >
               <CardContent>
-                <CallIcon
+                <WhatsAppIcon
                   sx={{
                     fontSize: 60,
                     color: theme.palette.success.main, // Green for success icon
