@@ -12,6 +12,8 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+
 // Custom Theme with primary color #282c34
 const theme = createTheme({
   palette: {
@@ -54,12 +56,28 @@ const theme = createTheme({
 });
 
 const Contact = () => {
+  const navigate = useNavigate();
+  const handleEmail = (e) => {
+    console.log("Email clicked");
+    e.preventDefault();
+    navigate("/email-us");
+  };
+  const handleWhatsapp = (e) => {
+    e.preventDefault();
+    const phoneNumber = "1234567890"; // Replace with the actual number
+    const message =
+      "Hello, I'm interested in learning more about your services!"; // Customize the message
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
+      message
+    )}`;
+    window.open(whatsappUrl, "_blank");
+  };
   return (
     <ThemeProvider theme={theme}>
       <Toolbar />
       <Box
         sx={{
-          py: 8,
+          py: 12,
           backgroundColor: "#d1dce8",
           minHeight: "100vh",
           height: "100%",
@@ -95,7 +113,7 @@ const Contact = () => {
           container
           spacing={4}
           sx={{
-            maxWidth: 900,
+            maxWidth: 1050,
             width: "100%",
             px: 3,
             justifyContent: "center",
@@ -130,12 +148,14 @@ const Contact = () => {
                   variant="h6"
                   fontWeight="bold"
                   color={theme.palette.primary.main}
-                  gutterBottom
                 >
                   Customer Support
                 </Typography>
+                <Typography color="textSecondary" sx={{ fontSize: 11, mb: 2 }}>
+                  24/7 Customer Support
+                </Typography>
                 <Typography variant="body1" color="textSecondary" mb={2}>
-                  Available 24/7 Toll-Free Services
+                  Our friendly team is here to help you.
                 </Typography>
                 <Button
                   variant="outlined"
@@ -147,7 +167,7 @@ const Contact = () => {
                     borderColor: theme.palette.primary.main,
                   }}
                 >
-                  1800-00-0000
+                  Chat Now
                 </Button>
               </CardContent>
             </Card>
@@ -181,9 +201,11 @@ const Contact = () => {
                   variant="h6"
                   fontWeight="bold"
                   color={theme.palette.primary.main}
-                  gutterBottom
                 >
                   Email Us
+                </Typography>
+                <Typography color="textSecondary" sx={{ fontSize: 11, mb: 2 }}>
+                  shopeasy.mern@gmail.com
                 </Typography>
                 <Typography variant="body1" color="textSecondary" mb={2}>
                   Quick response within 24 hours
@@ -197,8 +219,9 @@ const Contact = () => {
                     color: theme.palette.primary.main,
                     borderColor: theme.palette.primary.main,
                   }}
+                  onClick={handleEmail}
                 >
-                  help@shopeasy.com
+                  Send Message
                 </Button>
               </CardContent>
             </Card>
@@ -232,9 +255,11 @@ const Contact = () => {
                   variant="h6"
                   fontWeight="bold"
                   color={theme.palette.primary.main}
-                  gutterBottom
                 >
-                  Direct Call
+                  Whatsapp
+                </Typography>
+                <Typography color="textSecondary" sx={{ fontSize: 11, mb: 2 }}>
+                  123-456-7890
                 </Typography>
                 <Typography variant="body1" color="textSecondary" mb={2}>
                   Monday - Friday, 9:00 AM - 6:00 PM
@@ -248,8 +273,10 @@ const Contact = () => {
                     color: theme.palette.success.main,
                     borderColor: theme.palette.success.main,
                   }}
+                  onClick={handleWhatsapp}
                 >
-                  123-456-7890
+                  {/* 123-456-7890 */}
+                  Whatsapp Now
                 </Button>
               </CardContent>
             </Card>

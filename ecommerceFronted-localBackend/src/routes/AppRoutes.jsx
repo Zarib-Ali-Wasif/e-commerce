@@ -16,6 +16,7 @@ import AddProduct from "../pages/AddProduct";
 import OtpVerification from "../pages/OtpVerification";
 import ResetPassword from "../pages/ResetPassword";
 import ManageAccount from "../components/ManageAccount";
+import EmailUs from "../components/EmailUs";
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ user, children }) => {
@@ -48,6 +49,7 @@ function AppRoutes() {
           <Route path="/forget-password" element={<ForgetPassword />} />
           <Route path="/otp-verification" element={<OtpVerification />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/email-us" element={<EmailUs />} />
 
           {/* Protected Routes */}
 
