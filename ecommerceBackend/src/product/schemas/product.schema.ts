@@ -9,7 +9,7 @@ export class Product {
   title: string;
 
   @Prop({
-    default: 'https://placehold.co/400x400?text=Product+Image',
+    default: 'https://placehold.co/400x400?text=Image+not+available',
   })
   image: string;
 

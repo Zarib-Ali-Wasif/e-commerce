@@ -17,6 +17,10 @@ import { Role } from 'src/auth/enums/role.enum';
 export class CreateUserDto {
   @ApiProperty()
   @IsString()
+  avatar: string;
+
+  @ApiProperty()
+  @IsString()
   @IsNotEmpty()
   name: string;
 

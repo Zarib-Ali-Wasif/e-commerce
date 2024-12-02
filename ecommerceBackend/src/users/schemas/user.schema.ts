@@ -7,6 +7,12 @@ export type UserDocument = User & Document;
 
 @Schema({ timestamps: true })
 export class User {
+  @Prop({
+    required: false,
+    default: 'https://via.placeholder.com/150?text=Avatar',
+  })
+  avatar: string;
+
   @Prop({ required: true })
   name: string;
 
