@@ -11,7 +11,8 @@ import {
   Box,
   Typography,
   CircularProgress,
-  TextField,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import api from "../../../lib/services/api";
 
@@ -20,6 +21,7 @@ const OrdersManagement = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [statusUpdate, setStatusUpdate] = useState({}); // Track status updates
+  const [buttonColor, setButtonColor] = useState({}); // Track button colors
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -41,7 +43,8 @@ const OrdersManagement = () => {
 
   const updateOrderStatus = async (orderNumber) => {
     const status = statusUpdate[orderNumber] || "";
-    if (!status) return alert("Please enter a valid status.");
+    if (!status) return alert("Please select a valid status.");
+
     try {
       await api.patch(`orders/status/${orderNumber}`, { status });
       setOrders((prevOrders) =>
@@ -49,6 +52,12 @@ const OrdersManagement = () => {
           order.orderNumber === orderNumber ? { ...order, status } : order
         )
       );
+
+      setButtonColor({ ...buttonColor, [orderNumber]: "green" });
+      setTimeout(() => {
+        setButtonColor({ ...buttonColor, [orderNumber]: "#1C4771" });
+      }, 2000);
+
       alert("Order status updated successfully.");
     } catch (error) {
       alert("Failed to update order status.");
@@ -84,59 +93,36 @@ const OrdersManagement = () => {
                 backgroundColor: "#1C4771",
                 color: "white",
                 fontWeight: 600,
-                borderRadius: "40px",
               }}
             >
-              <TableCell
-                style={{ color: "white", fontWeight: "bold", fontSize: "15px" }}
-              >
+              <TableCell style={{ color: "white", fontWeight: "bold" }}>
                 Order ID
               </TableCell>
-              <TableCell
-                style={{ color: "white", fontWeight: "bold", fontSize: "15px" }}
-              >
+              <TableCell style={{ color: "white", fontWeight: "bold" }}>
                 Customer
               </TableCell>
-              <TableCell
-                style={{ color: "white", fontWeight: "bold", fontSize: "15px" }}
-              >
+              <TableCell style={{ color: "white", fontWeight: "bold" }}>
                 Address
               </TableCell>
-              <TableCell
-                style={{ color: "white", fontWeight: "bold", fontSize: "15px" }}
-              >
+              <TableCell style={{ color: "white", fontWeight: "bold" }}>
                 Status
               </TableCell>
-              <TableCell
-                style={{ color: "white", fontWeight: "bold", fontSize: "15px" }}
-              >
+              <TableCell style={{ color: "white", fontWeight: "bold" }}>
                 Total
               </TableCell>
-              <TableCell
-                style={{ color: "white", fontWeight: "bold", fontSize: "15px" }}
-              >
+              <TableCell style={{ color: "white", fontWeight: "bold" }}>
                 Payment Method
               </TableCell>
-              <TableCell
-                style={{ color: "white", fontWeight: "bold", fontSize: "15px" }}
-              >
+              <TableCell style={{ color: "white", fontWeight: "bold" }}>
                 Date
               </TableCell>
-              <TableCell
-                style={{ color: "white", fontWeight: "bold", fontSize: "15px" }}
-              >
+              <TableCell style={{ color: "white", fontWeight: "bold" }}>
                 Actions
               </TableCell>
             </TableRow>
           </TableHead>
           {loading ? (
-            <Box
-              display="flex"
-              flexDirection="column"
-              justifyContent="center"
-              alignItems="center"
-              height="50vh"
-            >
+            <Box display="flex" justifyContent="center" height="50vh">
               <CircularProgress size={100} />
               <Typography variant="body1" mt={2}>
                 Loading orders...
@@ -150,14 +136,19 @@ const OrdersManagement = () => {
                   <TableCell>{order.userId?.name}</TableCell>
                   <TableCell>{order.address}</TableCell>
                   <TableCell>
-                    <TextField
+                    <Select
                       value={statusUpdate[order.orderNumber] || order.status}
                       onChange={(e) =>
                         handleStatusChange(order.orderNumber, e.target.value)
                       }
-                      variant="outlined"
-                      size="small"
-                    />
+                      fullWidth
+                    >
+                      <MenuItem value="New">New</MenuItem>
+                      <MenuItem value="Processing">Processing</MenuItem>
+                      <MenuItem value="Shipped">Shipped</MenuItem>
+                      <MenuItem value="Delivered">Delivered</MenuItem>
+                      <MenuItem value="Canceled">Canceled</MenuItem>
+                    </Select>
                   </TableCell>
                   <TableCell>{order.summary.total}</TableCell>
                   <TableCell>{order.paymentMethod}</TableCell>
@@ -165,7 +156,11 @@ const OrdersManagement = () => {
                   <TableCell>
                     <Button
                       variant="contained"
-                      style={{ marginRight: "8px", backgroundColor: "#1C4771" }}
+                      style={{
+                        backgroundColor:
+                          buttonColor[order.orderNumber] || "#1C4771",
+                        color: "white",
+                      }}
                       onClick={() => updateOrderStatus(order.orderNumber)}
                     >
                       Update
