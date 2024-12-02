@@ -32,16 +32,15 @@ const EmailUs = () => {
       to_name: "Shop Easy",
       from_name,
       reply_to: email,
-      email,
       message,
     };
 
     emailjs
       .send(
-        "service_o8d8oxe", // Replace with your EmailJS service ID
-        "template_vqm0cgk", // Replace with your EmailJS template ID
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
         updatedFormData,
-        "eY1kh5FXgq_97yedH" // Replace with your EmailJS user ID
+        import.meta.env.VITE_EMAILJS_USER_ID
       )
       .then(
         () => {
