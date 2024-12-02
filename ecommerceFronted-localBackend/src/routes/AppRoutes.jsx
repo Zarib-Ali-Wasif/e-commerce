@@ -20,12 +20,23 @@ import EmailUs from "../components/EmailUs";
 import AdminPanel from "../components/Admin/AdminPanel";
 
 // ProtectedRoute Component
-const ProtectedRoute = ({ user, children }) => {
-  return user ? children : <Navigate to="/login" replace />;
+const ProtectedRoute = ({ user, requiredRole, children }) => {
+  // Check if user is logged in and if the role matches the required role
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  const userRole = user?.role; // Assuming 'role' is stored in user object
+  if (requiredRole && userRole !== requiredRole) {
+    // If the role does not match, redirect to not found page or home
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
 };
 
 function AppRoutes() {
-  const user = localStorage.getItem("user");
+  const user = JSON.parse(localStorage.getItem("user")); // Assuming user data is stored in localStorage
 
   return (
     <BrowserRouter
@@ -53,7 +64,6 @@ function AppRoutes() {
           <Route path="/email-us" element={<EmailUs />} />
 
           {/* Protected Routes */}
-
           <Route
             path="/order-confirmation"
             element={
@@ -63,18 +73,21 @@ function AppRoutes() {
             }
           />
 
+          {/* User Protected Route */}
           <Route
             path="/manage-account"
             element={
-              <ProtectedRoute user={user}>
+              <ProtectedRoute user={user} requiredRole="User">
                 <ManageAccount />
               </ProtectedRoute>
             }
           />
+
+          {/* Admin Protected Route */}
           <Route
             path="/admin-panel"
             element={
-              <ProtectedRoute user={user}>
+              <ProtectedRoute user={user} requiredRole="Admin">
                 <AdminPanel />
               </ProtectedRoute>
             }
