@@ -55,7 +55,7 @@ export class OrdersController {
     return this.ordersService.findOne({ orderNumber });
   }
 
-  @Patch('/:orderNumber/status')
+  @Patch('status/:orderNumber')
   async updateOrderStatus(
     @Param('orderNumber') orderNumber: string,
     @Body('status') status: string,

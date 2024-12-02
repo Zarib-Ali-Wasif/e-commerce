@@ -1,13 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Order {
   @Prop({ required: true })
   orderNumber: string; // Unique order number
 
-  @Prop({ required: true })
-  userId: string;
+  // @Prop({ required: true })
+  // userId: string;
+
+  @Prop({ type: Types.ObjectId, ref: 'User' }) // Correct reference
+  userId: Types.ObjectId; // Change to ObjectId type
 
   @Prop({ required: true })
   email: string;

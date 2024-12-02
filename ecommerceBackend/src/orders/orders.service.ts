@@ -25,7 +25,11 @@ export class OrdersService {
   }
 
   async findAll(filter: any): Promise<Order[]> {
-    return this.orderModel.find(filter).sort({ createdAt: -1 }).exec();
+    return this.orderModel
+      .find(filter)
+      .sort({ createdAt: -1 })
+      .populate('userId', 'name email role') // Specify fields to populate
+      .exec();
   }
 
   async findOne(filter: any): Promise<Order> {
