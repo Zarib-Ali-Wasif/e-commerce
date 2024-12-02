@@ -129,7 +129,7 @@ const EmailUs = () => {
             }}
           >
             {isSubmitting ? (
-              <CircularProgress size={24} color="secondary" />
+              <CircularProgress size={24} color="primary" />
             ) : (
               "Submit"
             )}
