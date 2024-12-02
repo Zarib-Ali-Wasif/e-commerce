@@ -17,6 +17,7 @@ import OtpVerification from "../pages/OtpVerification";
 import ResetPassword from "../pages/ResetPassword";
 import ManageAccount from "../components/ManageAccount";
 import EmailUs from "../components/EmailUs";
+import AdminPanel from "../components/Admin/AdminPanel";
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ user, children }) => {
@@ -67,6 +68,14 @@ function AppRoutes() {
             element={
               <ProtectedRoute user={user}>
                 <ManageAccount />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin-panel"
+            element={
+              <ProtectedRoute user={user}>
+                <AdminPanel />
               </ProtectedRoute>
             }
           />
