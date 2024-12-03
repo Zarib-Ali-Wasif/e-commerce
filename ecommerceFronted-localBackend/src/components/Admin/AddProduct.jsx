@@ -16,7 +16,7 @@ import { useFormik } from "formik";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
-import api from "../../lib/services/api";
+import api from "../../../lib/services/api";
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -73,7 +73,7 @@ const AddProduct = () => {
 
         toast.success("Product added successfully!");
         resetForm();
-        navigate("/products"); // Navigate to the products list or other desired page
+        localStorage.getItem("role") === "Admin" ? null : navigate("/products"); // Navigate to the products list or other desired page
       } catch (error) {
         console.error("An error occurred:", error.message);
         toast.error("Error: Failed to add product. Please try again later.");

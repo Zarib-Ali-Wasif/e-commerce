@@ -12,7 +12,7 @@ import OrderConfirmation from "../components/OrderConfirmation";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import ForgetPassword from "../pages/ForgetPassword";
-import AddProduct from "../pages/AddProduct";
+import AddProduct from "../components/Admin/AddProduct";
 import OtpVerification from "../pages/OtpVerification";
 import ResetPassword from "../pages/ResetPassword";
 import ManageAccount from "../components/ManageAccount";

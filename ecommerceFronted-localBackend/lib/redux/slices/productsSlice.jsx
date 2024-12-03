@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import api from "../../services/api";
 
 // Async thunk to fetch products
@@ -40,11 +40,50 @@ export const fetchCategories = createAsyncThunk(
   }
 );
 
+// Async thunk to delete a product
+export const deleteProduct = createAsyncThunk(
+  "products/deleteProduct",
+  async (productId, { rejectWithValue }) => {
+    try {
+      const response = await api.delete(`store/products/${productId}`);
+      toast.success("Product deleted successfully");
+      return productId; // Returning the deleted product's ID to remove from the state
+    } catch (error) {
+      toast.error("Failed to delete product");
+      return rejectWithValue(
+        error.response?.data || "Failed to delete product"
+      );
+    }
+  }
+);
+
+// Async thunk to update a product
+export const updateProduct = createAsyncThunk(
+  "products/updateProduct",
+  async ({ productId, dataToUpdate }, { rejectWithValue }) => {
+    try {
+      const response = await api.patch(
+        `store/products/${productId}`,
+        dataToUpdate
+      );
+      toast.success("Product updated successfully");
+      return response.data; // Returning updated product details
+    } catch (error) {
+      toast.error("Failed to update product");
+      return rejectWithValue(
+        error.response?.data || "Failed to update product"
+      );
+    }
+  }
+);
+
 const initialState = {
   productsList: [],
   categories: [],
   loading: false,
   loadingCategories: false,
+  loadingDelete: false,
+  loadingUpdate: false,
   error: null,
 };
 
@@ -82,6 +121,39 @@ const productsSlice = createSlice({
       })
       .addCase(fetchCategories.rejected, (state, action) => {
         state.loadingCategories = false;
+        state.error = action.payload;
+      })
+      // Delete Product
+      .addCase(deleteProduct.pending, (state) => {
+        state.loadingDelete = true;
+      })
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        state.loadingDelete = false;
+        state.productsList = state.productsList.filter(
+          (product) => product.id !== action.payload
+        );
+        state.error = null;
+      })
+      .addCase(deleteProduct.rejected, (state, action) => {
+        state.loadingDelete = false;
+        state.error = action.payload;
+      })
+      // Update Product
+      .addCase(updateProduct.pending, (state) => {
+        state.loadingUpdate = true;
+      })
+      .addCase(updateProduct.fulfilled, (state, action) => {
+        state.loadingUpdate = false;
+        const index = state.productsList.findIndex(
+          (product) => product.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.productsList[index] = action.payload;
+        }
+        state.error = null;
+      })
+      .addCase(updateProduct.rejected, (state, action) => {
+        state.loadingUpdate = false;
         state.error = action.payload;
       });
   },
