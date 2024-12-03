@@ -52,8 +52,8 @@ const Signup = () => {
       .required("Email is required"),
     contactNumber: Yup.string()
       .matches(
-        /^[\d+_]+$/,
-        "Contact number must contain only digits, '+' or '_'"
+        /^\+?[0-9]{10,15}$/,
+        "Contact number must be 10 to 15 digits long and may start with a '+'"
       )
       .required("Contact number is required"),
     gender: Yup.string().required("Gender is required"),
@@ -238,6 +238,7 @@ const Signup = () => {
             name="contactNumber"
             variant="standard"
             fullWidth
+            type="tel"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.contactNumber}
