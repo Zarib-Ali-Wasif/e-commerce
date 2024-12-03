@@ -14,6 +14,7 @@ import {
   Select,
   MenuItem,
   TextField,
+  Grid,
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -88,42 +89,63 @@ const OrdersManagement = () => {
 
   return (
     <Box sx={{ padding: "20px", maxWidth: "100%" }}>
-      <Box display="flex" gap={2} mb={2}>
-        <Select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          displayEmpty
-          sx={{ width: "200px" }}
-        >
-          <MenuItem value="">All Orders</MenuItem>
-          <MenuItem value="Pending">Pending</MenuItem>
-          <MenuItem value="Processing">Processing</MenuItem>
-          <MenuItem value="Shipped">Shipped</MenuItem>
-          <MenuItem value="Delivered">Delivered</MenuItem>
-          <MenuItem value="Canceled">Canceled</MenuItem>
-        </Select>
+      <Grid container spacing={2} mb={2}>
+        {/* Status Filter */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            displayEmpty
+            fullWidth
+          >
+            <MenuItem value="">All Orders</MenuItem>
+            <MenuItem value="Pending">Pending</MenuItem>
+            <MenuItem value="Processing">Processing</MenuItem>
+            <MenuItem value="Shipped">Shipped</MenuItem>
+            <MenuItem value="Delivered">Delivered</MenuItem>
+            <MenuItem value="Canceled">Canceled</MenuItem>
+          </Select>
+        </Grid>
 
-        <TextField
-          label="Search by Order ID or Customer Name"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          sx={{ flex: 1 }}
-          placeholder="Search by Order ID or Customer Name"
-        />
+        {/* Search Field */}
+        <Grid item xs={12} sm={6} md={3}>
+          <TextField
+            label="Search by Order ID or Customer Name"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            fullWidth
+            placeholder="Search by Order ID or Customer Name"
+          />
+        </Grid>
 
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            label="Start Date"
-            value={startDate}
-            onChange={(date) => setStartDate(date)}
-          />
-          <DatePicker
-            label="End Date"
-            value={endDate}
-            onChange={(date) => setEndDate(date)}
-          />
-        </LocalizationProvider>
-      </Box>
+        {/* Start Date Picker */}
+        <Grid item xs={12} sm={6} md={3}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="Start Date"
+              value={startDate}
+              onChange={(date) => setStartDate(date)}
+              slots={{
+                textField: (params) => <TextField {...params} fullWidth />,
+              }}
+            />
+          </LocalizationProvider>
+        </Grid>
+
+        {/* End Date Picker */}
+        <Grid item xs={12} sm={6} md={3}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="End Date"
+              value={endDate}
+              onChange={(date) => setEndDate(date)}
+              slots={{
+                textField: (params) => <TextField {...params} fullWidth />,
+              }}
+            />
+          </LocalizationProvider>
+        </Grid>
+      </Grid>
 
       <TableContainer
         component={Paper}

@@ -140,7 +140,7 @@ const AdminPanel = () => {
             sx={{
               minWidth: 180,
               borderRadius: "12px",
-              padding: "12px 24px",
+              padding: "12px 18px",
               textTransform: "none",
               fontWeight: 500,
               boxShadow: 4,
