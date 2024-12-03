@@ -55,6 +55,14 @@ export class UsersController {
     return await this.usersService.update(id, updateUserDto);
   }
 
+  @Patch('status/:id')
+  async updateUserStatus(
+    @Param('id') id: string,
+    @Body('status') status: boolean,
+  ) {
+    return this.usersService.updateStatus(id, status);
+  }
+
   @Delete('deleteById/:id')
   delete(@Param('id') id: string) {
     return this.usersService.delete(id);

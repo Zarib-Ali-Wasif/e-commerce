@@ -43,10 +43,12 @@ const CustomerManagement = () => {
         const { userId, orderDate } = order;
         if (!customerMap.has(userId._id)) {
           customerMap.set(userId._id, {
+            userId: userId._id,
             name: userId.name,
             email: userId.email,
             phone: userId.contactNumber,
             active: userId.is_Active,
+            createdAt: userId.createdAt,
             totalOrders: 0,
             lastOrderDate: orderDate,
           });
@@ -85,6 +87,15 @@ const CustomerManagement = () => {
       );
     }
     setFilteredCustomers(filtered);
+  };
+
+  const handleStatusChange = async (userId, status) => {
+    try {
+      await api.patch(`user/status/${userId}`, { status });
+      fetchOrders(); // Refetch orders to update the list
+    } catch (err) {
+      console.error("Failed to update status", err);
+    }
   };
 
   return (
@@ -148,6 +159,7 @@ const CustomerManagement = () => {
                   "Total Orders",
                   "Last Order Date",
                   "Status",
+                  "Account Created",
                 ].map((header) => (
                   <TableCell
                     key={header}
@@ -179,7 +191,26 @@ const CustomerManagement = () => {
                     <TableCell>{customer.totalOrders}</TableCell>
                     <TableCell>{customer.lastOrderDate.slice(0, 10)}</TableCell>
                     <TableCell>
-                      {customer.active ? "Active" : "Deactivated"}
+                      <Select
+                        value={
+                          customer.active ? "Active" : "Deactivated" || "Active"
+                        }
+                        onChange={(e) =>
+                          handleStatusChange(
+                            customer.userId,
+                            e.target.value == "Active" ? true : false
+                          )
+                        }
+                        sx={{ width: "100%" }}
+                      >
+                        <MenuItem value="Active">Active</MenuItem>
+                        <MenuItem value="Deactivated">Deactivated</MenuItem>
+                      </Select>
+                    </TableCell>
+                    <TableCell>
+                      {customer.createdAt
+                        ? customer.createdAt.slice(0, 10)
+                        : "-"}
                     </TableCell>
                   </TableRow>
                 ))

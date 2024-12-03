@@ -28,7 +28,7 @@ export class OrdersService {
     return this.orderModel
       .find(filter)
       .sort({ createdAt: -1 })
-      .populate('userId', 'name email contactNumber role is_Active') // Specify fields to populate
+      .populate('userId', 'name email contactNumber role is_Active createdAt') // Specify fields to populate
       .exec();
   }
 

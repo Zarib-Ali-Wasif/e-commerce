@@ -173,6 +173,12 @@ export class UsersService {
     }
   }
 
+  async updateStatus(id: string, status: boolean) {
+    return this.userModel
+      .findByIdAndUpdate(id, { is_Active: status }, { new: true })
+      .exec();
+  }
+
   async delete(id: string) {
     try {
       const deletedUser = await this.userModel.findByIdAndDelete(id);
