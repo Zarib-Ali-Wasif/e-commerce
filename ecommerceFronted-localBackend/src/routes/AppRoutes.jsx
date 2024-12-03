@@ -64,6 +64,7 @@ function AppRoutes() {
           <Route path="/email-us" element={<EmailUs />} />
 
           {/* Protected Routes */}
+
           <Route
             path="/order-confirmation"
             element={

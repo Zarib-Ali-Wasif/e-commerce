@@ -20,47 +20,29 @@ const OrdersManagement = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [statusUpdate, setStatusUpdate] = useState({}); // Track status updates
-  const [buttonColor, setButtonColor] = useState({}); // Track button colors
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await api.get("orders");
-        setOrders(response.data);
-      } catch (err) {
-        setError("Failed to load orders");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchOrders();
   }, []);
 
-  const handleStatusChange = (orderNumber, value) => {
-    setStatusUpdate({ ...statusUpdate, [orderNumber]: value });
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get("orders");
+      setOrders(response.data);
+    } catch (err) {
+      setError("Failed to load orders");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const updateOrderStatus = async (orderNumber) => {
-    const status = statusUpdate[orderNumber] || "";
-    if (!status) return alert("Please select a valid status.");
-
+  const handleStatusChange = async (orderNumber, status) => {
     try {
       await api.patch(`orders/status/${orderNumber}`, { status });
-      setOrders((prevOrders) =>
-        prevOrders.map((order) =>
-          order.orderNumber === orderNumber ? { ...order, status } : order
-        )
-      );
-
-      setButtonColor({ ...buttonColor, [orderNumber]: "green" });
-      setTimeout(() => {
-        setButtonColor({ ...buttonColor, [orderNumber]: "#1C4771" });
-      }, 2000);
-
-      alert("Order status updated successfully.");
-    } catch (error) {
-      alert("Failed to update order status.");
+      fetchOrders(); // Refetch orders to update the list
+    } catch (err) {
+      console.error("Failed to update status", err);
     }
   };
 
@@ -88,41 +70,33 @@ const OrdersManagement = () => {
                 </Typography>
               </TableCell>
             </TableRow>
-            <TableRow
-              style={{
-                backgroundColor: "#1C4771",
-                color: "white",
-                fontWeight: 600,
-              }}
-            >
-              <TableCell style={{ color: "white", fontWeight: "bold" }}>
-                Order ID
-              </TableCell>
-              <TableCell style={{ color: "white", fontWeight: "bold" }}>
-                Customer
-              </TableCell>
-              <TableCell style={{ color: "white", fontWeight: "bold" }}>
-                Address
-              </TableCell>
-              <TableCell style={{ color: "white", fontWeight: "bold" }}>
-                Status
-              </TableCell>
-              <TableCell style={{ color: "white", fontWeight: "bold" }}>
-                Total
-              </TableCell>
-              <TableCell style={{ color: "white", fontWeight: "bold" }}>
-                Payment Method
-              </TableCell>
-              <TableCell style={{ color: "white", fontWeight: "bold" }}>
-                Date
-              </TableCell>
-              <TableCell style={{ color: "white", fontWeight: "bold" }}>
-                Actions
-              </TableCell>
+            <TableRow sx={{ backgroundColor: "#1C4771" }}>
+              {[
+                "Order ID",
+                "Customer",
+                "Address",
+                "Status",
+                "Total",
+                "Payment Method",
+                "Order Date",
+                "Last Updated",
+              ].map((header) => (
+                <TableCell
+                  key={header}
+                  sx={{ color: "white", fontWeight: "bold" }}
+                >
+                  {header}
+                </TableCell>
+              ))}
             </TableRow>
           </TableHead>
           {loading ? (
-            <Box display="flex" justifyContent="center" height="50vh">
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              height="50vh"
+            >
               <CircularProgress size={100} />
               <Typography variant="body1" mt={2}>
                 Loading orders...
@@ -133,39 +107,27 @@ const OrdersManagement = () => {
               {orders.map((order) => (
                 <TableRow key={order.orderNumber}>
                   <TableCell>{order.orderNumber}</TableCell>
-                  <TableCell>{order.userId?.name}</TableCell>
+                  <TableCell>{order.userId.name}</TableCell>
                   <TableCell>{order.address}</TableCell>
                   <TableCell>
                     <Select
-                      value={statusUpdate[order.orderNumber] || order.status}
+                      value={order.status || "Pending"}
                       onChange={(e) =>
                         handleStatusChange(order.orderNumber, e.target.value)
                       }
-                      fullWidth
+                      sx={{ width: "100%" }}
                     >
-                      <MenuItem value="New">New</MenuItem>
+                      <MenuItem value="Pending">Pending</MenuItem>
                       <MenuItem value="Processing">Processing</MenuItem>
                       <MenuItem value="Shipped">Shipped</MenuItem>
                       <MenuItem value="Delivered">Delivered</MenuItem>
                       <MenuItem value="Canceled">Canceled</MenuItem>
                     </Select>
                   </TableCell>
-                  <TableCell>{order.summary.total}</TableCell>
+                  <TableCell>${order.summary.total}</TableCell>
                   <TableCell>{order.paymentMethod}</TableCell>
                   <TableCell>{order.orderDate.slice(0, 10)}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="contained"
-                      style={{
-                        backgroundColor:
-                          buttonColor[order.orderNumber] || "#1C4771",
-                        color: "white",
-                      }}
-                      onClick={() => updateOrderStatus(order.orderNumber)}
-                    >
-                      Update
-                    </Button>
-                  </TableCell>
+                  <TableCell>{order.updatedAt.slice(0, 10)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
