@@ -45,7 +45,6 @@ const OrdersManagement = () => {
       console.error("Failed to update status", err);
     }
   };
-
   return (
     <Box sx={{ padding: "20px", maxWidth: "100%" }}>
       <TableContainer
@@ -75,11 +74,11 @@ const OrdersManagement = () => {
                 "Order ID",
                 "Customer",
                 "Address",
-                "Status",
                 "Total",
                 "Payment Method",
                 "Order Date",
                 "Last Updated",
+                "Status",
               ].map((header) => (
                 <TableCell
                   key={header}
@@ -90,25 +89,33 @@ const OrdersManagement = () => {
               ))}
             </TableRow>
           </TableHead>
-          {loading ? (
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              height="50vh"
-            >
-              <CircularProgress size={100} />
-              <Typography variant="body1" mt={2}>
-                Loading orders...
-              </Typography>
-            </Box>
-          ) : (
-            <TableBody>
-              {orders.map((order) => (
+          <TableBody>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={8}>
+                  <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    height="50vh"
+                  >
+                    <CircularProgress size={100} />
+                    <Typography variant="body1" mt={2}>
+                      Loading orders...
+                    </Typography>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ) : (
+              orders.map((order) => (
                 <TableRow key={order.orderNumber}>
                   <TableCell>{order.orderNumber}</TableCell>
                   <TableCell>{order.userId.name}</TableCell>
                   <TableCell>{order.address}</TableCell>
+                  <TableCell>${order.summary.total}</TableCell>
+                  <TableCell>{order.paymentMethod}</TableCell>
+                  <TableCell>{order.orderDate.slice(0, 10)}</TableCell>
+                  <TableCell>{order.updatedAt.slice(0, 10)}</TableCell>
                   <TableCell>
                     <Select
                       value={order.status || "Pending"}
@@ -124,14 +131,10 @@ const OrdersManagement = () => {
                       <MenuItem value="Canceled">Canceled</MenuItem>
                     </Select>
                   </TableCell>
-                  <TableCell>${order.summary.total}</TableCell>
-                  <TableCell>{order.paymentMethod}</TableCell>
-                  <TableCell>{order.orderDate.slice(0, 10)}</TableCell>
-                  <TableCell>{order.updatedAt.slice(0, 10)}</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          )}
+              ))
+            )}
+          </TableBody>
         </Table>
       </TableContainer>
     </Box>
