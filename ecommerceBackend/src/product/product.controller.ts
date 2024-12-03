@@ -9,6 +9,7 @@ import {
   Query,
   NotFoundException,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDTO } from './dtos/create-product.dto';
@@ -17,6 +18,7 @@ import { Roles } from 'src/auth/decorators/role.decorator';
 import { Role } from 'src/auth/enums/role.enum';
 import { RolesGuard } from 'src/auth/guards/role.guard';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
+import { UpdateProductDto } from './dtos/update-product.dto';
 
 // @UseGuards(JwtGuard, RolesGuard)
 // @Roles(Role.Admin)
@@ -94,14 +96,14 @@ export class ProductController {
     return product;
   }
 
-  @Put('/:id')
+  @Patch('/:id')
   async updateProduct(
     @Param('id') id: string,
-    @Body() createProductDTO: CreateProductDTO,
+    @Body() updateProductDto: UpdateProductDto,
   ) {
     const product = await this.productService.updateProduct(
       id,
-      createProductDTO,
+      updateProductDto,
     );
     if (!product) throw new NotFoundException('Product does not exist!');
     return product;
