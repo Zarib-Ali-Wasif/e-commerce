@@ -105,7 +105,7 @@ const CustomerManagement = () => {
             color: "#1C4771",
           }}
         >
-          Orders Management
+          Customer Management
         </Typography>
 
         <Grid container spacing={2} mb={4}>
