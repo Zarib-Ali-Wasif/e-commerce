@@ -88,155 +88,161 @@ const OrdersManagement = () => {
   };
 
   return (
-    <Box sx={{ padding: "20px", maxWidth: "100%" }}>
-      <Grid container spacing={2} mb={2}>
-        {/* Status Filter */}
-        <Grid item xs={12} sm={6} md={3}>
-          <Select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            displayEmpty
-            fullWidth
-          >
-            <MenuItem value="">All Orders</MenuItem>
-            <MenuItem value="Pending">Pending</MenuItem>
-            <MenuItem value="Processing">Processing</MenuItem>
-            <MenuItem value="Shipped">Shipped</MenuItem>
-            <MenuItem value="Delivered">Delivered</MenuItem>
-            <MenuItem value="Canceled">Canceled</MenuItem>
-          </Select>
-        </Grid>
-
-        {/* Search Field */}
-        <Grid item xs={12} sm={6} md={3}>
-          <TextField
-            label="Search by Order ID or Customer Name"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            fullWidth
-            placeholder="Search by Order ID or Customer Name"
-          />
-        </Grid>
-
-        {/* Start Date Picker */}
-        <Grid item xs={12} sm={6} md={3}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="Start Date"
-              value={startDate}
-              onChange={(date) => setStartDate(date)}
-              slots={{
-                textField: (params) => <TextField {...params} fullWidth />,
-              }}
-            />
-          </LocalizationProvider>
-        </Grid>
-
-        {/* End Date Picker */}
-        <Grid item xs={12} sm={6} md={3}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="End Date"
-              value={endDate}
-              onChange={(date) => setEndDate(date)}
-              slots={{
-                textField: (params) => <TextField {...params} fullWidth />,
-              }}
-            />
-          </LocalizationProvider>
-        </Grid>
-      </Grid>
-
-      <TableContainer
-        component={Paper}
-        style={{ marginTop: "20px", padding: "0px 10px" }}
+    <Box>
+      <Box
+        sx={{
+          padding: "20px",
+          marginTop: 8,
+          maxWidth: "100%",
+        }}
       >
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell colSpan={8}>
-                <Typography
-                  variant="h4"
-                  sx={{
-                    fontWeight: 600,
-                    mt: 2,
-                    mb: 2,
-                    textAlign: "center",
-                    color: "#1C4771",
-                  }}
-                >
-                  Orders Management
-                </Typography>
-              </TableCell>
-            </TableRow>
-            <TableRow sx={{ backgroundColor: "#1C4771" }}>
-              {[
-                "Order ID",
-                "Customer",
-                "Address",
-                "Total",
-                "Payment Method",
-                "Order Date",
-                "Last Updated",
-                "Status",
-              ].map((header) => (
-                <TableCell
-                  key={header}
-                  sx={{ color: "white", fontWeight: "bold" }}
-                >
-                  {header}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={8}>
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    height="50vh"
+        <Typography
+          variant="h4"
+          sx={{
+            fontWeight: 600,
+            mb: 6,
+            textAlign: "center",
+            color: "#1C4771",
+          }}
+        >
+          Orders Management
+        </Typography>
+        <Grid container spacing={2} mb={4}>
+          {/* Status Filter */}
+          <Grid item xs={12} sm={6} md={3}>
+            <Select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              displayEmpty
+              fullWidth
+            >
+              <MenuItem value="">All Orders</MenuItem>
+              <MenuItem value="Pending">Pending</MenuItem>
+              <MenuItem value="Processing">Processing</MenuItem>
+              <MenuItem value="Shipped">Shipped</MenuItem>
+              <MenuItem value="Delivered">Delivered</MenuItem>
+              <MenuItem value="Canceled">Canceled</MenuItem>
+            </Select>
+          </Grid>
+
+          {/* Search Field */}
+          <Grid item xs={12} sm={6} md={3}>
+            <TextField
+              label="Search by Order ID or Customer Name"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              fullWidth
+              placeholder="Search by Order ID or Customer Name"
+            />
+          </Grid>
+
+          {/* Start Date Picker */}
+          <Grid item xs={12} sm={6} md={3}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="Start Date"
+                value={startDate}
+                onChange={(date) => setStartDate(date)}
+                slots={{
+                  textField: (params) => <TextField {...params} fullWidth />,
+                }}
+              />
+            </LocalizationProvider>
+          </Grid>
+
+          {/* End Date Picker */}
+          <Grid item xs={12} sm={6} md={3}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="End Date"
+                value={endDate}
+                onChange={(date) => setEndDate(date)}
+                slots={{
+                  textField: (params) => <TextField {...params} fullWidth />,
+                }}
+              />
+            </LocalizationProvider>
+          </Grid>
+        </Grid>
+
+        <TableContainer
+          sx={{
+            borderRadius: "8px",
+            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+          }}
+          component={Paper}
+        >
+          <Table>
+            <TableHead>
+              <TableRow sx={{ backgroundColor: "#1C4771" }}>
+                {[
+                  "Order ID",
+                  "Customer",
+                  "Address",
+                  "Total",
+                  "Payment Method",
+                  "Order Date",
+                  "Last Updated",
+                  "Status",
+                ].map((header) => (
+                  <TableCell
+                    key={header}
+                    sx={{ color: "white", fontWeight: "bold" }}
                   >
-                    <CircularProgress size={100} />
-                    <Typography variant="body1" mt={2}>
-                      Loading orders...
-                    </Typography>
-                  </Box>
-                </TableCell>
+                    {header}
+                  </TableCell>
+                ))}
               </TableRow>
-            ) : (
-              filteredOrders.map((order) => (
-                <TableRow key={order.orderNumber}>
-                  <TableCell>{order.orderNumber}</TableCell>
-                  <TableCell>{order.userId.name}</TableCell>
-                  <TableCell>{order.address}</TableCell>
-                  <TableCell>${order.summary.total}</TableCell>
-                  <TableCell>{order.paymentMethod}</TableCell>
-                  <TableCell>{order.orderDate.slice(0, 10)}</TableCell>
-                  <TableCell>{order.updatedAt.slice(0, 10)}</TableCell>
-                  <TableCell>
-                    <Select
-                      value={order.status || "Pending"}
-                      onChange={(e) =>
-                        handleStatusChange(order.orderNumber, e.target.value)
-                      }
-                      sx={{ width: "100%" }}
+            </TableHead>
+            <TableBody>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={8}>
+                    <Box
+                      display="flex"
+                      justifyContent="center"
+                      alignItems="center"
+                      height="50vh"
                     >
-                      <MenuItem value="Pending">Pending</MenuItem>
-                      <MenuItem value="Processing">Processing</MenuItem>
-                      <MenuItem value="Shipped">Shipped</MenuItem>
-                      <MenuItem value="Delivered">Delivered</MenuItem>
-                      <MenuItem value="Canceled">Canceled</MenuItem>
-                    </Select>
+                      <CircularProgress size={100} />
+                      <Typography variant="body1" mt={2}>
+                        Loading orders...
+                      </Typography>
+                    </Box>
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              ) : (
+                filteredOrders.map((order) => (
+                  <TableRow key={order.orderNumber}>
+                    <TableCell>{order.orderNumber}</TableCell>
+                    <TableCell>{order.userId.name}</TableCell>
+                    <TableCell>{order.address}</TableCell>
+                    <TableCell>${order.summary.total}</TableCell>
+                    <TableCell>{order.paymentMethod}</TableCell>
+                    <TableCell>{order.orderDate.slice(0, 10)}</TableCell>
+                    <TableCell>{order.updatedAt.slice(0, 10)}</TableCell>
+                    <TableCell>
+                      <Select
+                        value={order.status || "Pending"}
+                        onChange={(e) =>
+                          handleStatusChange(order.orderNumber, e.target.value)
+                        }
+                        sx={{ width: "100%" }}
+                      >
+                        <MenuItem value="Pending">Pending</MenuItem>
+                        <MenuItem value="Processing">Processing</MenuItem>
+                        <MenuItem value="Shipped">Shipped</MenuItem>
+                        <MenuItem value="Delivered">Delivered</MenuItem>
+                        <MenuItem value="Canceled">Canceled</MenuItem>
+                      </Select>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
     </Box>
   );
 };
