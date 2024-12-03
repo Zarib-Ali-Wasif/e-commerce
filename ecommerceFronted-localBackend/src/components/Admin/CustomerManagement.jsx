@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -9,95 +9,144 @@ import {
   Paper,
   Box,
   Typography,
+  CircularProgress,
+  Select,
+  MenuItem,
+  TextField,
+  Grid,
 } from "@mui/material";
+import api from "../../../lib/services/api";
 
 const CustomerManagement = () => {
-  const customers = [
-    {
-      name: "John Doe",
-      email: "john@example.com",
-      phone: "123-456-7890",
-      orders: "5",
-      lastOrder: "2024-11-30",
-    },
-    {
-      name: "Jane Smith",
-      email: "jane@example.com",
-      phone: "098-765-4321",
-      orders: "3",
-      lastOrder: "2024-11-28",
-    },
-  ];
+  const [customers, setCustomers] = useState([]);
+  const [filteredCustomers, setFilteredCustomers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [customers, searchQuery, statusFilter]);
+
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get("orders");
+      const orders = response.data;
+
+      const customerMap = new Map();
+      orders.forEach((order) => {
+        const { userId, orderDate } = order;
+        if (!customerMap.has(userId._id)) {
+          customerMap.set(userId._id, {
+            name: userId.name,
+            email: userId.email,
+            phone: userId.phone,
+            active: userId.active,
+            totalOrders: 0,
+            lastOrderDate: orderDate,
+          });
+        }
+        const customer = customerMap.get(userId._id);
+        customer.totalOrders += 1;
+        if (new Date(orderDate) > new Date(customer.lastOrderDate)) {
+          customer.lastOrderDate = orderDate;
+        }
+      });
+
+      setCustomers([...customerMap.values()]);
+      setFilteredCustomers([...customerMap.values()]);
+    } catch (error) {
+      console.error("Failed to fetch orders:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const applyFilters = () => {
+    let filtered = customers;
+    if (searchQuery) {
+      filtered = filtered.filter(
+        (customer) =>
+          customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          customer.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          customer.phone.includes(searchQuery)
+      );
+    }
+    if (statusFilter) {
+      filtered = filtered.filter(
+        (customer) =>
+          (statusFilter === "Active" && customer.active) ||
+          (statusFilter === "Deactivated" && !customer.active)
+      );
+    }
+    setFilteredCustomers(filtered);
+  };
 
   return (
     <Box sx={{ padding: "20px" }}>
-      <TableContainer
-        component={Paper}
-        style={{ marginTop: "20px", padding: "0px 10px" }}
-      >
+      <Grid container spacing={2} mb={2}>
+        <Grid item xs={12} sm={6} md={3}>
+          <Select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            displayEmpty
+            fullWidth
+          >
+            <MenuItem value="">All Customers</MenuItem>
+            <MenuItem value="Active">Active</MenuItem>
+            <MenuItem value="Deactivated">Deactivated</MenuItem>
+          </Select>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <TextField
+            label="Search by Name, Email, or Phone"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+      </Grid>
+
+      <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell colSpan={5}>
-                <Typography
-                  variant="h4"
-                  sx={{
-                    fontWeight: 600,
-                    mt: 2,
-                    mb: 2,
-                    textAlign: "center",
-                    color: "#1C4771",
-                  }}
-                >
-                  Customer Management
-                </Typography>
-              </TableCell>
-            </TableRow>
-            <TableRow
-              style={{
-                backgroundColor: "#1C4771",
-                color: "white",
-                fontWeight: 600,
-                borderRadius: "40px",
-              }}
-            >
-              <TableCell
-                style={{ color: "white", fontWeight: "bold", fontSize: "15px" }}
-              >
-                Name
-              </TableCell>
-              <TableCell
-                style={{ color: "white", fontWeight: "bold", fontSize: "15px" }}
-              >
-                Email
-              </TableCell>
-              <TableCell
-                style={{ color: "white", fontWeight: "bold", fontSize: "15px" }}
-              >
-                Phone
-              </TableCell>
-              <TableCell
-                style={{ color: "white", fontWeight: "bold", fontSize: "15px" }}
-              >
-                Total Orders
-              </TableCell>
-              <TableCell
-                style={{ color: "white", fontWeight: "bold", fontSize: "15px" }}
-              >
-                Last Order Date
-              </TableCell>
+              <TableCell>Name</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Phone</TableCell>
+              <TableCell>Total Orders</TableCell>
+              <TableCell>Last Order Date</TableCell>
+              <TableCell>Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {customers.map((customer, index) => (
-              <TableRow key={index}>
-                <TableCell>{customer.name}</TableCell>
-                <TableCell>{customer.email}</TableCell>
-                <TableCell>{customer.phone}</TableCell>
-                <TableCell>{customer.orders}</TableCell>
-                <TableCell>{customer.lastOrder}</TableCell>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={6}>
+                  <Box display="flex" justifyContent="center">
+                    <CircularProgress />
+                  </Box>
+                </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              filteredCustomers.map((customer) => (
+                <TableRow key={customer.email}>
+                  <TableCell>{customer.name}</TableCell>
+                  <TableCell>{customer.email}</TableCell>
+                  <TableCell>{customer.phone}</TableCell>
+                  <TableCell>{customer.totalOrders}</TableCell>
+                  <TableCell>{customer.lastOrderDate.slice(0, 10)}</TableCell>
+                  <TableCell>
+                    {customer.active ? "Active" : "Deactivated"}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>
