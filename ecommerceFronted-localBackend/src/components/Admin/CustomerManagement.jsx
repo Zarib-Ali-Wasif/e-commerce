@@ -60,6 +60,17 @@ const CustomerManagement = () => {
         }
       });
 
+      // Check if last order date is more than 6 months ago
+      const currentDate = new Date();
+      customerMap.forEach((customer) => {
+        const lastOrderDate = new Date(customer.lastOrderDate);
+        const diffInMonths =
+          (currentDate - lastOrderDate) / (1000 * 60 * 60 * 24 * 30);
+        if (diffInMonths > 6 && customer.active) {
+          handleStatusChange(customer.userId, "false");
+        }
+      });
+
       setCustomers([...customerMap.values()]);
       setFilteredCustomers([...customerMap.values()]);
     } catch (error) {
