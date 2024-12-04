@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   Box,
@@ -9,20 +9,31 @@ import {
   Select,
   InputLabel,
   FormControl,
+  Select,
+  MenuItem,
   CardMedia,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
 import api from "../../../lib/services/api";
 
-const AddProduct = () => {
-  const navigate = useNavigate();
-
-  const [productImage, setProductImage] = useState();
+const AddProduct = ({ productData, onSubmit }) => {
+  const [productImage, setProductImage] = useState(productData?.image || "");
   const [file, setFile] = useState(null);
+
+  useEffect(() => {
+    if (productData) {
+      formik.setValues({
+        title: productData.title || "",
+        description: productData.description || "",
+        price: productData.price || "",
+        category: productData.category || "",
+      });
+      setProductImage(productData.image || "");
+    }
+  }, [productData]);
 
   const handleFileUpload = (e) => {
     const uploadedFile = e.target.files[0];
@@ -36,7 +47,7 @@ const AddProduct = () => {
     description: Yup.string().required("Description is required"),
     price: Yup.number()
       .required("Price is required")
-      .positive("Price must be a positive number"),
+      .positive("Price must be positive"),
     category: Yup.string().required("Category is required"),
   });
 
@@ -48,7 +59,7 @@ const AddProduct = () => {
       category: "",
     },
     validationSchema,
-    onSubmit: async (data, { resetForm }) => {
+    onSubmit: async (data) => {
       try {
         const formData = new FormData();
         if (file) {
@@ -59,24 +70,20 @@ const AddProduct = () => {
           ? await api.post("image/upload/single", formData, {
               headers: { "Content-Type": "multipart/form-data" },
             })
-          : { data: "" };
-
+          : { data: productImage }; // Use existing image if not uploading a new one
         const imageUrl = imageResponse.data || ""; // URL of the uploaded image
 
         const productData = {
           ...data,
-          image: imageUrl, // Attach the image URL
+          image: imageUrl || productImage,
         };
 
-        // Send the request to create the product
-        const response = await api.post("store/products", productData);
+        await onSubmit(productData); // Call the onSubmit function passed as prop
 
-        toast.success("Product added successfully!");
-        resetForm();
-        localStorage.getItem("role") === "Admin" ? null : navigate("/products"); // Navigate to the products list or other desired page
+        toast.success(productData.id ? "Product updated!" : "Product added!");
+        formik.resetForm();
       } catch (error) {
-        console.error("An error occurred:", error.message);
-        toast.error("Error: Failed to add product. Please try again later.");
+        toast.error("Failed to process request, please try again.");
       }
     },
   });
@@ -128,7 +135,7 @@ const AddProduct = () => {
           color: "#1C4771", // Replace with your desired color code
         }}
       >
-        Add Product
+        {productData ? "Edit Product" : "Add Product"}
       </Typography>
 
       {/* Product Image Section */}
@@ -162,120 +169,109 @@ const AddProduct = () => {
         />
       </Box>
 
-      {/* Form Fields */}
       <Box sx={{ width: "300px", mt: 3 }}>
-        <Typography sx={{ textAlign: "start" }}>Title</Typography>
-        <Box sx={{ mb: 1 }}>
-          <TextField
-            name="title"
-            variant="standard"
-            fullWidth
+        <TextField
+          label="Title"
+          name="title"
+          fullWidth
+          variant="standard"
+          value={formik.values.title}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+        />
+        {formik.touched.title && formik.errors.title && (
+          <Typography color="error">{formik.errors.title}</Typography>
+        )}
+
+        <TextField
+          label="Description"
+          name="description"
+          fullWidth
+          variant="standard"
+          multiline
+          rows={4}
+          value={formik.values.description}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          sx={{ mt: 2 }}
+        />
+        {formik.touched.description && formik.errors.description && (
+          <Typography color="error">{formik.errors.description}</Typography>
+        )}
+
+        <TextField
+          label="Price"
+          name="price"
+          fullWidth
+          type="number"
+          variant="standard"
+          value={formik.values.price}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          sx={{ mt: 2 }}
+        />
+        {formik.touched.price && formik.errors.price && (
+          <Typography color="error">{formik.errors.price}</Typography>
+        )}
+
+        <FormControl fullWidth variant="standard" sx={{ mt: 2 }}>
+          <Select
+            name="category"
+            value={formik.values.category}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            value={formik.values.title}
-          />
-          {formik.touched.title && formik.errors.title ? (
-            <Typography color="error">{formik.errors.title}</Typography>
-          ) : null}
-        </Box>
-
-        <Typography sx={{ textAlign: "start" }}>Description</Typography>
-        <Box sx={{ mb: 1 }}>
-          <TextField
-            name="description"
-            variant="standard"
+            displayEmpty
             fullWidth
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.description}
-          />
-          {formik.touched.description && formik.errors.description ? (
-            <Typography color="error">{formik.errors.description}</Typography>
-          ) : null}
-        </Box>
-
-        <Typography sx={{ textAlign: "start" }}>Price</Typography>
-        <Box sx={{ mb: 1 }}>
-          <TextField
-            name="price"
-            variant="standard"
-            fullWidth
-            type="number"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.price}
-          />
-          {formik.touched.price && formik.errors.price ? (
-            <Typography color="error">{formik.errors.price}</Typography>
-          ) : null}
-        </Box>
-
-        <Box sx={{ mb: 1, mt: 2.5, textAlign: "start" }}>
-          <FormControl fullWidth variant="standard">
-            <Select
-              name="category"
-              value={formik.values.category}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              displayEmpty
-              fullWidth
-              sx={{
-                height: "45px", // Set height for the select component
-                "& .MuiSelect-select": {
-                  paddingTop: "10px", // Adjust padding if needed to center the text vertically
-                },
-              }}
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    maxHeight: 200, // Set max height for the dropdown
-                    overflowY: "auto", // Enable scrolling if the content exceeds the height
-                  },
-                },
-              }}
-            >
-              <MenuItem value="" disabled>
-                Category
-              </MenuItem>
-              {categories.map((category) => (
-                <MenuItem key={category} value={category}>
-                  {category}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          {formik.touched.category && formik.errors.category ? (
-            <Typography color="error">{formik.errors.category}</Typography>
-          ) : null}
-        </Box>
-
-        {/* Add Product Button */}
-        <Box>
-          <Button
-            onClick={formik.handleSubmit}
             sx={{
-              width: "303px",
-              border: "1px solid #1C4771", // Change to the desired color
-              borderRadius: "4px",
-              color: "#1C4771", // Button text color
-              mt: 6,
-              fontSize: "18px",
-              textTransform: "capitalize",
-              "&:hover": {
-                backgroundColor: "#1C4771", // Hover background color
-                color: "white", // Hover text color
+              height: "45px", // Set height for the select component
+              "& .MuiSelect-select": {
+                paddingTop: "10px", // Adjust padding if needed to center the text vertically
               },
-              "&:active": {
-                backgroundColor: "#1C4771", // Active background color
-                color: "white", // Active text color
+            }}
+            MenuProps={{
+              PaperProps: {
+                style: {
+                  maxHeight: 200, // Set max height for the dropdown
+                  overflowY: "auto", // Enable scrolling if the content exceeds the height
+                },
               },
             }}
           >
-            Add Product
-          </Button>
-        </Box>
-        <ToastContainer />
+            <MenuItem value="" disabled>
+              Select Category
+            </MenuItem>
+            {categories.map((category) => (
+              <MenuItem key={category} value={category}>
+                {category}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        {formik.touched.category && formik.errors.category && (
+          <Typography color="error">{formik.errors.category}</Typography>
+        )}
+
+        <Button
+          onClick={formik.handleSubmit}
+          sx={{
+            mt: 4,
+            width: "100%",
+            bgcolor: "#1C4771",
+            color: "white",
+            "&:hover": {
+              backgroundColor: "#1C4771", // Hover background color
+              color: "white", // Hover text color
+            },
+            "&:active": {
+              backgroundColor: "#1C4771", // Active background color
+              color: "white", // Active text color
+            },
+          }}
+        >
+          {productData ? "Update Product" : "Add Product"}
+        </Button>
       </Box>
+      <ToastContainer />
     </Box>
   );
 };
