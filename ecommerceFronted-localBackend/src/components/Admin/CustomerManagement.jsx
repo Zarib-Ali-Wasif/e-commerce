@@ -19,97 +19,103 @@ import {
 import api from "../../../lib/services/api";
 
 const CustomerManagement = () => {
-  const [customers, setCustomers] = useState([]);
-  const [filteredCustomers, setFilteredCustomers] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
-    fetchOrders();
+    fetchUsersAndOrders();
   }, []);
 
   useEffect(() => {
     applyFilters();
-  }, [customers, searchQuery, statusFilter]);
+  }, [users, searchQuery, statusFilter]);
 
-  const fetchOrders = async () => {
+  const fetchUsersAndOrders = async () => {
     setLoading(true);
     try {
-      const response = await api.get("orders");
-      const orders = response.data;
+      const [usersResponse, ordersResponse] = await Promise.all([
+        api.get("user"),
+        api.get("orders"),
+      ]);
 
-      const customerMap = new Map();
-      orders.forEach((order) => {
-        const { userId, orderDate } = order;
-        if (!customerMap.has(userId._id)) {
-          customerMap.set(userId._id, {
-            userId: userId._id,
-            name: userId.name,
-            email: userId.email,
-            phone: userId.contactNumber,
-            active: userId.is_Active,
-            createdAt: userId.createdAt,
-            totalOrders: 0,
-            lastOrderDate: orderDate,
-          });
+      const usersData = usersResponse.data;
+      const ordersData = ordersResponse.data;
+
+      // Map orders to each user
+      const userOrderMap = usersData.map((user) => {
+        const userOrders = ordersData.filter(
+          (order) => order.userId._id === user._id
+        );
+        const lastOrderDate = userOrders.length
+          ? userOrders.reduce((latest, order) =>
+              new Date(order.orderDate) > new Date(latest.orderDate)
+                ? order
+                : latest
+            ).orderDate
+          : null;
+
+        console.log(`User: ${user.name}, Last Order Date: ${lastOrderDate}`); // Debugging line
+
+        // Check if last order date is more than 6 months ago
+        const currentDate = new Date();
+        const diffInMonths = lastOrderDate
+          ? (currentDate - new Date(lastOrderDate)) / (1000 * 60 * 60 * 24 * 30)
+          : 0;
+
+        // If last order was more than 6 months ago, change status
+        if (diffInMonths > 6 && user.is_Active) {
+          handleStatusChange(user._id, false); // Deactivate user
         }
-        const customer = customerMap.get(userId._id);
-        customer.totalOrders += 1;
-        if (new Date(orderDate) > new Date(customer.lastOrderDate)) {
-          customer.lastOrderDate = orderDate;
-        }
+
+        return {
+          ...user,
+          totalOrders: userOrders.length,
+          lastOrderDate,
+        };
       });
 
-      // Check if last order date is more than 6 months ago
-      const currentDate = new Date();
-      customerMap.forEach((customer) => {
-        const lastOrderDate = new Date(customer.lastOrderDate);
-        const diffInMonths =
-          (currentDate - lastOrderDate) / (1000 * 60 * 60 * 24 * 30);
-        if (diffInMonths > 6 && customer.active) {
-          handleStatusChange(customer.userId, "false");
-        }
-      });
-
-      setCustomers([...customerMap.values()]);
-      setFilteredCustomers([...customerMap.values()]);
+      setUsers(userOrderMap);
+      setFilteredUsers(userOrderMap);
     } catch (error) {
-      console.error("Failed to fetch orders:", error);
+      console.error("Failed to fetch data:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const applyFilters = () => {
-    let filtered = customers;
+    let filtered = users;
     if (searchQuery) {
       filtered = filtered.filter(
-        (customer) =>
-          customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          customer.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          customer.phone.includes(searchQuery)
+        (user) =>
+          user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          user.phone.includes(searchQuery)
       );
     }
     if (statusFilter) {
       filtered = filtered.filter(
-        (customer) =>
-          (statusFilter === "Active" && customer.active) ||
-          (statusFilter === "Deactivated" && !customer.active)
+        (user) =>
+          (statusFilter === "Active" && user.is_Active) ||
+          (statusFilter === "Deactivated" && !user.is_Active)
       );
     }
-    setFilteredCustomers(filtered);
+    setFilteredUsers(filtered);
     setCurrentPage(1); // Reset to first page when filtering
   };
 
   const handleStatusChange = async (userId, status) => {
     try {
       await api.patch(`user/status/${userId}`, { status });
-      fetchOrders(); // Refetch orders to update the list
-    } catch (err) {
-      console.error("Failed to update status", err);
+      fetchUsersAndOrders(); // Refetch data to update the table
+    } catch (error) {
+      console.error("Failed to update status", error);
     }
   };
 
@@ -122,7 +128,7 @@ const CustomerManagement = () => {
     setCurrentPage(1);
   };
 
-  const paginatedCustomers = filteredCustomers.slice(
+  const paginatedUsers = filteredUsers.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -172,11 +178,11 @@ const CustomerManagement = () => {
         </Grid>
 
         <TableContainer
+          component={Paper}
           sx={{
             borderRadius: "8px",
             boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
           }}
-          component={Paper}
         >
           <Table>
             <TableHead>
@@ -210,21 +216,25 @@ const CustomerManagement = () => {
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedCustomers.map((customer) => (
-                  <TableRow key={customer.userId}>
-                    <TableCell>{customer.name}</TableCell>
-                    <TableCell>{customer.email}</TableCell>
+                paginatedUsers.map((user) => (
+                  <TableRow key={user._id}>
+                    <TableCell>{user.name}</TableCell>
+                    <TableCell>{user.email}</TableCell>
                     <TableCell>
-                      {customer.phone ? customer.phone : "-"}
+                      {user.contactNumber ? user.contactNumber : "-"}
                     </TableCell>
-                    <TableCell>{customer.totalOrders}</TableCell>
-                    <TableCell>{customer.lastOrderDate.slice(0, 10)}</TableCell>
+                    <TableCell>{user.totalOrders}</TableCell>
+                    <TableCell>
+                      {user.lastOrderDate
+                        ? user.lastOrderDate.slice(0, 10)
+                        : "-"}
+                    </TableCell>
                     <TableCell>
                       <Select
-                        value={customer.active ? "Active" : "Deactivated"}
+                        value={user.active ? "Active" : "Deactivated"}
                         onChange={(e) =>
                           handleStatusChange(
-                            customer.userId,
+                            user._id,
                             e.target.value == "Active" ? true : false
                           )
                         }
@@ -235,9 +245,7 @@ const CustomerManagement = () => {
                       </Select>
                     </TableCell>
                     <TableCell>
-                      {customer.createdAt
-                        ? customer.createdAt.slice(0, 10)
-                        : "-"}
+                      {user.createdAt ? user.createdAt.slice(0, 10) : "-"}
                     </TableCell>
                   </TableRow>
                 ))
@@ -277,22 +285,20 @@ const CustomerManagement = () => {
             <Typography display="inline" mx={2}>
               {`${(currentPage - 1) * itemsPerPage + 1} - ${Math.min(
                 currentPage * itemsPerPage,
-                filteredCustomers.length
-              )} of ${filteredCustomers.length}`}
+                filteredUsers.length
+              )} of ${filteredUsers.length}`}
             </Typography>
             <Button
               onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage * itemsPerPage >= filteredCustomers.length}
+              disabled={currentPage * itemsPerPage >= filteredUsers.length}
             >
               &gt;
             </Button>
             <Button
               onClick={() =>
-                handlePageChange(
-                  Math.ceil(filteredCustomers.length / itemsPerPage)
-                )
+                handlePageChange(Math.ceil(filteredUsers.length / itemsPerPage))
               }
-              disabled={currentPage * itemsPerPage >= filteredCustomers.length}
+              disabled={currentPage * itemsPerPage >= filteredUsers.length}
             >
               &gt;|
             </Button>
