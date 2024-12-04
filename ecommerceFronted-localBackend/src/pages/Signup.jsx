@@ -52,7 +52,7 @@ const Signup = () => {
       .required("Email is required"),
     contactNumber: Yup.string()
       .matches(
-        /^\+?[0-9]{10,15}$/,
+        /^\+?\d{1,4}[-\s.]?\(?\d{1,4}\)?[-\s.]?\d{1,4}[-\s.]?\d{1,9}$/,
         "Contact number must be 10 to 15 digits long and may start with a '+'"
       )
       .required("Contact number is required"),
