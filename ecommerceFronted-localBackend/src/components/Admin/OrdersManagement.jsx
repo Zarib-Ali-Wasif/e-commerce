@@ -29,6 +29,8 @@ const OrdersManagement = () => {
   const [endDate, setEndDate] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     fetchOrders();
@@ -76,6 +78,7 @@ const OrdersManagement = () => {
     }
 
     setFilteredOrders(filtered);
+    setCurrentPage(1); // Reset to first page when filtering
   };
 
   const handleStatusChange = async (orderNumber, status) => {
@@ -86,6 +89,20 @@ const OrdersManagement = () => {
       console.error("Failed to update status", err);
     }
   };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(parseInt(e.target.value));
+    setCurrentPage(1);
+  };
+
+  const paginatedOrders = filteredOrders.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <Box>
@@ -212,7 +229,7 @@ const OrdersManagement = () => {
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredOrders.map((order) => (
+                paginatedOrders.map((order) => (
                   <TableRow key={order.orderNumber}>
                     <TableCell>{order.orderNumber}</TableCell>
                     <TableCell>{order.userId.name}</TableCell>
@@ -242,6 +259,59 @@ const OrdersManagement = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
+        {/* Pagination Controls */}
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mt={2}
+        >
+          <Select value={itemsPerPage} onChange={handleItemsPerPageChange}>
+            {[10, 20, 30].map((num) => (
+              <MenuItem key={num} value={num}>
+                {num} per page
+              </MenuItem>
+            ))}
+          </Select>
+
+          <Box>
+            <Button
+              onClick={() => handlePageChange(1)}
+              disabled={currentPage === 1}
+            >
+              |&lt;
+            </Button>
+            <Button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              &lt;
+            </Button>
+            <Typography display="inline" mx={2}>
+              {`${(currentPage - 1) * itemsPerPage + 1} - ${Math.min(
+                currentPage * itemsPerPage,
+                filteredOrders.length
+              )} of ${filteredOrders.length}`}
+            </Typography>
+            <Button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage * itemsPerPage >= filteredOrders.length}
+            >
+              &gt;
+            </Button>
+            <Button
+              onClick={() =>
+                handlePageChange(
+                  Math.ceil(filteredOrders.length / itemsPerPage)
+                )
+              }
+              disabled={currentPage * itemsPerPage >= filteredOrders.length}
+            >
+              &gt;|
+            </Button>
+          </Box>
+        </Box>
       </Box>
     </Box>
   );

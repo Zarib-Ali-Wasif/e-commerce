@@ -20,7 +20,6 @@ import api from "../../../lib/services/api";
 
 const CustomerManagement = () => {
   const [users, setUsers] = useState([]);
-  const [orders, setOrders] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -59,8 +58,6 @@ const CustomerManagement = () => {
                 : latest
             ).orderDate
           : null;
-
-        console.log(`User: ${user.name}, Last Order Date: ${lastOrderDate}`); // Debugging line
 
         // Check if last order date is more than 6 months ago
         const currentDate = new Date();
