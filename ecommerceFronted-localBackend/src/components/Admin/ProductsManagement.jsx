@@ -1,3 +1,10 @@
+// Add new Product button working
+// Remove Discount button Working
+// Delete button working
+// View Details button working,
+// ToDo: Update button is not working, have to attach the modal and show form inmodal , and in form have to map current data respectively
+// ToDo:In View Details Modal we have to remove add to cart button in modal when Admin login
+// ToDo: In Add new Product, we have to add form in modal , and when we submit form tham it have to reload the fetch orders, and categorises, because we have to reload the page after adding new product to see the new product
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -27,6 +34,7 @@ import {
 } from "../../../lib/redux/slices/productsSlice"; // Assuming you have these actions
 import ProductDetailsModal from "../ProductDetailsModal";
 import AddProduct from "./AddProduct"; // Import your AddProduct component
+import { Update } from "@mui/icons-material";
 
 const ProductsManagement = () => {
   const [modalOpen, setModalOpen] = useState(false);
