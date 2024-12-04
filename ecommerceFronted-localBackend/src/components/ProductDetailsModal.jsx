@@ -24,6 +24,7 @@ const ProductDetailsModal = ({
   const product = useSelector((state) =>
     getProductDetails(productId, state.cart.productsList)
   );
+  const role = localStorage.getItem("role");
 
   if (!product) {
     return (
@@ -186,22 +187,24 @@ const ProductDetailsModal = ({
                 </Typography>
               </Box>
             </Box>
-
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                dispatch(addToCart(product)); // Dispatch addToCart action
-                handleClose();
-              }}
-              sx={{
-                mt: 4,
-                backgroundColor: "#1C4771",
-                "&:hover": { backgroundColor: "#163b56" },
-              }}
-            >
-              Add to Cart
-            </Button>
+            {/* If the user is an Admin, do not show the Add to Cart button */}
+            {role !== "Admin" && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  dispatch(addToCart(product)); // Dispatch addToCart action
+                  handleClose();
+                }}
+                sx={{
+                  mt: 4,
+                  backgroundColor: "#1C4771",
+                  "&:hover": { backgroundColor: "#163b56" },
+                }}
+              >
+                Add to Cart
+              </Button>
+            )}
           </Grid>
         </Grid>
       </Box>
