@@ -14,6 +14,7 @@ import {
   MenuItem,
   TextField,
   Grid,
+  Button,
 } from "@mui/material";
 import api from "../../../lib/services/api";
 
@@ -23,6 +24,8 @@ const CustomerManagement = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     fetchOrders();
@@ -98,6 +101,7 @@ const CustomerManagement = () => {
       );
     }
     setFilteredCustomers(filtered);
+    setCurrentPage(1); // Reset to first page when filtering
   };
 
   const handleStatusChange = async (userId, status) => {
@@ -108,6 +112,20 @@ const CustomerManagement = () => {
       console.error("Failed to update status", err);
     }
   };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(parseInt(e.target.value));
+    setCurrentPage(1);
+  };
+
+  const paginatedCustomers = filteredCustomers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <Box>
@@ -185,15 +203,15 @@ const CustomerManagement = () => {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={6}>
+                  <TableCell colSpan={7}>
                     <Box display="flex" justifyContent="center">
                       <CircularProgress />
                     </Box>
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredCustomers.map((customer) => (
-                  <TableRow key={customer.email}>
+                paginatedCustomers.map((customer) => (
+                  <TableRow key={customer.userId}>
                     <TableCell>{customer.name}</TableCell>
                     <TableCell>{customer.email}</TableCell>
                     <TableCell>
@@ -203,9 +221,7 @@ const CustomerManagement = () => {
                     <TableCell>{customer.lastOrderDate.slice(0, 10)}</TableCell>
                     <TableCell>
                       <Select
-                        value={
-                          customer.active ? "Active" : "Deactivated" || "Active"
-                        }
+                        value={customer.active ? "Active" : "Deactivated"}
                         onChange={(e) =>
                           handleStatusChange(
                             customer.userId,
@@ -229,6 +245,59 @@ const CustomerManagement = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
+        {/* Pagination Controls */}
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mt={2}
+        >
+          <Select value={itemsPerPage} onChange={handleItemsPerPageChange}>
+            {[10, 20, 30].map((num) => (
+              <MenuItem key={num} value={num}>
+                {num} per page
+              </MenuItem>
+            ))}
+          </Select>
+
+          <Box>
+            <Button
+              onClick={() => handlePageChange(1)}
+              disabled={currentPage === 1}
+            >
+              |&lt;
+            </Button>
+            <Button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              &lt;
+            </Button>
+            <Typography display="inline" mx={2}>
+              {`${(currentPage - 1) * itemsPerPage + 1} - ${Math.min(
+                currentPage * itemsPerPage,
+                filteredCustomers.length
+              )} of ${filteredCustomers.length}`}
+            </Typography>
+            <Button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage * itemsPerPage >= filteredCustomers.length}
+            >
+              &gt;
+            </Button>
+            <Button
+              onClick={() =>
+                handlePageChange(
+                  Math.ceil(filteredCustomers.length / itemsPerPage)
+                )
+              }
+              disabled={currentPage * itemsPerPage >= filteredCustomers.length}
+            >
+              &gt;|
+            </Button>
+          </Box>
+        </Box>
       </Box>
     </Box>
   );
