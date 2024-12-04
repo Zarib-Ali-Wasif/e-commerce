@@ -9,8 +9,6 @@ import {
   Select,
   InputLabel,
   FormControl,
-  Select,
-  MenuItem,
   CardMedia,
 } from "@mui/material";
 import { useFormik } from "formik";
@@ -71,8 +69,8 @@ const AddProduct = ({ productData, onSubmit }) => {
               headers: { "Content-Type": "multipart/form-data" },
             })
           : { data: productImage }; // Use existing image if not uploading a new one
-        const imageUrl = imageResponse.data || ""; // URL of the uploaded image
-
+        const imageUrl = imageResponse.data.url || ""; // URL of the uploaded image
+        console.log(imageUrl);
         const productData = {
           ...data,
           image: imageUrl || productImage,
@@ -153,8 +151,10 @@ const AddProduct = ({ productData, onSubmit }) => {
               borderRadius: "20px",
             }}
             image={
-              productImage
+              productImage !== null
                 ? productImage
+                : imageUrl
+                ? imageUrl
                 : "https://placehold.co/600x400?text=Click+to+Upload+Image"
             }
             alt="Product Image"
@@ -240,8 +240,8 @@ const AddProduct = ({ productData, onSubmit }) => {
             <MenuItem value="" disabled>
               Select Category
             </MenuItem>
-            {categories.map((category) => (
-              <MenuItem key={category} value={category}>
+            {categories.map((category, index) => (
+              <MenuItem key={`${category}-${index}`} value={category}>
                 {category}
               </MenuItem>
             ))}

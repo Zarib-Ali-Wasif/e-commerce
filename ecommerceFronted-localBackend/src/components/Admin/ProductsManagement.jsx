@@ -22,36 +22,26 @@ import {
   Badge,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import {
   fetchProducts,
   fetchCategories,
-} from "../../../lib/redux/slices/productsSlice";
-import {
   deleteProduct,
   updateProduct,
-} from "../../../lib/redux/slices/productsSlice"; // Assuming you have these actions
+} from "../../../lib/redux/slices/productsSlice";
 import ProductDetailsModal from "../ProductDetailsModal";
-import AddProduct from "./AddProduct"; // Import your AddProduct component
-import { Update } from "@mui/icons-material";
+import AddProduct from "./AddProduct"; // Import the updated AddProduct component
 
 const ProductsManagement = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [showAddProductModal, setShowAddProductModal] = useState(false);
-  const {
-    productsList,
-    categories,
-    loading,
-    loadingCategories,
-    loadingDelete,
-    loadingUpdate,
-    error,
-  } = useSelector((state) => state.products);
+
+  const { productsList, categories, loading, loadingCategories } = useSelector(
+    (state) => state.products
+  );
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(fetchProducts("all"));
@@ -60,7 +50,7 @@ const ProductsManagement = () => {
 
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
-    dispatch(fetchProducts(event.target.value)); // Fetch products by category
+    dispatch(fetchProducts(event.target.value));
   };
 
   const handleOpenModal = (id) => {
@@ -75,31 +65,30 @@ const ProductsManagement = () => {
 
   const handleAddProduct = () => {
     setShowAddProductModal(true);
-    // setTimeout(() => {
-    //   dispatch(fetchProducts("all")); // Fetch products after adding a new one
-    //   dispatch(fetchCategories());
-    // }, 2000);
-    // toast.success("Test: Product added successfully");
+  };
+
+  const handleCloseAddProductModal = () => {
+    setShowAddProductModal(false);
+  };
+
+  const handleProductAdded = () => {
+    dispatch(fetchProducts("all"));
+    setShowAddProductModal(false);
+    toast.success("Product added successfully!");
   };
 
   const handleDeleteProduct = (productId) => {
-    // Call delete API and remove from the store
-    dispatch(deleteProduct(productId));
-    setTimeout(() => {
-      dispatch(fetchProducts("all")); // Fetch products after adding a new one
-      dispatch(fetchCategories());
-    }, 2000);
-    toast.success("Product deleted successfully");
+    dispatch(deleteProduct(productId)).then(() => {
+      dispatch(fetchProducts("all"));
+      toast.success("Product deleted successfully");
+    });
   };
 
   const handleUpdateProduct = (productId, dataToUpdate) => {
-    // Call update API and update the product
-    dispatch(updateProduct({ productId, dataToUpdate }));
-    setTimeout(() => {
-      dispatch(fetchProducts("all")); // Fetch products after adding a new one
-      dispatch(fetchCategories());
-    }, 2000);
-    toast.success("Product updated successfully");
+    dispatch(updateProduct({ productId, dataToUpdate })).then(() => {
+      dispatch(fetchProducts("all"));
+      toast.success("Product updated successfully");
+    });
   };
 
   const handleRemoveDiscount = (productId) => {
@@ -111,6 +100,36 @@ const ProductsManagement = () => {
     };
     handleUpdateProduct(productId, dataToUpdate); // Remove discount
     toast.success("Discount removed successfully");
+  };
+
+  const [editProductData, setEditProductData] = useState(null); // Edit data ke liye state
+
+  // Function to open AddProduct modal for editing
+  const handleEditProduct = (product) => {
+    setEditProductData(product);
+    setShowAddProductModal(true);
+  };
+
+  // Submit handler for both add and edit
+  const handleAddOrUpdateProductSubmit = (productData) => {
+    if (editProductData) {
+      dispatch(
+        updateProduct({
+          productId: editProductData._id,
+          dataToUpdate: productData,
+        })
+      ).then(() => {
+        dispatch(fetchProducts("all"));
+        toast.success("Product updated successfully!");
+      });
+    } else {
+      dispatch(AddProduct(productData)).then(() => {
+        dispatch(fetchProducts("all"));
+        toast.success("Product added successfully!");
+      });
+    }
+    setShowAddProductModal(false);
+    setEditProductData(null); // Reset edit data after submission
   };
 
   return (
@@ -164,8 +183,8 @@ const ProductsManagement = () => {
         </Box>
       ) : (
         <Grid container spacing={4}>
-          {productsList.map((product) => (
-            <Grid item xs={12} sm={6} md={4} key={product._id}>
+          {productsList.map((product, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
               <Card
                 sx={{
                   maxWidth: 345,
@@ -230,13 +249,21 @@ const ProductsManagement = () => {
                   >
                     View Details
                   </Button>
-
+                  {/* 
                   <Button
                     variant="contained"
                     sx={{ textTransform: "none", marginRight: 1 }}
                     onClick={() => handleUpdateProduct(product._id)} // You would pass the updated data here
                   >
                     Update
+                  </Button> */}
+
+                  <Button
+                    variant="outlined"
+                    sx={{ color: "#387DA3", textTransform: "none" }}
+                    onClick={() => handleEditProduct(product)} // Opens in edit mode
+                  >
+                    Edit
                   </Button>
 
                   <Button
@@ -246,7 +273,6 @@ const ProductsManagement = () => {
                   >
                     Delete
                   </Button>
-
                   <Button
                     variant="outlined"
                     sx={{ color: "#387DA3", textTransform: "none" }}
@@ -276,10 +302,21 @@ const ProductsManagement = () => {
 
       <ToastContainer />
 
-      {/* Add New Product Modal */}
-      {showAddProductModal && <AddProduct />}
+      {/* {showAddProductModal && (
+        <AddProduct
+          onClose={handleCloseAddProductModal}
+          onProductAdded={handleProductAdded}
+        />
+      )} */}
 
-      {/* Product Details Modal */}
+      {showAddProductModal && (
+        <AddProduct
+          productData={editProductData} // Pass edit data if editing
+          onClose={handleCloseAddProductModal}
+          onSubmit={handleAddOrUpdateProductSubmit} // Dynamic submission
+        />
+      )}
+
       {selectedProductId && (
         <ProductDetailsModal
           open={modalOpen}
