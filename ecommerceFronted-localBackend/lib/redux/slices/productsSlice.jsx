@@ -232,7 +232,6 @@ const productsSlice = createSlice({
       .addCase(applyDiscount.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        console.log("Discount applied:", action.payload); // Handle success, optionally update products list
       })
       .addCase(applyDiscount.rejected, (state, action) => {
         state.loading = false;
@@ -246,7 +245,6 @@ const productsSlice = createSlice({
       .addCase(removeDiscount.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        console.log("Discount removed:", action.payload); // Handle success
       })
       .addCase(removeDiscount.rejected, (state, action) => {
         state.loading = false;

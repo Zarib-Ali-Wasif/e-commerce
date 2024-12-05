@@ -58,7 +58,6 @@ const theme = createTheme({
 const Contact = () => {
   const navigate = useNavigate();
   const handleEmail = (e) => {
-    console.log("Email clicked");
     e.preventDefault();
     navigate("/email-us");
   };

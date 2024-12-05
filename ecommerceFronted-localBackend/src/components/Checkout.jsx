@@ -97,7 +97,6 @@ const Checkout = () => {
     try {
       setLoading(true); // Show loader
       const response = await api.post(`orders`, orderDetails);
-      console.log("Order saved successfully:", response.data);
       localStorage.setItem("order", JSON.stringify(orderDetails));
       dispatch(clearCart()); // Clear cart via Redux
       toast.success("Order placed successfully!");
