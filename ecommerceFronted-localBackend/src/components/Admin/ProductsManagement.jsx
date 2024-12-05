@@ -273,12 +273,12 @@ const ProductsManagement = () => {
         <Grid item xs={12} md={3}>
           <FormControl
             fullWidth
-            alignItems="center"
-            margin="auto"
             variant="outlined"
             sx={{
               backgroundColor: "#f5f5f5",
               borderRadius: "8px",
+              alignItems: "center",
+              margin: "0 auto", // Use sx prop for custom margins
             }}
           >
             <InputLabel
@@ -323,58 +323,63 @@ const ProductsManagement = () => {
           </FormControl>
         </Grid>
 
-        {/* Apply Discount Button */}
-        <Grid item xs={12} md={3}>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "#1C4771",
-              color: "#fff",
-              width: "100%",
-              textTransform: "none",
-              "&:hover": { backgroundColor: "#163b56" },
-            }}
-            onClick={handleOpenAddDiscount}
-            startIcon={<DiscountIcon />}
-          >
-            Apply Discount
-          </Button>
-        </Grid>
+        {/* Button Group on the right */}
+        <Grid item xs={12} md={9}>
+          <Grid container spacing={2} justifyContent="flex-end">
+            {/* Apply Discount Button */}
+            <Grid item xs={12} md={4} lg={3}>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "#1C4771",
+                  color: "#fff",
+                  width: "100%",
+                  textTransform: "none",
+                  "&:hover": { backgroundColor: "#163b56" },
+                }}
+                onClick={handleOpenAddDiscount}
+                startIcon={<DiscountIcon />}
+              >
+                Apply Discount
+              </Button>
+            </Grid>
 
-        {/* Remove Discount Button */}
-        <Grid item xs={12} md={3}>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "#1C4771",
-              color: "#fff",
-              width: "100%",
-              textTransform: "none",
-              "&:hover": { backgroundColor: "#163b56" },
-            }}
-            onClick={handleOpenRemoveDiscount}
-            startIcon={<RemoveCircleIcon />}
-          >
-            Remove Discount
-          </Button>
-        </Grid>
+            {/* Remove Discount Button */}
+            <Grid item xs={12} md={4} lg={3}>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "#1C4771",
+                  color: "#fff",
+                  width: "100%",
+                  textTransform: "none",
+                  "&:hover": { backgroundColor: "#163b56" },
+                }}
+                onClick={handleOpenRemoveDiscount}
+                startIcon={<RemoveCircleIcon />}
+              >
+                Remove Discount
+              </Button>
+            </Grid>
 
-        {/* Add New Product Button */}
-        <Grid item xs={12} md={3}>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "#1C4771",
-              color: "#fff",
-              width: "100%",
-              textTransform: "none",
-              "&:hover": { backgroundColor: "#163b56" },
-            }}
-            onClick={handleAddProduct}
-            startIcon={<AddCircleIcon />}
-          >
-            Add New Product
-          </Button>
+            {/* Add New Product Button */}
+            <Grid item xs={12} md={4} lg={3}>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "#1C4771",
+                  color: "#fff",
+                  width: "100%",
+                  textTransform: "none",
+                  "&:hover": { backgroundColor: "#163b56" },
+                }}
+                onClick={handleAddProduct}
+                startIcon={<AddCircleIcon />}
+              >
+                Add New Product
+              </Button>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
 
