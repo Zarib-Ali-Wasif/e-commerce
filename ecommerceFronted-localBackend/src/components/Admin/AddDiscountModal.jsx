@@ -18,18 +18,19 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-const AddDiscountModal = ({ categories, onSubmit }) => {
+const AddDiscountModal = ({ categories, onSubmit, onOpen, onClose }) => {
   const [open, setOpen] = useState(false);
+
   const [confirmOpen, setConfirmOpen] = useState(false); // State for confirmation dialog
   const [offerName, setOfferName] = useState("");
   const [discountPercent, setDiscountPercent] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-    resetForm();
-  };
+  // const handleOpen = () => setOpen(true);
+  // const handleClose = () => {
+  //   setOpen(false);
+  //   resetForm();
+  // };
 
   const resetForm = () => {
     setOfferName("");
@@ -43,19 +44,19 @@ const AddDiscountModal = ({ categories, onSubmit }) => {
   const handleSubmit = () => {
     onSubmit({ offerName, discountPercent, selectedCategory });
     resetForm();
-    handleClose(); // Close the modal after submission
+    onClose(); // Close the modal after submission
     handleConfirmClose(); // Close the confirmation dialog
   };
 
   return (
     <>
-      <Button variant="contained" color="primary" onClick={handleOpen}>
+      {/* <Button variant="contained" color="primary" onClick={handleOpen}>
         Apply Offer / Add Discount
-      </Button>
+      </Button> */}
 
       <Modal
         open={open}
-        onClose={handleClose}
+        onClose={onClose}
         sx={{
           display: "flex",
           justifyContent: "center",
@@ -75,7 +76,7 @@ const AddDiscountModal = ({ categories, onSubmit }) => {
         >
           <IconButton
             sx={{ position: "absolute", top: 5, right: 5 }}
-            onClick={handleClose}
+            onClick={onClose}
           >
             <CloseIcon />
           </IconButton>
