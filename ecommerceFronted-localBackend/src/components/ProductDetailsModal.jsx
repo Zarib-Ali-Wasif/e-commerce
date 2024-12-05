@@ -128,6 +128,12 @@ const ProductDetailsModal = ({
             >
               {product.title}
             </Typography>
+            <Typography variant="body2" color="textSecondary" gutterBottom>
+              {product.category}
+            </Typography>
+            <Typography variant="body1" color="textSecondary" gutterBottom>
+              Available Stock: {product.stock || 0}
+            </Typography>
             <Typography variant="h6" color="textSecondary" gutterBottom>
               Price: ${product.price.toFixed(2)}
             </Typography>

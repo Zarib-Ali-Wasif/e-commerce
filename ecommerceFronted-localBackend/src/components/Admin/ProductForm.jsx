@@ -16,7 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
 import api from "../../../lib/services/api";
 
-const AddProduct = ({ productData, onSubmit }) => {
+const ProductForm = ({ productData, onSubmit }) => {
   const [productImage, setProductImage] = useState(productData?.image || "");
   const [file, setFile] = useState(null);
 
@@ -27,6 +27,7 @@ const AddProduct = ({ productData, onSubmit }) => {
         description: productData.description || "",
         price: productData.price || "",
         category: productData.category || "",
+        stock: productData.stock || "",
       });
       setProductImage(productData.image || "");
     }
@@ -45,7 +46,11 @@ const AddProduct = ({ productData, onSubmit }) => {
     price: Yup.number()
       .required("Price is required")
       .positive("Price must be positive"),
+    price: Yup.number()
+      .required("Price is required")
+      .positive("Price must be positive"),
     category: Yup.string().required("Category is required"),
+    stock: Yup.number().positive("stock must be positive"),
   });
 
   const formik = useFormik({
@@ -54,6 +59,7 @@ const AddProduct = ({ productData, onSubmit }) => {
       description: "",
       price: "",
       category: "",
+      stock: "",
     },
     validationSchema,
     onSubmit: async (data) => {
@@ -248,6 +254,21 @@ const AddProduct = ({ productData, onSubmit }) => {
           <Typography color="error">{formik.errors.category}</Typography>
         )}
 
+        <TextField
+          label="Available Stock"
+          name="stock"
+          fullWidth
+          type="number"
+          variant="standard"
+          value={formik.values.stock}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          sx={{ mt: 2 }}
+        />
+        {formik.touched.stock && formik.errors.stock && (
+          <Typography color="error">{formik.errors.stock}</Typography>
+        )}
+
         <Button
           onClick={formik.handleSubmit}
           sx={{
@@ -273,4 +294,4 @@ const AddProduct = ({ productData, onSubmit }) => {
   );
 };
 
-export default AddProduct;
+export default ProductForm;

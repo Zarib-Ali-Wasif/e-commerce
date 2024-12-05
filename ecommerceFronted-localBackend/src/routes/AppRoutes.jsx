@@ -12,7 +12,7 @@ import OrderConfirmation from "../components/OrderConfirmation";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import ForgetPassword from "../pages/ForgetPassword";
-import AddProduct from "../components/Admin/AddProduct";
+import ProductForm from "../components/Admin/ProductForm";
 import OtpVerification from "../pages/OtpVerification";
 import ResetPassword from "../pages/ResetPassword";
 import ManageAccount from "../components/ManageAccount";
@@ -52,7 +52,7 @@ function AppRoutes() {
           <Route path="/about" element={<About />} />
           <Route path="/products" element={<Products />} />
           <Route path="/products/:id" element={<Products showModal={true} />} />
-          <Route path="/add-product" element={<AddProduct />} />
+          <Route path="/add-product" element={<ProductForm />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />

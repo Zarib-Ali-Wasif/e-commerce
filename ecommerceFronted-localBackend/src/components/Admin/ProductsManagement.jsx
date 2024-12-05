@@ -24,7 +24,7 @@ import {
   deleteProduct,
 } from "../../../lib/redux/slices/productsSlice";
 import ProductDetailsModal from "../ProductDetailsModal";
-import AddProduct from "./AddProduct"; // Import the updated AddProduct component
+import ProductForm from "./ProductForm"; // Import the updated ProductForm component
 
 const ProductsManagement = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -98,7 +98,7 @@ const ProductsManagement = () => {
 
   const [editProductData, setEditProductData] = useState(null); // Edit data ke liye state
 
-  // Function to open AddProduct modal for editing
+  // Function to open ProductForm modal for editing
   const handleEditProduct = (product) => {
     setEditProductData(product);
     setShowAddProductModal(true);
@@ -218,8 +218,7 @@ const ProductsManagement = () => {
                     Price: ${product.price.toFixed(2)}
                   </Typography>
                   <Typography variant="body1" color="textSecondary">
-                    Available Stock: {product.stock || 20}
-                    {/* Assuming stock is part of the product object */}
+                    Available Stock: {product.stock || 0}
                   </Typography>
 
                   {product.discount?.name &&
@@ -291,7 +290,7 @@ const ProductsManagement = () => {
       <ToastContainer />
 
       {showAddProductModal && (
-        <AddProduct
+        <ProductForm
           productData={editProductData} // Pass edit data if editing
           onClose={handleCloseAddProductModal}
           onSubmit={handleAddOrUpdateProductSubmit} // Dynamic submission
