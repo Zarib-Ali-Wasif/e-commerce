@@ -1,10 +1,3 @@
-// Add new Product button working
-// Remove Discount button Working
-// Delete button working
-// View Details button working,
-// ToDo: Update button is not working, have to attach the modal and show form inmodal , and in form have to map current data respectively
-// ToDo:In View Details Modal we have to remove add to cart button in modal when Admin login
-// ToDo: In Add new Product, we have to add form in modal , and when we submit form tham it have to reload the fetch orders, and categorises, because we have to reload the page after adding new product to see the new product
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -26,8 +19,9 @@ import { toast, ToastContainer } from "react-toastify";
 import {
   fetchProducts,
   fetchCategories,
-  deleteProduct,
+  addProduct,
   updateProduct,
+  deleteProduct,
 } from "../../../lib/redux/slices/productsSlice";
 import ProductDetailsModal from "../ProductDetailsModal";
 import AddProduct from "./AddProduct"; // Import the updated AddProduct component
@@ -113,6 +107,7 @@ const ProductsManagement = () => {
   // Submit handler for both add and edit
   const handleAddOrUpdateProductSubmit = (productData) => {
     if (editProductData) {
+      // Update existing product
       dispatch(
         updateProduct({
           productId: editProductData._id,
@@ -123,7 +118,8 @@ const ProductsManagement = () => {
         toast.success("Product updated successfully!");
       });
     } else {
-      dispatch(AddProduct(productData)).then(() => {
+      // Add new product
+      dispatch(addProduct(productData)).then(() => {
         dispatch(fetchProducts("all"));
         toast.success("Product added successfully!");
       });
@@ -249,14 +245,6 @@ const ProductsManagement = () => {
                   >
                     View Details
                   </Button>
-                  {/* 
-                  <Button
-                    variant="contained"
-                    sx={{ textTransform: "none", marginRight: 1 }}
-                    onClick={() => handleUpdateProduct(product._id)} // You would pass the updated data here
-                  >
-                    Update
-                  </Button> */}
 
                   <Button
                     variant="outlined"
@@ -301,13 +289,6 @@ const ProductsManagement = () => {
       </Button>
 
       <ToastContainer />
-
-      {/* {showAddProductModal && (
-        <AddProduct
-          onClose={handleCloseAddProductModal}
-          onProductAdded={handleProductAdded}
-        />
-      )} */}
 
       {showAddProductModal && (
         <AddProduct

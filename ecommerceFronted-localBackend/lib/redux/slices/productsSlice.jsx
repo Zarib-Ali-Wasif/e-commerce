@@ -40,19 +40,17 @@ export const fetchCategories = createAsyncThunk(
   }
 );
 
-// Async thunk to delete a product
-export const deleteProduct = createAsyncThunk(
-  "products/deleteProduct",
-  async (productId, { rejectWithValue }) => {
+// Async thunk to add a product
+export const addProduct = createAsyncThunk(
+  "products/addProduct",
+  async (newProduct, { rejectWithValue }) => {
     try {
-      const response = await api.delete(`store/products/${productId}`);
-      toast.success("Product deleted successfully");
-      return productId; // Returning the deleted product's ID to remove from the state
+      const response = await api.post("store/products", newProduct);
+      // toast.success("Product added successfully");
+      return response.data; // Returning the newly added product details
     } catch (error) {
-      toast.error("Failed to delete product");
-      return rejectWithValue(
-        error.response?.data || "Failed to delete product"
-      );
+      toast.error("Failed to add product");
+      return rejectWithValue(error.response?.data || "Failed to add product");
     }
   }
 );
@@ -66,12 +64,29 @@ export const updateProduct = createAsyncThunk(
         `store/products/${productId}`,
         dataToUpdate
       );
-      toast.success("Product updated successfully");
+      // toast.success("Product updated successfully");
       return response.data; // Returning updated product details
     } catch (error) {
       toast.error("Failed to update product");
       return rejectWithValue(
         error.response?.data || "Failed to update product"
+      );
+    }
+  }
+);
+
+// Async thunk to delete a product
+export const deleteProduct = createAsyncThunk(
+  "products/deleteProduct",
+  async (productId, { rejectWithValue }) => {
+    try {
+      const response = await api.delete(`store/products/${productId}`);
+      // toast.success("Product deleted successfully");
+      return productId; // Returning the deleted product's ID to remove from the state
+    } catch (error) {
+      toast.error("Failed to delete product");
+      return rejectWithValue(
+        error.response?.data || "Failed to delete product"
       );
     }
   }
@@ -123,19 +138,17 @@ const productsSlice = createSlice({
         state.loadingCategories = false;
         state.error = action.payload;
       })
-      // Delete Product
-      .addCase(deleteProduct.pending, (state) => {
-        state.loadingDelete = true;
+      // Add Product
+      .addCase(addProduct.pending, (state) => {
+        state.loading = true;
       })
-      .addCase(deleteProduct.fulfilled, (state, action) => {
-        state.loadingDelete = false;
-        state.productsList = state.productsList.filter(
-          (product) => product.id !== action.payload
-        );
+      .addCase(addProduct.fulfilled, (state, action) => {
+        state.loading = false;
+        state.productsList.push(action.payload); // Add the new product to the list
         state.error = null;
       })
-      .addCase(deleteProduct.rejected, (state, action) => {
-        state.loadingDelete = false;
+      .addCase(addProduct.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload;
       })
       // Update Product
@@ -154,6 +167,21 @@ const productsSlice = createSlice({
       })
       .addCase(updateProduct.rejected, (state, action) => {
         state.loadingUpdate = false;
+        state.error = action.payload;
+      })
+      // Delete Product
+      .addCase(deleteProduct.pending, (state) => {
+        state.loadingDelete = true;
+      })
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        state.loadingDelete = false;
+        state.productsList = state.productsList.filter(
+          (product) => product.id !== action.payload
+        );
+        state.error = null;
+      })
+      .addCase(deleteProduct.rejected, (state, action) => {
+        state.loadingDelete = false;
         state.error = action.payload;
       });
   },

@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   TextField,
-  Avatar,
   MenuItem,
   Select,
   InputLabel,
@@ -70,17 +69,18 @@ const AddProduct = ({ productData, onSubmit }) => {
             })
           : { data: productImage }; // Use existing image if not uploading a new one
         const imageUrl = imageResponse.data.url || productImage; // URL of the uploaded image
-        console.log(imageUrl);
         const productData = {
           ...data,
           image: imageUrl,
         };
-
         await onSubmit(productData); // Call the onSubmit function passed as prop
 
-        toast.success(productData.id ? "Product updated!" : "Product added!");
+        // toast.success(productData.id ? "Product updated!" : "Product added!");
         formik.resetForm();
+        setProductImage(""); // Clear the image after submission if needed
+        setFile(null); // Clear the file input after form submission
       } catch (error) {
+        console.error("Failed to process request", error);
         toast.error("Failed to process request, please try again.");
       }
     },
@@ -268,7 +268,7 @@ const AddProduct = ({ productData, onSubmit }) => {
           {productData ? "Update Product" : "Add Product"}
         </Button>
       </Box>
-      <ToastContainer />
+      {/* <ToastContainer /> */}
     </Box>
   );
 };
