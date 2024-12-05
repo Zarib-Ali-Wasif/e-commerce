@@ -121,18 +121,16 @@ const ProductForm = ({ productData, onSubmit, onClose }) => {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        height: "90vh",
+        height: "100vh",
         textAlign: "center",
-        padding: 10, // Add some padding to the container for better spacing
       }}
     >
       {/* Add Product Heading */}
       <Typography
         sx={{
-          fontSize: "64px",
-          fontWeight: 500,
-          mb: 2,
-          mt: 12,
+          fontSize: { xs: "28px", sm: "38px", md: "54px" },
+          fontWeight: "bold",
+          mt: { xs: 2 },
           color: "#1C4771", // Replace with your desired color code
         }}
       >
@@ -141,7 +139,7 @@ const ProductForm = ({ productData, onSubmit, onClose }) => {
 
       {/* Product Image Section */}
 
-      <Box sx={{ mt: 2 }}>
+      <Box sx={{ mt: 0 }}>
         <label htmlFor="productImageInput">
           <CardMedia
             component="img"
@@ -169,7 +167,7 @@ const ProductForm = ({ productData, onSubmit, onClose }) => {
         />
       </Box>
 
-      <Box sx={{ width: "300px", mt: 3 }}>
+      <Box sx={{ maxWidth: "300px", width: "90%", mt: 3 }}>
         <TextField
           label="Title"
           name="title"
@@ -267,7 +265,7 @@ const ProductForm = ({ productData, onSubmit, onClose }) => {
           <Typography color="error">{formik.errors.price}</Typography>
         )}
 
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", pb: 5 }}>
           <Button
             onClick={formik.handleSubmit}
             sx={{

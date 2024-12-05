@@ -24,7 +24,7 @@ import {
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined"; // Discount icon
+import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
 
 import { useDispatch, useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
@@ -403,31 +403,29 @@ const ProductsManagement = () => {
 
       <ToastContainer />
 
-      {/* {showAddProductModal && (
-        <ProductForm
-          productData={editProductData} // Pass edit data if editing
-          onSubmit={handleAddOrUpdateProductSubmit} // Dynamic submission
-          onClose={handleCloseAddProductModal}
-        />
-      )} */}
-
       <Modal
-        open={modalOpen} // Controls modal visibility
-        onClose={handleCloseAddProductModal} // Close modal on backdrop click or close button
-        aria-labelledby="product-modal-title"
-        aria-describedby="product-modal-description"
+        open={showAddProductModal}
+        onClose={handleCloseAddProductModal}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
       >
         <Box
           sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)", // Center the modal
-            width: 400,
-            bgcolor: "background.paper",
-            borderRadius: 1,
-            boxShadow: 24,
-            p: 3,
+            margin: "auto",
+            width: {
+              xs: "90%",
+              sm: "70%",
+              md: "50%",
+            },
+            maxHeight: "80vh",
+            overflowY: "auto",
+            backgroundColor: "#fff",
+            borderRadius: "8px",
+            outline: "none",
+            position: "relative",
           }}
         >
           <ProductForm
