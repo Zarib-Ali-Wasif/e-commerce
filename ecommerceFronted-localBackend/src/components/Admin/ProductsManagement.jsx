@@ -68,43 +68,33 @@ const ProductsManagement = () => {
     getDiscountNames(productsList);
   }, [dispatch]);
 
+  // Extract unique discount names once productsList is populated
+  useEffect(() => {
+    if (productsList.length > 0) {
+      const uniqueOffers = getDiscountNames(productsList);
+      setOffers(uniqueOffers);
+    }
+  }, [productsList]);
+
+  // Selector to get unique discount names from the productsList
+  const getDiscountNames = (productsList) => {
+    const discountNames = productsList
+      .map((product) => product.discount.name)
+      .filter((name) => name && name.toLowerCase() !== "none"); // Filter out 'none' or 'None'
+
+    // Get unique discount names (remove duplicates)
+    return [...new Set(discountNames)];
+  };
+
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
     dispatch(fetchProducts(event.target.value));
   };
 
-  const handleOpenModal = (id) => {
-    setSelectedProductId(id);
-    setModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    setSelectedProductId(null);
-  };
-
-  const handleAddProduct = () => {
-    setShowAddProductModal(true);
-  };
-
-  const handleCloseAddProductModal = () => {
-    setShowAddProductModal(false);
-  };
-
-  const handleOpenAddDiscount = () => {
-    setShowAddDiscountModal(true);
-  };
-
-  const handleCloseAddDiscount = () => {
-    setShowAddDiscountModal(false);
-  };
-
-  const handleOpenRemoveDiscount = () => {
-    setShowRemoveDiscountModal(true);
-  };
-
-  const handleCloseRemoveDiscount = () => {
-    setShowRemoveDiscountModal(false);
+  const openConfirmDialog = (action, product) => {
+    setConfirmAction(action);
+    setSelectedProduct(product);
+    setConfirmOpen(true);
   };
 
   const handleUpdateProduct = (productId, dataToUpdate) => {
@@ -130,12 +120,6 @@ const ProductsManagement = () => {
     };
     handleUpdateProduct(productId, dataToUpdate); // Remove discount
     toast.success("Discount removed successfully");
-  };
-
-  const openConfirmDialog = (action, product) => {
-    setConfirmAction(action);
-    setSelectedProduct(product);
-    setConfirmOpen(true);
   };
 
   const handleConfirm = () => {
@@ -185,6 +169,7 @@ const ProductsManagement = () => {
         selectedCategory: data.selectedCategory,
       })
     )
+      .unwrap()
       .then(() => {
         dispatch(fetchProducts("all"));
         toast.success("Discount applied successfully!");
@@ -213,25 +198,42 @@ const ProductsManagement = () => {
       });
   };
 
-  // Extract unique discount names once productsList is populated
-  useEffect(() => {
-    if (productsList.length > 0) {
-      const uniqueOffers = getDiscountNames(productsList);
-      setOffers(uniqueOffers);
-    }
-  }, [productsList]);
+  const handleOpenModal = (id) => {
+    setSelectedProductId(id);
+    setModalOpen(true);
+  };
 
-  // Selector to get unique discount names from the productsList
-  const getDiscountNames = (productsList) => {
-    const discountNames = productsList
-      .map((product) => product.discount.name)
-      .filter((name) => name && name.toLowerCase() !== "none"); // Filter out 'none' or 'None'
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedProductId(null);
+  };
 
-    // Get unique discount names (remove duplicates)
-    return [...new Set(discountNames)];
+  const handleAddProduct = () => {
+    setShowAddProductModal(true);
+  };
+
+  const handleCloseAddProductModal = () => {
+    setShowAddProductModal(false);
+  };
+
+  const handleOpenAddDiscount = () => {
+    setShowAddDiscountModal(true);
+  };
+
+  const handleCloseAddDiscount = () => {
+    setShowAddDiscountModal(false);
+  };
+
+  const handleOpenRemoveDiscount = () => {
+    setShowRemoveDiscountModal(true);
+  };
+
+  const handleCloseRemoveDiscount = () => {
+    setShowRemoveDiscountModal(false);
   };
 
   return (
+    // Main Container
     <Box
       sx={{
         padding: "20px",
@@ -239,23 +241,29 @@ const ProductsManagement = () => {
         maxWidth: "100%",
       }}
     >
+      {/* Page Title */}
       <Typography
         variant="h4"
         sx={{
           fontWeight: 600,
-          mb: 6,
+          mb: 10,
           textAlign: "center",
           color: "#1C4771",
         }}
       >
         Manage Products
       </Typography>
+
+      {/* Filter Section */}
       <Grid
         container
-        spacing={3}
+        spacing={2}
         sx={{
+          width: "100%",
+          margin: "auto",
           alignItems: "center",
           padding: "16px",
+          marginBottom: 5,
           backgroundColor: "#f9f9f9",
           borderRadius: "8px",
           boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
@@ -265,6 +273,8 @@ const ProductsManagement = () => {
         <Grid item xs={12} md={3}>
           <FormControl
             fullWidth
+            alignItems="center"
+            margin="auto"
             variant="outlined"
             sx={{
               backgroundColor: "#f5f5f5",
@@ -288,7 +298,9 @@ const ProductsManagement = () => {
                 PaperProps: {
                   sx: {
                     maxHeight: 200,
-                    "& .MuiMenuItem-root:hover": { backgroundColor: "#f0f8ff" },
+                    "& .MuiMenuItem-root:hover": {
+                      backgroundColor: "#f0f8ff",
+                    },
                   },
                 },
               }}
@@ -366,6 +378,7 @@ const ProductsManagement = () => {
         </Grid>
       </Grid>
 
+      {/* Product Cards */}
       {loading ? (
         <Box
           sx={{
@@ -423,7 +436,6 @@ const ProductsManagement = () => {
                   <Typography variant="body1" color="textSecondary">
                     Available Stock: {product.stock || 0}
                   </Typography>
-
                   {product.discount?.name &&
                     product.discount.discountPercent > 0 && (
                       <Typography
@@ -435,6 +447,7 @@ const ProductsManagement = () => {
                     )}
                 </CardContent>
 
+                {/* Product Actions */}
                 <Box
                   sx={{
                     display: "flex",
@@ -483,27 +496,7 @@ const ProductsManagement = () => {
         </Grid>
       )}
 
-      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
-        <DialogTitle>Confirm Action</DialogTitle>
-        <DialogContent>
-          Are you sure you want to{" "}
-          {confirmAction === "delete"
-            ? "delete this product"
-            : "remove the discount"}
-          ?
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setConfirmOpen(false)} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleConfirm} color="error">
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <ToastContainer />
-
+      {/* Add Product Modal */}
       <Modal
         open={showAddProductModal}
         onClose={handleCloseAddProductModal}
@@ -537,6 +530,7 @@ const ProductsManagement = () => {
         </Box>
       </Modal>
 
+      {/* Product Details Modal */}
       {selectedProductId && (
         <ProductDetailsModal
           open={modalOpen}
@@ -563,6 +557,28 @@ const ProductsManagement = () => {
         offers={offers}
         onSubmit={handleRemoveDiscountSubmit}
       />
+
+      {/* Confirm Dialog */}
+      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+        <DialogTitle>Confirm Action</DialogTitle>
+        <DialogContent>
+          Are you sure you want to{" "}
+          {confirmAction === "delete"
+            ? "delete this product"
+            : "remove the discount"}
+          ?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirm} color="error">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <ToastContainer />
     </Box>
   );
 };
