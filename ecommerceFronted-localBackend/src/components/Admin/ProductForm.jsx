@@ -16,7 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
 import api from "../../../lib/services/api";
 
-const ProductForm = ({ productData, onSubmit }) => {
+const ProductForm = ({ productData, onSubmit, onClose }) => {
   const [productImage, setProductImage] = useState(productData?.image || "");
   const [file, setFile] = useState(null);
 
@@ -192,7 +192,7 @@ const ProductForm = ({ productData, onSubmit }) => {
           fullWidth
           variant="standard"
           multiline
-          rows={4}
+          rows={3}
           value={formik.values.description}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
@@ -200,21 +200,6 @@ const ProductForm = ({ productData, onSubmit }) => {
         />
         {formik.touched.description && formik.errors.description && (
           <Typography color="error">{formik.errors.description}</Typography>
-        )}
-
-        <TextField
-          label="Price"
-          name="price"
-          fullWidth
-          type="number"
-          variant="standard"
-          value={formik.values.price}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          sx={{ mt: 2 }}
-        />
-        {formik.touched.price && formik.errors.price && (
-          <Typography color="error">{formik.errors.price}</Typography>
         )}
 
         <FormControl fullWidth variant="standard" sx={{ mt: 2 }}>
@@ -269,25 +254,66 @@ const ProductForm = ({ productData, onSubmit }) => {
           <Typography color="error">{formik.errors.stock}</Typography>
         )}
 
-        <Button
-          onClick={formik.handleSubmit}
-          sx={{
-            mt: 4,
-            width: "100%",
-            bgcolor: "#1C4771",
-            color: "white",
-            "&:hover": {
-              backgroundColor: "#1C4771", // Hover background color
-              color: "white", // Hover text color
-            },
-            "&:active": {
-              backgroundColor: "#1C4771", // Active background color
-              color: "white", // Active text color
-            },
-          }}
-        >
-          {productData ? "Update Product" : "Add Product"}
-        </Button>
+        <TextField
+          label="Price"
+          name="price"
+          fullWidth
+          type="number"
+          variant="standard"
+          value={formik.values.price}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          sx={{ mt: 2 }}
+        />
+        {formik.touched.price && formik.errors.price && (
+          <Typography color="error">{formik.errors.price}</Typography>
+        )}
+
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Button
+            onClick={formik.handleSubmit}
+            sx={{
+              mt: 4,
+              width: "54%",
+              bgcolor: "#1C4771",
+              color: "white",
+              border: "1px solid #1C4771",
+              "&:hover": {
+                backgroundColor: "#388e3c", // Hover background color
+                color: "#fff", // Hover text color
+                border: "none",
+              },
+              "&:active": {
+                backgroundColor: "#388e3c", // Active background color
+                color: "#fff", // Active text color
+                border: "none",
+              },
+            }}
+          >
+            {productData ? "Update Product" : "Add Product"}
+          </Button>
+          <Button
+            onClick={onclose}
+            sx={{
+              mt: 4,
+              width: "43%",
+              border: "1px solid #1C4771",
+              color: "#1C4771",
+              "&:hover": {
+                backgroundColor: "#d32f2f", // Hover background color
+                color: "#fff", // Hover text color
+                border: "none",
+              },
+              "&:active": {
+                backgroundColor: "#d32f2f", // Active background color
+                color: "fff", // Active text color
+                border: "none",
+              },
+            }}
+          >
+            Cancel
+          </Button>
+        </Box>
       </Box>
       {/* <ToastContainer /> */}
     </Box>

@@ -134,35 +134,114 @@ const ProductsManagement = () => {
         Manage Products
       </Typography>
 
-      {/* Category Filter */}
-      <FormControl
-        variant="outlined"
+      <Grid
+        container
         sx={{
-          width: { xs: "100%", sm: "40%", md: "20%" },
-          mt: { xs: 2, md: 0 },
-          mb: { xs: "20px", md: "50px" },
-          backgroundColor: "#f5f5f5",
-          borderRadius: "8px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        <InputLabel id="category-select-label">Filter by Category</InputLabel>
-        <Select
-          labelId="category-select-label"
-          value={selectedCategory}
-          onChange={handleCategoryChange}
-        >
-          <MenuItem value="all">All</MenuItem>
-          {loadingCategories ? (
-            <MenuItem disabled>Loading categories...</MenuItem>
-          ) : (
-            categories.map((category, index) => (
-              <MenuItem key={index} value={category}>
-                {category.charAt(0).toUpperCase() + category.slice(1)}
+        {/* Category Filter */}
+        <Grid item xs={12} md={6} sx={{ mb: { xs: 2, md: 4 } }}>
+          <FormControl
+            variant="outlined"
+            sx={{
+              width: { xs: "100%", sm: "60%", md: "40%" }, // Adjust responsive width
+              mt: { xs: 2, md: 0 },
+              backgroundColor: "#f5f5f5",
+              borderRadius: "8px",
+              boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
+              zIndex: 1,
+            }}
+          >
+            <InputLabel
+              id="category-select-label"
+              sx={{
+                fontSize: "0.9rem",
+                fontWeight: "500",
+                color: "#1C4771",
+                "&.Mui-focused": { color: "#387DA3" }, // Focus color
+              }}
+            >
+              Filter by Category
+            </InputLabel>
+            <Select
+              labelId="category-select-label"
+              value={selectedCategory}
+              onChange={handleCategoryChange}
+              MenuProps={{
+                PaperProps: {
+                  sx: {
+                    maxHeight: 300,
+                    "& .MuiMenuItem-root:hover": { backgroundColor: "#f0f8ff" },
+                  },
+                },
+              }}
+              sx={{
+                "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+                "&:hover .MuiOutlinedInput-notchedOutline": { border: "none" },
+                "& .MuiSelect-root": {
+                  fontSize: "1rem",
+                  fontWeight: "500",
+                  color: "#1C4771",
+                },
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#387DA3",
+                },
+              }}
+            >
+              <MenuItem
+                value="all"
+                sx={{
+                  fontSize: "0.9rem",
+                  fontWeight: "500",
+                  color: "#1C4771",
+                  "&:hover": { backgroundColor: "#f0f8ff" },
+                }}
+              >
+                All
               </MenuItem>
-            ))
-          )}
-        </Select>
-      </FormControl>
+              {loadingCategories ? (
+                <MenuItem disabled>Loading categories...</MenuItem>
+              ) : (
+                categories.map((category, index) => (
+                  <MenuItem
+                    key={index}
+                    value={category}
+                    sx={{
+                      fontSize: "0.9rem",
+                      fontWeight: "500",
+                      color: "#1C4771",
+                      "&:hover": { backgroundColor: "#f0f8ff" },
+                    }}
+                  >
+                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                  </MenuItem>
+                ))
+              )}
+            </Select>
+          </FormControl>
+        </Grid>
+
+        {/* Add Product Button */}
+        <Grid item xs={12} md={3} sx={{ textAlign: "right" }}>
+          <Button
+            variant="contained"
+            sx={{
+              textTransform: "none",
+              mt: { xs: 2, md: 4 },
+              mb: { xs: 2, md: 4 },
+
+              backgroundColor: "#1C4771",
+              "&:hover": { backgroundColor: "#163b56" },
+            }}
+            onClick={handleAddProduct}
+          >
+            Add New Product
+          </Button>
+        </Grid>
+      </Grid>
 
       {loading ? (
         <Box
@@ -180,10 +259,11 @@ const ProductsManagement = () => {
       ) : (
         <Grid container spacing={4}>
           {productsList.map((product, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
+            <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={product._id}>
               <Card
                 sx={{
                   maxWidth: 345,
+                  height: "100%",
                   display: "flex",
                   flexDirection: "column",
                   position: "relative",
@@ -273,19 +353,6 @@ const ProductsManagement = () => {
           ))}
         </Grid>
       )}
-
-      <Button
-        variant="contained"
-        sx={{
-          textTransform: "none",
-          marginTop: 2,
-          backgroundColor: "#1C4771",
-          "&:hover": { backgroundColor: "#163b56" },
-        }}
-        onClick={handleAddProduct}
-      >
-        Add New Product
-      </Button>
 
       <ToastContainer />
 
