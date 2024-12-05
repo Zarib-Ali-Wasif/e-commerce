@@ -36,7 +36,7 @@ const AddProduct = ({ productData, onSubmit }) => {
   const handleFileUpload = (e) => {
     const uploadedFile = e.target.files[0];
     setFile(uploadedFile);
-    const imageUrl = URL.createObjectURL(uploadedFile);
+    const imageUrl = URL.createObjectURL(uploadedFile) || "";
     setProductImage(imageUrl);
   };
 
@@ -69,11 +69,11 @@ const AddProduct = ({ productData, onSubmit }) => {
               headers: { "Content-Type": "multipart/form-data" },
             })
           : { data: productImage }; // Use existing image if not uploading a new one
-        const imageUrl = imageResponse.data.url || ""; // URL of the uploaded image
+        const imageUrl = imageResponse.data.url || productImage; // URL of the uploaded image
         console.log(imageUrl);
         const productData = {
           ...data,
-          image: imageUrl || productImage,
+          image: imageUrl,
         };
 
         await onSubmit(productData); // Call the onSubmit function passed as prop
@@ -151,11 +151,8 @@ const AddProduct = ({ productData, onSubmit }) => {
               borderRadius: "20px",
             }}
             image={
-              productImage !== null
-                ? productImage
-                : imageUrl
-                ? imageUrl
-                : "https://placehold.co/600x400?text=Click+to+Upload+Image"
+              productImage ||
+              "https://placehold.co/600x400?text=Click+to+Upload+Image"
             }
             alt="Product Image"
           />
