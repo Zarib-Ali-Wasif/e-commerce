@@ -57,8 +57,8 @@ const AdminPanel = () => {
         <Grid item>
           <Button
             variant="outlined"
-            startIcon={<ShoppingCart />}
-            onClick={() => setActiveSection("OrdersManagement")}
+            startIcon={<People />}
+            onClick={() => setActiveSection("CustomerManagement")}
             sx={{
               minWidth: 180,
               borderRadius: "12px",
@@ -76,7 +76,7 @@ const AdminPanel = () => {
               transition: "all 0.3s ease",
             }}
           >
-            Orders
+            Manage Customers
           </Button>
         </Grid>
 
@@ -102,15 +102,15 @@ const AdminPanel = () => {
               transition: "all 0.3s ease",
             }}
           >
-            Products
+            Manage Products
           </Button>
         </Grid>
 
         <Grid item>
           <Button
             variant="outlined"
-            startIcon={<People />}
-            onClick={() => setActiveSection("CustomerManagement")}
+            startIcon={<ShoppingCart />}
+            onClick={() => setActiveSection("OrdersManagement")}
             sx={{
               minWidth: 180,
               borderRadius: "12px",
@@ -128,7 +128,7 @@ const AdminPanel = () => {
               transition: "all 0.3s ease",
             }}
           >
-            Customers
+            Manage Orders
           </Button>
         </Grid>
 

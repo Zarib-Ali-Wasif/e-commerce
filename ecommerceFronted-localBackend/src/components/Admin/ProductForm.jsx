@@ -46,9 +46,6 @@ const ProductForm = ({ productData, onSubmit, onClose }) => {
     price: Yup.number()
       .required("Price is required")
       .positive("Price must be positive"),
-    price: Yup.number()
-      .required("Price is required")
-      .positive("Price must be positive"),
     category: Yup.string().required("Category is required"),
     stock: Yup.number().positive("stock must be positive"),
   });
@@ -294,7 +291,7 @@ const ProductForm = ({ productData, onSubmit, onClose }) => {
             {productData ? "Update Product" : "Add Product"}
           </Button>
           <Button
-            onClick={onclose}
+            onClick={onClose}
             sx={{
               mt: 4,
               width: "43%",

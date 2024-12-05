@@ -13,7 +13,18 @@ import {
   Select,
   CircularProgress,
   Badge,
+  IconButton,
+  Tooltip,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined"; // Discount icon
+
 import { useDispatch, useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import {
@@ -31,6 +42,9 @@ const ProductsManagement = () => {
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [showAddProductModal, setShowAddProductModal] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   const { productsList, categories, loading, loadingCategories } = useSelector(
     (state) => state.products
@@ -65,23 +79,17 @@ const ProductsManagement = () => {
     setShowAddProductModal(false);
   };
 
-  const handleProductAdded = () => {
-    dispatch(fetchProducts("all"));
-    setShowAddProductModal(false);
-    toast.success("Product added successfully!");
+  const handleUpdateProduct = (productId, dataToUpdate) => {
+    dispatch(updateProduct({ productId, dataToUpdate })).then(() => {
+      dispatch(fetchProducts("all"));
+      toast.success("Product updated successfully");
+    });
   };
 
   const handleDeleteProduct = (productId) => {
     dispatch(deleteProduct(productId)).then(() => {
       dispatch(fetchProducts("all"));
       toast.success("Product deleted successfully");
-    });
-  };
-
-  const handleUpdateProduct = (productId, dataToUpdate) => {
-    dispatch(updateProduct({ productId, dataToUpdate })).then(() => {
-      dispatch(fetchProducts("all"));
-      toast.success("Product updated successfully");
     });
   };
 
@@ -96,7 +104,22 @@ const ProductsManagement = () => {
     toast.success("Discount removed successfully");
   };
 
-  const [editProductData, setEditProductData] = useState(null); // Edit data ke liye state
+  const openConfirmDialog = (action, product) => {
+    setConfirmAction(action);
+    setSelectedProduct(product);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirm = () => {
+    if (confirmAction === "delete") {
+      handleDeleteProduct(selectedProduct._id);
+    } else if (confirmAction === "removeDiscount") {
+      handleRemoveDiscount(selectedProduct._id);
+    }
+    setConfirmOpen(false);
+  };
+
+  const [editProductData, setEditProductData] = useState(null); // State to store the product data for editing
 
   // Function to open ProductForm modal for editing
   const handleEditProduct = (product) => {
@@ -259,7 +282,7 @@ const ProductsManagement = () => {
       ) : (
         <Grid container spacing={4}>
           {productsList.map((product, index) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={product._id}>
+            <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={index}>
               <Card
                 sx={{
                   maxWidth: 345,
@@ -312,41 +335,47 @@ const ProductsManagement = () => {
                     )}
                 </CardContent>
 
-                <Box sx={{ textAlign: "center", mb: 2 }}>
-                  <Button
-                    variant="outlined"
-                    sx={{
-                      color: "#387DA3",
-                      textTransform: "none",
-                      borderColor: "#387DA3",
-                    }}
-                    onClick={() => handleOpenModal(product._id)}
-                  >
-                    View Details
-                  </Button>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: 2, // Space between icons for cleaner look
+                    mb: 2,
+                  }}
+                >
+                  {/* View Details */}
+                  <Tooltip title="View Details">
+                    <IconButton onClick={() => handleOpenModal(product._id)}>
+                      <VisibilityOutlinedIcon sx={{ color: "#387DA3" }} />
+                    </IconButton>
+                  </Tooltip>
 
-                  <Button
-                    variant="outlined"
-                    sx={{ color: "#387DA3", textTransform: "none" }}
-                    onClick={() => handleEditProduct(product)} // Opens in edit mode
-                  >
-                    Edit
-                  </Button>
+                  {/* Edit */}
+                  <Tooltip title="Edit Product">
+                    <IconButton onClick={() => handleEditProduct(product)}>
+                      <EditOutlinedIcon sx={{ color: "#387DA3" }} />
+                    </IconButton>
+                  </Tooltip>
 
-                  <Button
-                    variant="outlined"
-                    sx={{ color: "red", textTransform: "none" }}
-                    onClick={() => handleDeleteProduct(product._id)}
-                  >
-                    Delete
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    sx={{ color: "#387DA3", textTransform: "none" }}
-                    onClick={() => handleRemoveDiscount(product._id)}
-                  >
-                    Remove Discount
-                  </Button>
+                  {/* Delete */}
+                  <Tooltip title="Delete Product">
+                    <IconButton
+                      onClick={() => openConfirmDialog("delete", product)}
+                    >
+                      <DeleteOutlineOutlinedIcon sx={{ color: "red" }} />
+                    </IconButton>
+                  </Tooltip>
+
+                  {/* Remove Discount */}
+                  <Tooltip title="Remove Discount">
+                    <IconButton
+                      onClick={() =>
+                        openConfirmDialog("removeDiscount", product)
+                      }
+                    >
+                      <LocalOfferOutlinedIcon sx={{ color: "#387DA3" }} />
+                    </IconButton>
+                  </Tooltip>
                 </Box>
               </Card>
             </Grid>
@@ -354,13 +383,30 @@ const ProductsManagement = () => {
         </Grid>
       )}
 
+      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+        <DialogTitle>Confirm Action</DialogTitle>
+        <DialogContent>
+          Are you sure you want to{" "}
+          {confirmAction === "delete"
+            ? "delete this product"
+            : "remove the discount"}
+          ?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmOpen(false)}>Cancel</Button>
+          <Button onClick={handleConfirm} color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <ToastContainer />
 
       {showAddProductModal && (
         <ProductForm
           productData={editProductData} // Pass edit data if editing
-          onClose={handleCloseAddProductModal}
           onSubmit={handleAddOrUpdateProductSubmit} // Dynamic submission
+          onClose={handleCloseAddProductModal}
         />
       )}
 
