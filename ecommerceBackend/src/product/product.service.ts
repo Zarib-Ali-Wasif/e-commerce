@@ -65,16 +65,100 @@ export class ProductService {
     const deletedProduct = await this.productModel.findByIdAndRemove(id);
     return deletedProduct;
   }
-  // Apply discount to all products (only those without an existing discount)
-  async applyDiscountToAllProducts(discountPercent: number): Promise<any> {
-    const result = await this.productModel.updateMany(
-      { 'discount.discountPercent': { $eq: 0 } }, // Only apply if no existing discount
-      { $set: { 'discount.discountPercent': discountPercent } },
-    );
+
+  // async applyDiscountToAllProducts(
+  //   discountName: string | undefined,
+  //   discountPercent: number,
+  //   category: string | undefined,
+  // ): Promise<any> {
+  //   // Build the query based on category
+  //   const query = {};
+
+  //   // If category is provided and it's not 'all', filter by category
+  //   if (category && category !== 'all') {
+  //     query['category'] = category;
+  //   }
+
+  //   // Prepare the update operation
+  //   const update = {
+  //     $set: {
+  //       'discount.discountPercent': discountPercent,
+  //       'discount.name': discountName || 'Default Discount', // Set discount name if provided
+  //     },
+  //   };
+
+  //   // If 'category' is 'all', apply the discount to all products
+  //   if (category === 'all') {
+  //     // Apply discount to all products regardless of category
+  //     const result = await this.productModel.updateMany({}, update);
+  //     return result;
+  //   } else {
+  //     // Apply the discount only to products of the specific category
+  //     const result = await this.productModel.updateMany(query, update);
+  //     return result;
+  //   }
+  // }
+
+  // async applyDiscountToAllProducts(
+  //   discountName: string | undefined,
+  //   discountPercent: number,
+  //   category: string | undefined,
+  // ): Promise<any> {
+  //   try {
+  //     const query = category === 'all' ? {} : { category };
+  //     const result = await this.productModel.updateMany(
+  //       query, // Apply filter based on the category value
+  //       {
+  //         $set: {
+  //           'discount.discountPercent': discountPercent,
+  //           'discount.name': discountName || 'Default Discount',
+  //         },
+  //       },
+  //     );
+
+  //     console.log('Update Result:', result); // Log the result for debugging
+
+  //     if (result.modifiedCount > 0) {
+  //       return {
+  //         success: true,
+  //         message: `${result.modifiedCount} products updated`,
+  //       };
+  //     } else {
+  //       return { success: false, message: 'No products updated' };
+  //     }
+  //   } catch (error) {
+  //     console.error('Error updating products:', error);
+  //     return { success: false, message: 'Failed to update products' };
+  //   }
+  // }
+
+  async applyDiscountToAllProducts(
+    discountName: string | undefined,
+    discountPercent: number,
+    category: string | undefined,
+  ): Promise<any> {
+    // Build the query to apply the discount
+    const query = {};
+
+    // If category is provided and it's not "all", filter by category
+    if (category && category !== 'all') {
+      query['category'] = category;
+    }
+
+    // Prepare the update operation
+    const update = {
+      $set: {
+        'discount.discountPercent': discountPercent,
+        'discount.name': discountName || 'Default Discount', // Set discount name if provided
+      },
+    };
+
+    // Update the products based on the query
+    const result = await this.productModel.updateMany(query, update);
+
     return result;
   }
 
-  // Remove discount from all products or by category or discount name
   async removeDiscountFromAllProducts(removeDiscountDTO: {
     category?: string;
     discountName?: string;
@@ -88,10 +172,6 @@ export class ProductService {
     if (removeDiscountDTO.discountName) {
       filter = { ...filter, 'discount.name': removeDiscountDTO.discountName };
     }
-    //  else {
-    //   // If no discount name is provided, remove all discounts
-    //   filter = { ...filter, 'discount.discountPercent': { $ne: 0 } };
-    // }
 
     const result = await this.productModel.updateMany(filter, {
       $set: { 'discount.discountPercent': 0, 'discount.name': 'None' },

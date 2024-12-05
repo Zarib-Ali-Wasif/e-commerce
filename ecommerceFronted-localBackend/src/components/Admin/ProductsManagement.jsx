@@ -34,9 +34,13 @@ import {
   addProduct,
   updateProduct,
   deleteProduct,
+  applyDiscount,
+  removeDiscount,
 } from "../../../lib/redux/slices/productsSlice";
 import ProductDetailsModal from "../ProductDetailsModal";
 import ProductForm from "./ProductForm"; // Import the updated ProductForm component
+import AddDiscountModal from "./AddDiscountModal";
+import RemoveDiscountModal from "./RemoveDiscountModal";
 
 const ProductsManagement = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -46,7 +50,8 @@ const ProductsManagement = () => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
-
+  const [editProductData, setEditProductData] = useState(null);
+  const [offers, setOffers] = useState([]);
   const { productsList, categories, loading, loadingCategories } = useSelector(
     (state) => state.products
   );
@@ -55,6 +60,7 @@ const ProductsManagement = () => {
   useEffect(() => {
     dispatch(fetchProducts("all"));
     dispatch(fetchCategories());
+    getDiscountNames(productsList);
   }, [dispatch]);
 
   const handleCategoryChange = (event) => {
@@ -120,8 +126,6 @@ const ProductsManagement = () => {
     setConfirmOpen(false);
   };
 
-  const [editProductData, setEditProductData] = useState(null); // State to store the product data for editing
-
   // Function to open ProductForm modal for editing
   const handleEditProduct = (product) => {
     setEditProductData(product);
@@ -150,6 +154,61 @@ const ProductsManagement = () => {
     }
     setShowAddProductModal(false);
     setEditProductData(null); // Reset edit data after submission
+  };
+
+  const handleApplyDiscountSubmit = (data) => {
+    console.log("Apply Discount Data Submitted:", data);
+    dispatch(
+      applyDiscount({
+        discountName: data.offerName,
+        discountPercent: data.discountPercent,
+        selectedCategory: data.selectedCategory,
+      })
+    )
+      .then(() => {
+        dispatch(fetchProducts("all"));
+        toast.success("Discount applied successfully!");
+      })
+      .catch((error) => {
+        toast.error(`Failed to apply discount: ${error}`);
+        console.error("Error applying discount:", error);
+      });
+  };
+
+  const handleRemoveDiscountSubmit = (data) => {
+    dispatch(
+      removeDiscount({
+        category: data.selectedCategory,
+        discountName: data.selectedOffer,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        dispatch(fetchProducts("all"));
+        toast.success("Discount removed successfully!");
+      })
+      .catch((error) => {
+        console.error("Error removing discount:", error);
+        toast.error("Failed to remove discount. Please try again.");
+      });
+  };
+
+  // Extract unique discount names once productsList is populated
+  useEffect(() => {
+    if (productsList.length > 0) {
+      const uniqueOffers = getDiscountNames(productsList);
+      setOffers(uniqueOffers);
+    }
+  }, [productsList]);
+
+  // Selector to get unique discount names from the productsList
+  const getDiscountNames = (productsList) => {
+    const discountNames = productsList
+      .map((product) => product.discount.name)
+      .filter((name) => name && name.toLowerCase() !== "none"); // Filter out 'none' or 'None'
+
+    // Get unique discount names (remove duplicates)
+    return [...new Set(discountNames)];
   };
 
   return (
@@ -261,6 +320,17 @@ const ProductsManagement = () => {
             </Select>
           </FormControl>
         </Grid>
+
+        <AddDiscountModal
+          categories={categories}
+          onSubmit={handleApplyDiscountSubmit}
+        />
+
+        <RemoveDiscountModal
+          offers={offers}
+          categories={categories}
+          onSubmit={handleRemoveDiscountSubmit}
+        />
 
         {/* Add Product Button */}
         <Grid item xs={12} md={3} sx={{ textAlign: "right" }}>
@@ -408,7 +478,9 @@ const ProductsManagement = () => {
           ?
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setConfirmOpen(false)}>Cancel</Button>
+          <Button onClick={() => setConfirmOpen(false)} color="secondary">
+            Cancel
+          </Button>
           <Button onClick={handleConfirm} color="primary">
             Confirm
           </Button>

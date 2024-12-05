@@ -9,11 +9,18 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
 const AddDiscountModal = ({ categories, onSubmit }) => {
   const [open, setOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false); // State for confirmation dialog
   const [offerName, setOfferName] = useState("");
   const [discountPercent, setDiscountPercent] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -30,10 +37,14 @@ const AddDiscountModal = ({ categories, onSubmit }) => {
     setSelectedCategory("");
   };
 
+  const handleConfirmOpen = () => setConfirmOpen(true);
+  const handleConfirmClose = () => setConfirmOpen(false);
+
   const handleSubmit = () => {
     onSubmit({ offerName, discountPercent, selectedCategory });
     resetForm();
     handleClose(); // Close the modal after submission
+    handleConfirmClose(); // Close the confirmation dialog
   };
 
   return (
@@ -55,7 +66,7 @@ const AddDiscountModal = ({ categories, onSubmit }) => {
           sx={{
             padding: "20px",
             width: "90%",
-            maxWidth: "400px",
+            maxWidth: { xs: "250px", sm: "400px" },
             backgroundColor: "#fff",
             borderRadius: "8px",
             position: "relative",
@@ -63,13 +74,21 @@ const AddDiscountModal = ({ categories, onSubmit }) => {
           }}
         >
           <IconButton
-            sx={{ position: "absolute", top: 10, right: 10 }}
+            sx={{ position: "absolute", top: 5, right: 5 }}
             onClick={handleClose}
           >
             <CloseIcon />
           </IconButton>
 
-          <h2 style={{ textAlign: "center" }}>Add Offer / Discount</h2>
+          <Typography
+            variant="h6"
+            fontWeight={"bold"}
+            textAlign="center"
+            mb={2}
+            pt={2}
+          >
+            Add Offer / Discount
+          </Typography>
 
           {/* Offer Name */}
           <TextField
@@ -130,7 +149,7 @@ const AddDiscountModal = ({ categories, onSubmit }) => {
           <Button
             variant="contained"
             color="success"
-            onClick={handleSubmit}
+            onClick={handleConfirmOpen}
             fullWidth
             sx={{ marginTop: "20px" }}
           >
@@ -138,6 +157,29 @@ const AddDiscountModal = ({ categories, onSubmit }) => {
           </Button>
         </Box>
       </Modal>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={confirmOpen} onClose={handleConfirmClose}>
+        <DialogTitle>Confirm Submission</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to apply this offer with a{" "}
+            <strong>{discountPercent}%</strong> discount to{" "}
+            {selectedCategory === "all"
+              ? "all categories"
+              : `the category "${selectedCategory}"`}
+            ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleConfirmClose} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

@@ -92,6 +92,46 @@ export const deleteProduct = createAsyncThunk(
   }
 );
 
+// Thunk to apply a discount
+export const applyDiscount = createAsyncThunk(
+  "products/applyDiscount",
+  async (
+    { selectedCategory, discountName, discountPercent },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await api.patch("store/products/apply-discount", {
+        category: selectedCategory || undefined,
+        discountName: discountName || undefined,
+        discountPercent: discountPercent || undefined,
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to apply discount"
+      );
+    }
+  }
+);
+
+// Thunk to remove discount
+export const removeDiscount = createAsyncThunk(
+  "products/removeDiscount",
+  async ({ category, discountName }, { rejectWithValue }) => {
+    try {
+      const response = await api.patch("store/products/remove-discount", {
+        category: category || undefined,
+        discountName: discountName || undefined,
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to remove discount"
+      );
+    }
+  }
+);
+
 const initialState = {
   productsList: [],
   categories: [],
@@ -182,6 +222,34 @@ const productsSlice = createSlice({
       })
       .addCase(deleteProduct.rejected, (state, action) => {
         state.loadingDelete = false;
+        state.error = action.payload;
+      })
+      // Apply Discount
+      .addCase(applyDiscount.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(applyDiscount.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        console.log("Discount applied:", action.payload); // Handle success, optionally update products list
+      })
+      .addCase(applyDiscount.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Remove discount
+      .addCase(removeDiscount.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(removeDiscount.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        console.log("Discount removed:", action.payload); // Handle success
+      })
+      .addCase(removeDiscount.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload;
       });
   },

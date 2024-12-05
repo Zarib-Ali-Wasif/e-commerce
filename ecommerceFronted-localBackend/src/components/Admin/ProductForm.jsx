@@ -91,7 +91,7 @@ const ProductForm = ({ productData, onSubmit, onClose }) => {
 
   const categories = [
     "Electronics",
-    "Jewelry",
+    "Jewellery",
     "Men's Clothing",
     "Women's Clothing",
     "Fashion",
@@ -103,7 +103,7 @@ const ProductForm = ({ productData, onSubmit, onClose }) => {
     "Groceries",
     "Furniture",
     "Automotive",
-    "Jewelry & Watches",
+    "Jewellery & Watches",
     "Pet Supplies",
     "Music & Instruments",
     "Baby Products",

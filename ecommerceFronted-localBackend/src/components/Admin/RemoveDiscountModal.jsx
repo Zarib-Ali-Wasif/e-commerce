@@ -9,11 +9,17 @@ import {
   InputLabel,
   FormControl,
   Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
 const RemoveDiscountModal = ({ offers, categories, onSubmit }) => {
   const [open, setOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
@@ -27,10 +33,18 @@ const RemoveDiscountModal = ({ offers, categories, onSubmit }) => {
     setSelectedOffer("");
     setSelectedCategory("");
   };
-  const handleSubmit = () => {
+
+  const handleRemoveClick = () => {
+    setConfirmOpen(true); // Open confirmation dialog
+  };
+
+  const handleConfirmClose = () => setConfirmOpen(false);
+
+  const handleConfirmSubmit = () => {
     onSubmit({ selectedOffer, selectedCategory });
     resetForm();
-    handleClose(); // Close the modal after submission
+    setConfirmOpen(false); // Close confirmation dialog
+    handleClose(); // Close the main modal
   };
 
   return (
@@ -39,6 +53,7 @@ const RemoveDiscountModal = ({ offers, categories, onSubmit }) => {
         Remove Offer / Discount
       </Button>
 
+      {/* Main Modal */}
       <Modal
         open={open}
         onClose={handleClose}
@@ -52,7 +67,7 @@ const RemoveDiscountModal = ({ offers, categories, onSubmit }) => {
           sx={{
             padding: "20px",
             width: "90%",
-            maxWidth: "400px",
+            maxWidth: { xs: "250px", sm: "400px" },
             backgroundColor: "#fff",
             borderRadius: "8px",
             position: "relative",
@@ -60,22 +75,36 @@ const RemoveDiscountModal = ({ offers, categories, onSubmit }) => {
           }}
         >
           <IconButton
-            sx={{ position: "absolute", top: 10, right: 10 }}
+            sx={{ position: "absolute", top: 5, right: 5 }}
             onClick={handleClose}
           >
             <CloseIcon />
           </IconButton>
 
-          <Typography variant="h6" textAlign="center" mb={2}>
+          <Typography
+            variant="h6"
+            fontWeight={"bold"}
+            textAlign="center"
+            mb={2}
+            pt={2}
+          >
             Remove Offer / Discount
           </Typography>
 
           {/* Offer Name Dropdown */}
           <FormControl fullWidth margin="normal">
-            <InputLabel>Offer Name </InputLabel>
+            <InputLabel>Offer Name</InputLabel>
             <Select
               value={selectedOffer}
               onChange={(e) => setSelectedOffer(e.target.value)}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 200, // Set a fixed height for the dropdown
+                    overflow: "auto", // Enable scrolling for overflow
+                  },
+                },
+              }}
             >
               <MenuItem value="">
                 <em>None</em>
@@ -90,10 +119,18 @@ const RemoveDiscountModal = ({ offers, categories, onSubmit }) => {
 
           {/* Category Dropdown */}
           <FormControl fullWidth margin="normal">
-            <InputLabel>Category </InputLabel>
+            <InputLabel>Category</InputLabel>
             <Select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 200, // Set a fixed height for the dropdown
+                    overflow: "auto", // Enable scrolling for overflow
+                  },
+                },
+              }}
             >
               <MenuItem value="">
                 <em>None</em>
@@ -105,17 +142,27 @@ const RemoveDiscountModal = ({ offers, categories, onSubmit }) => {
               ))}
             </Select>
           </FormControl>
+
           <Typography variant="body2" color="error">
-            Note: Selecting a category will remove offers from all products in
-            that category. Choosing an offer name will remove it only from
-            applicable products. Leave both empty to remove all offers.
+            Note:
+            <ul style={{ listStyleType: "disc", paddingLeft: "20px" }}>
+              <li>
+                Selecting a category will remove offers from all products in
+                that category.
+              </li>
+              <li>
+                Choosing an offer name will remove it only from applicable
+                products.
+              </li>
+              <li>Leave both empty to remove all offers.</li>
+            </ul>
           </Typography>
 
-          {/* Submit Button */}
+          {/* Open Confirmation Dialog */}
           <Button
             variant="contained"
             color="error"
-            onClick={handleSubmit}
+            onClick={handleRemoveClick}
             fullWidth
             sx={{ marginTop: "20px" }}
           >
@@ -123,6 +170,32 @@ const RemoveDiscountModal = ({ offers, categories, onSubmit }) => {
           </Button>
         </Box>
       </Modal>
+
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={confirmOpen}
+        onClose={handleConfirmClose}
+        aria-labelledby="confirmation-dialog-title"
+        aria-describedby="confirmation-dialog-description"
+      >
+        <DialogTitle id="confirmation-dialog-title">
+          Confirm Removal
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="confirmation-dialog-description">
+            Are you sure you want to remove the selected offer or discount? This
+            action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleConfirmClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmSubmit} color="error">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

@@ -62,7 +62,7 @@ const AdminPanel = () => {
             sx={{
               minWidth: 180,
               borderRadius: "12px",
-              padding: "12px 24px",
+              padding: "12px 12px",
               textTransform: "none",
               fontWeight: 500,
               boxShadow: 4,
@@ -88,7 +88,7 @@ const AdminPanel = () => {
             sx={{
               minWidth: 180,
               borderRadius: "12px",
-              padding: "12px 24px",
+              padding: "12px 12px",
               textTransform: "none",
               fontWeight: 500,
               boxShadow: 4,

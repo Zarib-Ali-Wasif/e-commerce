@@ -71,7 +71,7 @@ const Products = ({ showModal }) => {
   return (
     <>
       <Box sx={{ padding: "20px", minHeight: "100vh", height: "100%", mt: 18 }}>
-        <Typography variant="h4" textAlign="center" mb={4}>
+        <Typography variant="h4" color="#1C4771" textAlign="center" mb={4}>
           Our Products
         </Typography>
 

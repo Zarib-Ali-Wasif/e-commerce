@@ -47,17 +47,27 @@ export class ProductController {
     return product;
   }
 
-  // Apply discount to all products (without existing offer)
-  @Post('/apply-discount')
-  async applyDiscount(@Body() discountDTO: { discountPercent: number }) {
+  // Apply discount to all products (or a specific category)
+  @Patch('/apply-discount')
+  async applyDiscount(
+    @Body()
+    discountDTO: {
+      discountName?: string;
+      discountPercent: number;
+      category?: string;
+    },
+  ) {
+    const { discountName, discountPercent, category } = discountDTO;
     const result = await this.productService.applyDiscountToAllProducts(
-      discountDTO.discountPercent,
+      discountName,
+      discountPercent,
+      category,
     );
     return result;
   }
 
   // Remove discount from all products or by category or discount name
-  @Post('/remove-discount')
+  @Patch('/remove-discount')
   async removeDiscount(
     @Body() removeDiscountDTO: { category?: string; discountName?: string },
   ) {
