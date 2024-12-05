@@ -27,6 +27,10 @@ export class CreateProductDTO {
   @IsNotEmpty()
   category: string;
 
+  @IsNumber()
+  @IsOptional()
+  stock: number;
+
   @IsObject()
   @IsOptional()
   discount: {

@@ -22,6 +22,9 @@ export class Product {
   @Prop({ required: true })
   category: string;
 
+  @Prop()
+  stock: number;
+
   @Prop({
     type: Object,
     default: { name: 'None', discountPercent: 0 },
