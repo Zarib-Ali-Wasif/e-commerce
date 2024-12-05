@@ -18,19 +18,11 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-const AddDiscountModal = ({ categories, onSubmit, onOpen, onClose }) => {
-  const [open, setOpen] = useState(false);
-
-  const [confirmOpen, setConfirmOpen] = useState(false); // State for confirmation dialog
+const AddDiscountModal = ({ categories, onSubmit, open, onClose }) => {
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [offerName, setOfferName] = useState("");
   const [discountPercent, setDiscountPercent] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-
-  // const handleOpen = () => setOpen(true);
-  // const handleClose = () => {
-  //   setOpen(false);
-  //   resetForm();
-  // };
 
   const resetForm = () => {
     setOfferName("");
@@ -44,16 +36,12 @@ const AddDiscountModal = ({ categories, onSubmit, onOpen, onClose }) => {
   const handleSubmit = () => {
     onSubmit({ offerName, discountPercent, selectedCategory });
     resetForm();
-    onClose(); // Close the modal after submission
+    onClose(); // Call onClose function to close the modal
     handleConfirmClose(); // Close the confirmation dialog
   };
 
   return (
     <>
-      {/* <Button variant="contained" color="primary" onClick={handleOpen}>
-        Apply Offer / Add Discount
-      </Button> */}
-
       <Modal
         open={open}
         onClose={onClose}
@@ -91,7 +79,6 @@ const AddDiscountModal = ({ categories, onSubmit, onOpen, onClose }) => {
             Add Offer / Discount
           </Typography>
 
-          {/* Offer Name */}
           <TextField
             fullWidth
             label="Offer Name"
@@ -101,7 +88,6 @@ const AddDiscountModal = ({ categories, onSubmit, onOpen, onClose }) => {
             margin="normal"
           />
 
-          {/* Discount Percent */}
           <TextField
             fullWidth
             label="Discount Percent"
@@ -112,7 +98,6 @@ const AddDiscountModal = ({ categories, onSubmit, onOpen, onClose }) => {
             inputProps={{ min: 0, max: 100 }}
           />
 
-          {/* Categories Dropdown */}
           <FormControl fullWidth margin="normal">
             <InputLabel>Category</InputLabel>
             <Select
@@ -121,23 +106,13 @@ const AddDiscountModal = ({ categories, onSubmit, onOpen, onClose }) => {
               MenuProps={{
                 PaperProps: {
                   style: {
-                    maxHeight: 200, // Set a fixed height for the dropdown
-                    overflow: "auto", // Enable scrolling for overflow
+                    maxHeight: 200,
+                    overflow: "auto",
                   },
                 },
               }}
             >
-              <MenuItem
-                value="all"
-                sx={{
-                  fontSize: "0.9rem",
-                  fontWeight: "500",
-                  color: "#1C4771",
-                  "&:hover": { backgroundColor: "#f0f8ff" },
-                }}
-              >
-                All
-              </MenuItem>
+              <MenuItem value="all">All</MenuItem>
               {categories.map((category, index) => (
                 <MenuItem key={index} value={category}>
                   {category}
@@ -146,7 +121,6 @@ const AddDiscountModal = ({ categories, onSubmit, onOpen, onClose }) => {
             </Select>
           </FormControl>
 
-          {/* Submit Button */}
           <Button
             variant="contained"
             color="success"
@@ -159,7 +133,6 @@ const AddDiscountModal = ({ categories, onSubmit, onOpen, onClose }) => {
         </Box>
       </Modal>
 
-      {/* Confirmation Dialog */}
       <Dialog open={confirmOpen} onClose={handleConfirmClose}>
         <DialogTitle>Confirm Submission</DialogTitle>
         <DialogContent>
