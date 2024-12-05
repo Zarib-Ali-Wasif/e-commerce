@@ -218,7 +218,7 @@ const ProductsManagement = () => {
                     Price: ${product.price.toFixed(2)}
                   </Typography>
                   <Typography variant="body1" color="textSecondary">
-                    Available Stock: {product.stock}{" "}
+                    Available Stock: {product.stock || 20}
                     {/* Assuming stock is part of the product object */}
                   </Typography>
 
