@@ -19,6 +19,7 @@ import {
   DialogActions,
   DialogTitle,
   DialogContent,
+  Modal,
 } from "@mui/material";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
@@ -402,13 +403,40 @@ const ProductsManagement = () => {
 
       <ToastContainer />
 
-      {showAddProductModal && (
+      {/* {showAddProductModal && (
         <ProductForm
           productData={editProductData} // Pass edit data if editing
           onSubmit={handleAddOrUpdateProductSubmit} // Dynamic submission
           onClose={handleCloseAddProductModal}
         />
-      )}
+      )} */}
+
+      <Modal
+        open={modalOpen} // Controls modal visibility
+        onClose={handleCloseAddProductModal} // Close modal on backdrop click or close button
+        aria-labelledby="product-modal-title"
+        aria-describedby="product-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)", // Center the modal
+            width: 400,
+            bgcolor: "background.paper",
+            borderRadius: 1,
+            boxShadow: 24,
+            p: 3,
+          }}
+        >
+          <ProductForm
+            productData={editProductData}
+            onSubmit={handleAddOrUpdateProductSubmit}
+            onClose={handleCloseAddProductModal}
+          />
+        </Box>
+      </Modal>
 
       {selectedProductId && (
         <ProductDetailsModal
