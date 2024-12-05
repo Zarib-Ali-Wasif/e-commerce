@@ -8,7 +8,7 @@ import {
   Button,
   CardMedia,
 } from "@mui/material";
-import api from "../../lib/services/api";
+import api from "./../lib/services/api";
 import { toast, ToastContainer } from "react-toastify";
 
 const ProfilePage = () => {

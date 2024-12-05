@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom"; // React Router's u
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast, ToastContainer } from "react-toastify";
-import api from "../../lib/services/api";
+import api from "./../lib/services/api";
 
 const OtpVerification = () => {
   const [resendDisabled, setResendDisabled] = useState(false); // For resend button state

@@ -10,9 +10,8 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
-import api from "../../lib/services/api";
+import api from "./../lib/services/api";
 import { useNavigate } from "react-router-dom";
 
 const UpdatePassword = () => {

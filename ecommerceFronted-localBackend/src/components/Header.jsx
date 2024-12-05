@@ -36,8 +36,8 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../lib/redux/slices/authSlice";
-import api from "../../lib/services/api";
+import { logout } from "./../lib/redux/slices/authSlice";
+import api from "./../lib/services/api";
 
 function Header() {
   const location = useLocation();

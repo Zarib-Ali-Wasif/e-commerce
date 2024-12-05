@@ -19,10 +19,10 @@ import {
   clearCart,
   updateQuantity,
   updateCartSummary,
-} from "../../lib/redux/slices/cartSlice";
-import { fetchProducts } from "../../lib/redux/slices/productsSlice";
-import { getProductDetails } from "../../lib/utils/helperFunctions";
-import { GST_PERCENT } from "../../lib/utils/helperFunctions";
+} from "./../lib/redux/slices/cartSlice";
+import { fetchProducts } from "./../lib/redux/slices/productsSlice";
+import { getProductDetails } from "./../lib/utils/helperFunctions";
+import { GST_PERCENT } from "./../lib/utils/helperFunctions";
 
 const Cart = () => {
   const dispatch = useDispatch();

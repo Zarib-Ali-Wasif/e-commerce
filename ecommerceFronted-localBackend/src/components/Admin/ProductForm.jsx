@@ -6,7 +6,6 @@ import {
   TextField,
   MenuItem,
   Select,
-  InputLabel,
   FormControl,
   CardMedia,
 } from "@mui/material";
@@ -14,7 +13,7 @@ import { useFormik } from "formik";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
-import api from "../../../lib/services/api";
+import api from "./../../lib/services/api";
 
 const ProductForm = ({ productData, onSubmit, onClose }) => {
   const [productImage, setProductImage] = useState(productData?.image || "");

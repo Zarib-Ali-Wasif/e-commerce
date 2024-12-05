@@ -18,7 +18,7 @@ import {
   Grid,
   Paper,
 } from "@mui/material";
-import api from "../../lib/services/api";
+import api from "./../lib/services/api";
 
 const RecentOrders = () => {
   const [orders, setOrders] = useState([]);

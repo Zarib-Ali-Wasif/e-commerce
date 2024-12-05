@@ -10,9 +10,9 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useSelector } from "react-redux";
-import { getProductDetails } from "../../lib/utils/helperFunctions";
+import { getProductDetails } from "./../lib/utils/helperFunctions";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../../lib/redux/slices/cartSlice";
+import { addToCart } from "./../lib/redux/slices/cartSlice";
 
 const ProductDetailsModal = ({
   open,

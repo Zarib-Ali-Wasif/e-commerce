@@ -14,7 +14,7 @@ import { ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { GST_PERCENT } from "../../lib/utils/helperFunctions";
+import { GST_PERCENT } from "./../lib/utils/helperFunctions";
 
 const OrderConfirmation = () => {
   const navigate = useNavigate();

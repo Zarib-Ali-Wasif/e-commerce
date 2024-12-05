@@ -16,7 +16,7 @@ import {
   Grid,
   Button,
 } from "@mui/material";
-import api from "../../../lib/services/api";
+import api from "./../../lib/services/api";
 
 const CustomerManagement = () => {
   const [users, setUsers] = useState([]);

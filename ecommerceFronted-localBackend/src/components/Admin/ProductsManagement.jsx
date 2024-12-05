@@ -39,7 +39,7 @@ import {
   deleteProduct,
   applyDiscount,
   removeDiscount,
-} from "../../../lib/redux/slices/productsSlice";
+} from "./../../lib/redux/slices/productsSlice";
 import ProductDetailsModal from "../ProductDetailsModal";
 import ProductForm from "./ProductForm"; // Import the updated ProductForm component
 import AddDiscountModal from "./AddDiscountModal";

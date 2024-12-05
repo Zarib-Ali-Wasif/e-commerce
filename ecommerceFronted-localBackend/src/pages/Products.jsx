@@ -22,8 +22,8 @@ import ProductDetailsModal from "../components/ProductDetailsModal";
 import {
   fetchProducts,
   fetchCategories,
-} from "../../lib/redux/slices/productsSlice";
-import { addToCart, updateCartSummary } from "../../lib/redux/slices/cartSlice";
+} from "./../lib/redux/slices/productsSlice";
+import { addToCart, updateCartSummary } from "./../lib/redux/slices/cartSlice";
 
 const Products = ({ showModal }) => {
   const [modalOpen, setModalOpen] = useState(false);
