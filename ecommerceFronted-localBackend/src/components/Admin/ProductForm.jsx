@@ -211,6 +211,7 @@ const ProductForm = ({ productData, onSubmit, onClose }) => {
             displayEmpty
             fullWidth
             sx={{
+              textAlign: "start",
               height: "45px", // Set height for the select component
               "& .MuiSelect-select": {
                 paddingTop: "10px", // Adjust padding if needed to center the text vertically
