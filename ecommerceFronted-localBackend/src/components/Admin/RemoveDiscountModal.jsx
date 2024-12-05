@@ -138,11 +138,18 @@ const RemoveDiscountModal = ({
             </Select>
           </FormControl>
 
-          <Typography variant="body2" color="error">
+          <Typography variant="body1" sx={{ color: "#ff2000" }}>
             Note:
           </Typography>
-          <Box>
-            <ul style={{ listStyleType: "disc", paddingLeft: "20px" }}>
+          <Box variant="body2" color="error">
+            <ul
+              style={{
+                listStyleType: "disc",
+                paddingLeft: "20px",
+                color: "#ff2000",
+                fontSize: "12px",
+              }}
+            >
               <li>
                 Selecting a category will remove offers from all products in
                 that category.

@@ -261,7 +261,6 @@ const ProductsManagement = () => {
         sx={{
           width: "100%",
           margin: "auto",
-          alignItems: "center",
           padding: "16px",
           marginBottom: 5,
           backgroundColor: "#f9f9f9",
@@ -277,8 +276,6 @@ const ProductsManagement = () => {
             sx={{
               backgroundColor: "#f5f5f5",
               borderRadius: "8px",
-              alignItems: "center",
-              margin: "0 auto", // Use sx prop for custom margins
             }}
           >
             <InputLabel
