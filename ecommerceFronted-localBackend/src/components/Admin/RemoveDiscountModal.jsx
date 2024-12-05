@@ -17,17 +17,16 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-const RemoveDiscountModal = ({ offers, categories, onSubmit }) => {
-  const [open, setOpen] = useState(false);
+const RemoveDiscountModal = ({
+  offers,
+  categories,
+  onSubmit,
+  open,
+  onClose,
+}) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-    resetForm();
-  };
 
   const resetForm = () => {
     setSelectedOffer("");
@@ -44,19 +43,15 @@ const RemoveDiscountModal = ({ offers, categories, onSubmit }) => {
     onSubmit({ selectedOffer, selectedCategory });
     resetForm();
     setConfirmOpen(false); // Close confirmation dialog
-    handleClose(); // Close the main modal
+    onClose(); // Close the main modal
   };
 
   return (
     <>
-      <Button variant="outlined" color="secondary" onClick={handleOpen}>
-        Remove Offer / Discount
-      </Button>
-
       {/* Main Modal */}
       <Modal
         open={open}
-        onClose={handleClose}
+        onClose={onClose}
         sx={{
           display: "flex",
           justifyContent: "center",
@@ -76,7 +71,7 @@ const RemoveDiscountModal = ({ offers, categories, onSubmit }) => {
         >
           <IconButton
             sx={{ position: "absolute", top: 5, right: 5 }}
-            onClick={handleClose}
+            onClick={onClose}
           >
             <CloseIcon />
           </IconButton>
@@ -145,6 +140,8 @@ const RemoveDiscountModal = ({ offers, categories, onSubmit }) => {
 
           <Typography variant="body2" color="error">
             Note:
+          </Typography>
+          <Box>
             <ul style={{ listStyleType: "disc", paddingLeft: "20px" }}>
               <li>
                 Selecting a category will remove offers from all products in
@@ -156,7 +153,7 @@ const RemoveDiscountModal = ({ offers, categories, onSubmit }) => {
               </li>
               <li>Leave both empty to remove all offers.</li>
             </ul>
-          </Typography>
+          </Box>
 
           {/* Open Confirmation Dialog */}
           <Button

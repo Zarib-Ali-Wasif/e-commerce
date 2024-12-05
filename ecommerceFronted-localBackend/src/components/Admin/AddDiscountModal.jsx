@@ -146,10 +146,10 @@ const AddDiscountModal = ({ categories, onSubmit, open, onClose }) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleConfirmClose} color="secondary">
+          <Button onClick={handleConfirmClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} color="primary">
+          <Button onClick={handleSubmit} color="success">
             Confirm
           </Button>
         </DialogActions>

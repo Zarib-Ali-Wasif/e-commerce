@@ -25,6 +25,9 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
+import DiscountIcon from "@mui/icons-material/Discount";
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 import { useDispatch, useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
@@ -47,6 +50,8 @@ const ProductsManagement = () => {
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [showAddProductModal, setShowAddProductModal] = useState(false);
+  const [showAddDiscountModal, setShowAddDiscountModal] = useState(false);
+  const [showRemoveDiscountModal, setShowRemoveDiscountModal] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -84,6 +89,22 @@ const ProductsManagement = () => {
 
   const handleCloseAddProductModal = () => {
     setShowAddProductModal(false);
+  };
+
+  const handleOpenAddDiscount = () => {
+    setShowAddDiscountModal(true);
+  };
+
+  const handleCloseAddDiscount = () => {
+    setShowAddDiscountModal(false);
+  };
+
+  const handleOpenRemoveDiscount = () => {
+    setShowRemoveDiscountModal(true);
+  };
+
+  const handleCloseRemoveDiscount = () => {
+    setShowRemoveDiscountModal(false);
   };
 
   const handleUpdateProduct = (productId, dataToUpdate) => {
@@ -157,7 +178,6 @@ const ProductsManagement = () => {
   };
 
   const handleApplyDiscountSubmit = (data) => {
-    console.log("Apply Discount Data Submitted:", data);
     dispatch(
       applyDiscount({
         discountName: data.offerName,
@@ -230,35 +250,32 @@ const ProductsManagement = () => {
       >
         Manage Products
       </Typography>
-
       <Grid
         container
+        spacing={3}
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
           alignItems: "center",
+          padding: "16px",
+          backgroundColor: "#f9f9f9",
+          borderRadius: "8px",
+          boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
         }}
       >
         {/* Category Filter */}
-        <Grid item xs={12} md={6} sx={{ mb: { xs: 2, md: 4 } }}>
+        <Grid item xs={12} md={3}>
           <FormControl
+            fullWidth
             variant="outlined"
             sx={{
-              width: { xs: "100%", sm: "60%", md: "40%" }, // Adjust responsive width
-              mt: { xs: 2, md: 0 },
               backgroundColor: "#f5f5f5",
               borderRadius: "8px",
-              boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
-              zIndex: 1,
             }}
           >
             <InputLabel
               id="category-select-label"
               sx={{
-                fontSize: "0.9rem",
-                fontWeight: "500",
                 color: "#1C4771",
-                "&.Mui-focused": { color: "#387DA3" }, // Focus color
+                fontSize: "0.9rem",
               }}
             >
               Filter by Category
@@ -270,49 +287,22 @@ const ProductsManagement = () => {
               MenuProps={{
                 PaperProps: {
                   sx: {
-                    maxHeight: 300,
+                    maxHeight: 200,
                     "& .MuiMenuItem-root:hover": { backgroundColor: "#f0f8ff" },
                   },
                 },
               }}
               sx={{
+                color: "#1C4771",
                 "& .MuiOutlinedInput-notchedOutline": { border: "none" },
-                "&:hover .MuiOutlinedInput-notchedOutline": { border: "none" },
-                "& .MuiSelect-root": {
-                  fontSize: "1rem",
-                  fontWeight: "500",
-                  color: "#1C4771",
-                },
-                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#387DA3",
-                },
               }}
             >
-              <MenuItem
-                value="all"
-                sx={{
-                  fontSize: "0.9rem",
-                  fontWeight: "500",
-                  color: "#1C4771",
-                  "&:hover": { backgroundColor: "#f0f8ff" },
-                }}
-              >
-                All
-              </MenuItem>
+              <MenuItem value="all">All</MenuItem>
               {loadingCategories ? (
                 <MenuItem disabled>Loading categories...</MenuItem>
               ) : (
                 categories.map((category, index) => (
-                  <MenuItem
-                    key={index}
-                    value={category}
-                    sx={{
-                      fontSize: "0.9rem",
-                      fontWeight: "500",
-                      color: "#1C4771",
-                      "&:hover": { backgroundColor: "#f0f8ff" },
-                    }}
-                  >
+                  <MenuItem key={index} value={category}>
                     {category.charAt(0).toUpperCase() + category.slice(1)}
                   </MenuItem>
                 ))
@@ -321,30 +311,55 @@ const ProductsManagement = () => {
           </FormControl>
         </Grid>
 
-        <AddDiscountModal
-          categories={categories}
-          onSubmit={handleApplyDiscountSubmit}
-        />
-
-        <RemoveDiscountModal
-          offers={offers}
-          categories={categories}
-          onSubmit={handleRemoveDiscountSubmit}
-        />
-
-        {/* Add Product Button */}
-        <Grid item xs={12} md={3} sx={{ textAlign: "right" }}>
+        {/* Apply Discount Button */}
+        <Grid item xs={12} md={3}>
           <Button
             variant="contained"
             sx={{
-              textTransform: "none",
-              mt: { xs: 2, md: 4 },
-              mb: { xs: 2, md: 4 },
-
               backgroundColor: "#1C4771",
+              color: "#fff",
+              width: "100%",
+              textTransform: "none",
+              "&:hover": { backgroundColor: "#163b56" },
+            }}
+            onClick={handleOpenAddDiscount}
+            startIcon={<DiscountIcon />}
+          >
+            Apply Discount
+          </Button>
+        </Grid>
+
+        {/* Remove Discount Button */}
+        <Grid item xs={12} md={3}>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#1C4771",
+              color: "#fff",
+              width: "100%",
+              textTransform: "none",
+              "&:hover": { backgroundColor: "#163b56" },
+            }}
+            onClick={handleOpenRemoveDiscount}
+            startIcon={<RemoveCircleIcon />}
+          >
+            Remove Discount
+          </Button>
+        </Grid>
+
+        {/* Add New Product Button */}
+        <Grid item xs={12} md={3}>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#1C4771",
+              color: "#fff",
+              width: "100%",
+              textTransform: "none",
               "&:hover": { backgroundColor: "#163b56" },
             }}
             onClick={handleAddProduct}
+            startIcon={<AddCircleIcon />}
           >
             Add New Product
           </Button>
@@ -478,10 +493,10 @@ const ProductsManagement = () => {
           ?
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setConfirmOpen(false)} color="secondary">
+          <Button onClick={() => setConfirmOpen(false)} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleConfirm} color="primary">
+          <Button onClick={handleConfirm} color="error">
             Confirm
           </Button>
         </DialogActions>
@@ -529,6 +544,25 @@ const ProductsManagement = () => {
           productId={selectedProductId}
         />
       )}
+
+      {/* Add Discount Modal */}
+      <AddDiscountModal
+        open={showAddDiscountModal}
+        onClose={handleCloseAddDiscount}
+        onOpen={handleOpenAddDiscount}
+        categories={categories}
+        onSubmit={handleApplyDiscountSubmit}
+      />
+
+      {/* Remove Discount Modal */}
+      <RemoveDiscountModal
+        open={showRemoveDiscountModal}
+        onClose={handleCloseRemoveDiscount}
+        onOpen={handleOpenRemoveDiscount}
+        categories={categories}
+        offers={offers}
+        onSubmit={handleRemoveDiscountSubmit}
+      />
     </Box>
   );
 };
