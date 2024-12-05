@@ -4,7 +4,7 @@ import DashboardOverview from "./DashboardOverview";
 import OrdersManagement from "./OrdersManagement";
 import ProductsManagement from "./ProductsManagement";
 import CustomerManagement from "./CustomerManagement";
-import UpdatePassword from "../../pages/UpdatePassword";
+import UpdatePassword from "../UpdatePassword";
 import {
   Dashboard,
   ShoppingCart,

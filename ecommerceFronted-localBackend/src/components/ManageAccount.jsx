@@ -9,7 +9,7 @@ import {
   Avatar,
 } from "@mui/material";
 import RecentOrders from "./RecentOrders";
-import UpdatePassword from "../pages/UpdatePassword";
+import UpdatePassword from "./UpdatePassword";
 import { AccountCircle, ShoppingCart, Lock } from "@mui/icons-material";
 import ProfilePage from "./ProfilePage";
 

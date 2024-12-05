@@ -11,7 +11,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
-import { loginUserAsync } from "./../lib/redux/slices/authSlice";
+import { loginUserAsync } from "../lib/redux/slices/authSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Visibility, VisibilityOff } from "@mui/icons-material";

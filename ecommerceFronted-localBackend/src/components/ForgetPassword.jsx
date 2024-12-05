@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"; // Use React Router's useNavigat
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast, ToastContainer } from "react-toastify";
-import api from "./../lib/services/api";
+import api from "../lib/services/api";
 
 // The ForgetPassword component allows users to request a password reset and receive an OTP for verification
 const ForgetPassword = () => {
