@@ -153,8 +153,22 @@ const ProductsManagement = () => {
   };
 
   return (
-    <Box sx={{ padding: "20px", minHeight: "100vh", height: "100%" }}>
-      <Typography variant="h4" textAlign="center" mb={4}>
+    <Box
+      sx={{
+        padding: "20px",
+        marginTop: 8,
+        maxWidth: "100%",
+      }}
+    >
+      <Typography
+        variant="h4"
+        sx={{
+          fontWeight: 600,
+          mb: 6,
+          textAlign: "center",
+          color: "#1C4771",
+        }}
+      >
         Manage Products
       </Typography>
 
