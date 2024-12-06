@@ -18,7 +18,11 @@ import {
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import api from "./../../lib/services/api";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchOrders,
+  updateOrderStatus,
+} from "./../../lib/redux/slices/ordersSlice";
 
 const OrdersManagement = () => {
   const [orders, setOrders] = useState([]);
@@ -27,50 +31,44 @@ const OrdersManagement = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
+  const dispatch = useDispatch();
+  const { ordersList, loading } = useSelector((state) => state.orders);
+
+  console.log("ordersList :", ordersList);
   useEffect(() => {
-    fetchOrders();
-  }, []);
+    dispatch(fetchOrders());
+  }, [dispatch]);
 
   useEffect(() => {
     applyFilters();
   }, [orders, statusFilter, searchQuery, startDate, endDate]);
 
-  const fetchOrders = async () => {
-    setLoading(true);
-    try {
-      const response = await api.get("orders");
-      setOrders(response.data);
-      setFilteredOrders(response.data);
-    } catch (err) {
-      setError("Failed to load orders");
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    console.log("Testing");
+    setFilteredOrders(ordersList);
+  }, [ordersList]);
 
   const applyFilters = () => {
-    let filtered = orders;
+    let filtered = ordersList;
 
     if (statusFilter) {
-      filtered = filtered.filter((order) => order.status === statusFilter);
+      filtered = filtered.filter((order) => order?.status === statusFilter);
     }
 
     if (searchQuery) {
       filtered = filtered.filter(
         (order) =>
-          order.orderNumber.toString().includes(searchQuery) ||
-          order.userId.name.toLowerCase().includes(searchQuery.toLowerCase())
+          order?.orderNumber?.toString().includes(searchQuery) ||
+          order?.userId?.name?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     if (startDate && endDate) {
       filtered = filtered.filter((order) => {
-        const orderDate = new Date(order.orderDate);
+        const orderDate = new Date(order?.orderDate);
         return (
           orderDate >= new Date(startDate) && orderDate <= new Date(endDate)
         );
@@ -81,13 +79,15 @@ const OrdersManagement = () => {
     setCurrentPage(1); // Reset to first page when filtering
   };
 
-  const handleStatusChange = async (orderNumber, status) => {
-    try {
-      await api.patch(`orders/status/${orderNumber}`, { status });
-      fetchOrders(); // Refetch orders to update the list
-    } catch (err) {
-      console.error("Failed to update status", err);
-    }
+  const handleStatusChange = (orderNumber, status) => {
+    dispatch(updateOrderStatus({ orderNumber, status }))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchOrders()); // Refetch orders to update the list
+      })
+      .catch((err) => {
+        console.error("Failed to update status", err);
+      });
   };
 
   const handlePageChange = (newPage) => {
@@ -99,10 +99,11 @@ const OrdersManagement = () => {
     setCurrentPage(1);
   };
 
-  const paginatedOrders = filteredOrders.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const paginatedOrders =
+    filteredOrders?.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+    ) || [];
 
   return (
     <Box>

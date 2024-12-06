@@ -21,7 +21,7 @@ export const updateOrderStatus = createAsyncThunk(
   "orders/updateOrderStatus",
   async ({ orderNumber, status }, { rejectWithValue }) => {
     try {
-      const response = await api.patch(`orders/${orderNumber}`, {
+      const response = await api.patch(`orders/status/${orderNumber}`, {
         status,
       });
       // toast.success("Order status updated successfully");
