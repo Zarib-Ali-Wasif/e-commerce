@@ -135,7 +135,7 @@ const ProductDetailsModal = ({
               Available Stock: {product.stock || 0}
             </Typography>
             <Typography variant="h6" color="textSecondary" gutterBottom>
-              Price: ${product.price.toFixed(2)}
+              Price: ${product.price}
             </Typography>
 
             {/* Conditionally Display Discount Badge */}

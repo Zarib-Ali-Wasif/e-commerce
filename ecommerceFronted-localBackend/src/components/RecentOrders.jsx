@@ -1,5 +1,3 @@
-// ToDo: Add this in the Header:
-
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -14,33 +12,22 @@ import {
   DialogTitle,
   Divider,
   Chip,
-  IconButton,
   Grid,
   Paper,
 } from "@mui/material";
-import api from "./../lib/services/api";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchRecentOrders } from "../lib/redux/slices/ordersSlice";
 
 const RecentOrders = () => {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null); // For storing selected order details
   const [openDialog, setOpenDialog] = useState(false); // For controlling dialog visibility
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await api.get("orders/recent");
-        setOrders(response.data);
-      } catch (err) {
-        setError("Failed to load orders");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const dispatch = useDispatch();
+  const { recentOrders, loading } = useSelector((state) => state.orders);
 
-    fetchOrders();
-  }, []);
+  useEffect(() => {
+    dispatch(fetchRecentOrders());
+  }, [dispatch]);
 
   const handleOrderClick = (order) => {
     setSelectedOrder(order); // Set selected order
@@ -79,13 +66,13 @@ const RecentOrders = () => {
             Loading orders...
           </Typography>
         </Box>
-      ) : orders.length === 0 ? (
+      ) : recentOrders.length === 0 ? (
         <Typography align="center" variant="body1" color="textSecondary">
           No recent orders found.
         </Typography>
       ) : (
         <Grid container spacing={2}>
-          {orders.map((order) => (
+          {recentOrders.map((order) => (
             <Grid item xs={12} md={6} lg={4} key={order._id}>
               <Card
                 sx={{ mb: 2, boxShadow: 3, cursor: "pointer" }}

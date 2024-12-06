@@ -4,6 +4,8 @@ import storage from "redux-persist/lib/storage"; // This uses localStorage by de
 import authReducer from "./slices/authSlice";
 import cartReducer from "./slices/cartSlice";
 import productsReducer from "./slices/productsSlice";
+import ordersReducer from "./slices/ordersSlice";
+import usersReducer from "./slices/usersSlice";
 
 // Persist configuration
 const persistConfig = {
@@ -22,6 +24,8 @@ const store = configureStore({
     auth: authReducer,
     cart: persistedCartReducer, // Persisted cart reducer
     products: persistedProductsReducer, // Persisted cart reducer
+    orders: ordersReducer, // Persisted cart reducer
+    users: usersReducer, // Persisted cart reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -6,30 +6,27 @@ import {
   Typography,
   Divider,
   Button,
-  CardMedia,
+  CircularProgress,
 } from "@mui/material";
-import api from "./../lib/services/api";
 import { toast, ToastContainer } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserInfo, updateAvatar } from "../lib/redux/slices/usersSlice";
 
 const ProfilePage = () => {
-  const [userInfo, setUserInfo] = useState({});
-  const [avatar, setAvatar] = useState(null);
-  const [file, setFile] = useState(null);
+  const dispatch = useDispatch();
+  const { userInfo, userInfoAvatar, loading } = useSelector(
+    (state) => state.users
+  );
   const userId = localStorage.getItem("userId"); // Get userId from local storage
 
-  useEffect(() => {
-    // Fetch user info by userId
-    const fetchUserInfo = async () => {
-      try {
-        const response = await api.get(`user/findUserById/${userId}`);
-        setUserInfo(response.data);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
+  const [avatar, setAvatar] = useState(null);
+  const [file, setFile] = useState(null);
 
-    fetchUserInfo();
-  }, [userId]);
+  useEffect(() => {
+    if (userId) {
+      dispatch(fetchUserInfo(userId));
+    }
+  }, [userId, dispatch]);
 
   const handleFileUpload = (e) => {
     const uploadedFile = e.target.files[0];
@@ -38,31 +35,44 @@ const ProfilePage = () => {
     setAvatar(imageUrl); // Preview the uploaded avatar
   };
 
-  const handleAvatarSubmit = async () => {
+  const handleAvatarSubmit = () => {
     if (!file) return;
-
-    const formData = new FormData();
-    formData.append("image", file);
-
-    try {
-      const imageResponse = await api.post("image/upload/single", formData);
-      const url = imageResponse.data.url;
-      const updatedUser = {
-        ...userInfo,
-        avatar: url, // Assuming API returns the URL of the uploaded image
-      };
-
-      // Update user info with the new avatar
-      await api.put(`user/updateById/${userId}`, updatedUser);
-      setUserInfo(updatedUser); // Update state to reflect changes
-      toast.success("Profile updated successfully!");
-      setAvatar(url);
-      setFile(null);
-    } catch (error) {
-      console.error("Error updating avatar:", error);
-      toast.error("Failed to update avatar.");
-    }
+    dispatch(updateAvatar({ userId, file }))
+      .unwrap()
+      .then(() => {
+        setFile(null);
+        setAvatar(null);
+      })
+      .catch((error) => {
+        console.error("Error updating avatar:", error);
+      });
   };
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "60vh",
+        }}
+      >
+        <CircularProgress size={80} />
+        <Typography
+          sx={{
+            mt: 4,
+            fontSize: { xs: "1.2rem", sm: "1.8rem" },
+            fontWeight: "500",
+            color: "#1C4771",
+          }}
+        >
+          Loading ...
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ display: "flex", justifyContent: "center", m: 2, mb: 8 }}>
@@ -88,7 +98,7 @@ const ProfilePage = () => {
                 cursor: "pointer",
               }}
               alt="User Avatar"
-              src={avatar || userInfo.avatar}
+              src={avatar || userInfo?.avatar}
             />
           </label>
           <input
@@ -100,10 +110,10 @@ const ProfilePage = () => {
           />
           <Box>
             <Typography variant="h5" color="textPrimary" fontWeight={600}>
-              {userInfo.name || "Name"}
+              {userInfo?.name || "Name"}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              {userInfo.role || "Role"}
+              {userInfo?.role || "Role"}
             </Typography>
           </Box>
         </Box>
@@ -113,29 +123,29 @@ const ProfilePage = () => {
         {/* Profile Details */}
         <Box sx={{ paddingBottom: 2 }}>
           <Typography variant="body1" color="textSecondary">
-            <strong>Email:</strong> {userInfo.email}
+            <strong>Email:</strong> {userInfo?.email}
           </Typography>
           <Typography variant="body1" color="textSecondary">
-            <strong>Age:</strong> {userInfo.age}
+            <strong>Age:</strong> {userInfo?.age}
           </Typography>
           <Typography variant="body1" color="textSecondary">
-            <strong>Gender:</strong> {userInfo.gender}
+            <strong>Gender:</strong> {userInfo?.gender}
           </Typography>
           <Typography variant="body1" color="textSecondary">
             <strong>Email Verified:</strong>{" "}
-            {userInfo.is_emailVerified ? "Yes" : "No"}
+            {userInfo?.is_emailVerified ? "Yes" : "No"}
           </Typography>
           <Typography variant="body1" color="textSecondary">
             <strong>Active Status:</strong>{" "}
-            {userInfo.is_Active ? "Active" : "Inactive"}
+            {userInfo?.is_Active ? "Active" : "Inactive"}
           </Typography>
           <Typography variant="body1" color="textSecondary">
             <strong>Account Created:</strong>{" "}
-            {new Date(userInfo.createdAt).toLocaleDateString()}
+            {new Date(userInfo?.createdAt).toLocaleDateString()}
           </Typography>
           <Typography variant="body1" color="textSecondary">
             <strong>Last Updated:</strong>{" "}
-            {new Date(userInfo.updatedAt).toLocaleDateString()}
+            {new Date(userInfo?.updatedAt).toLocaleDateString()}
           </Typography>
         </Box>
 

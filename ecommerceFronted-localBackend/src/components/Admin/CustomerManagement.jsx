@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
 import {
   Table,
   TableBody,
@@ -16,104 +18,33 @@ import {
   Grid,
   Button,
 } from "@mui/material";
-import api from "./../../lib/services/api";
+import {
+  fetchUsersAndOrders,
+  updateUserStatus,
+  setSearchQuery,
+  setStatusFilter,
+  applyFilters,
+} from "./../../lib/redux/slices/usersSlice";
 
 const CustomerManagement = () => {
-  const [users, setUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const dispatch = useDispatch();
+  const { filteredUsers, loading, searchQuery, statusFilter } = useSelector(
+    (state) => state.users
+  );
+
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
-    fetchUsersAndOrders();
-  }, []);
+    dispatch(fetchUsersAndOrders());
+  }, [dispatch]);
 
   useEffect(() => {
-    applyFilters();
-  }, [users, searchQuery, statusFilter]);
+    dispatch(applyFilters());
+  }, [searchQuery, statusFilter, dispatch]);
 
-  const fetchUsersAndOrders = async () => {
-    setLoading(true);
-    try {
-      const [usersResponse, ordersResponse] = await Promise.all([
-        api.get("user"),
-        api.get("orders"),
-      ]);
-
-      const usersData = usersResponse.data;
-      const ordersData = ordersResponse.data;
-
-      // Map orders to each user
-      const userOrderMap = usersData.map((user) => {
-        const userOrders = ordersData.filter(
-          (order) => order.userId._id === user._id
-        );
-        const lastOrderDate = userOrders.length
-          ? userOrders.reduce((latest, order) =>
-              new Date(order.orderDate) > new Date(latest.orderDate)
-                ? order
-                : latest
-            ).orderDate
-          : null;
-
-        // Check if last order date is more than 6 months ago
-        const currentDate = new Date();
-        const diffInMonths = lastOrderDate
-          ? (currentDate - new Date(lastOrderDate)) / (1000 * 60 * 60 * 24 * 30)
-          : 0;
-
-        // If last order was more than 6 months ago, change status
-        if (diffInMonths > 6 && user.is_Active) {
-          handleStatusChange(user._id, false); // Deactivate user
-        }
-
-        return {
-          ...user,
-          totalOrders: userOrders.length,
-          lastOrderDate,
-        };
-      });
-
-      setUsers(userOrderMap);
-      setFilteredUsers(userOrderMap);
-    } catch (error) {
-      console.error("Failed to fetch data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const applyFilters = () => {
-    let filtered = users;
-    if (searchQuery) {
-      filtered = filtered.filter(
-        (user) =>
-          user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          user.phone.includes(searchQuery)
-      );
-    }
-    if (statusFilter) {
-      filtered = filtered.filter(
-        (user) =>
-          (statusFilter === "Active" && user.is_Active) ||
-          (statusFilter === "Deactivated" && !user.is_Active)
-      );
-    }
-    setFilteredUsers(filtered);
-    setCurrentPage(1); // Reset to first page when filtering
-  };
-
-  const handleStatusChange = async (userId, status) => {
-    try {
-      await api.patch(`user/status/${userId}`, { status });
-      fetchUsersAndOrders(); // Refetch data to update the table
-    } catch (error) {
-      console.error("Failed to update status", error);
-    }
+  const handleStatusChange = (userId, status) => {
+    dispatch(updateUserStatus({ userId, status }));
   };
 
   const handlePageChange = (newPage) => {
@@ -155,7 +86,7 @@ const CustomerManagement = () => {
           <Grid item xs={12} sm={6} md={3}>
             <Select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+              onChange={(e) => dispatch(setStatusFilter(e.target.value))}
               displayEmpty
               fullWidth
             >
@@ -168,7 +99,7 @@ const CustomerManagement = () => {
             <TextField
               label="Search by Name, Email, or Phone"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => dispatch(setSearchQuery(e.target.value))}
               fullWidth
             />
           </Grid>
@@ -207,8 +138,17 @@ const CustomerManagement = () => {
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={7}>
-                    <Box display="flex" justifyContent="center">
-                      <CircularProgress />
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        minHeight: "60vh",
+                      }}
+                    >
+                      <CircularProgress size={100} />
+                      <Typography>Loading products...</Typography>
                     </Box>
                   </TableCell>
                 </TableRow>
@@ -228,7 +168,7 @@ const CustomerManagement = () => {
                     </TableCell>
                     <TableCell>
                       <Select
-                        value={user.active ? "Active" : "Deactivated"}
+                        value={user.is_Active ? "Active" : "Deactivated"}
                         onChange={(e) =>
                           handleStatusChange(
                             user._id,

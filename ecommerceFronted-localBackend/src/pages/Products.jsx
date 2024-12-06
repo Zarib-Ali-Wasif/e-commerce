@@ -230,7 +230,7 @@ const Products = ({ showModal }) => {
                     </Typography>
 
                     <Typography variant="body1" color="textSecondary">
-                      Price: ${product.price.toFixed(2)}
+                      Price: ${product.price}
                     </Typography>
 
                     {/* Only show offer name if discount name exists and is valid */}

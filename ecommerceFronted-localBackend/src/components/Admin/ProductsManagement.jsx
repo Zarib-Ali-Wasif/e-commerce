@@ -424,7 +424,11 @@ const ProductsManagement = () => {
 
                 <CardMedia
                   component="img"
-                  sx={{ width: "100%", height: "200px", objectFit: "contain" }}
+                  sx={{
+                    width: "100%",
+                    height: "200px",
+                    objectFit: "contain",
+                  }}
                   image={product.image}
                   alt={product.title}
                 />
@@ -433,7 +437,7 @@ const ProductsManagement = () => {
                     {product.title}
                   </Typography>
                   <Typography variant="body1" color="textSecondary">
-                    Price: ${product.price.toFixed(2)}
+                    Price: ${product.price}
                   </Typography>
                   <Typography variant="body1" color="textSecondary">
                     Available Stock: {product.stock || 0}
