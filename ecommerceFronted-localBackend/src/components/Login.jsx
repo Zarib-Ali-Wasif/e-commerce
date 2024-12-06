@@ -15,6 +15,7 @@ import { loginUserAsync } from "../lib/redux/slices/authSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -24,12 +25,12 @@ const Login = () => {
   const [redirectTo, setRedirectTo] = useState("");
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
-
+  console.log(storedUser);
   useEffect(() => {
     // Check if user is already logged in
     if (storedUser?.token && storedUser?.role) {
       if (storedUser.role === "Admin") {
-        navigate("/adminpanel");
+        navigate("/admin-panel");
       } else if (storedUser.role === "User") {
         navigate("/");
       }
@@ -77,25 +78,59 @@ const Login = () => {
       role: "",
     },
     validationSchema,
+    // onSubmit: async (data, { resetForm }) => {
+    //   try {
+    //     localStorage.setItem("role", data.role);
+    //     const resultAction = await dispatch(loginUserAsync(data)).unwrap();
+    //     if (resultAction) {
+    //       const decodedToken = jwtDecode(response.access_token);
+    //       localStorage.setItem("user", JSON.stringify(decodedToken));
+    //       resetForm();
+    //       setTimeout(() => {
+    //         if (redirectTo) {
+    //           navigate(`/${redirectTo}`); // Navigate to the passed redirectTo path
+    //           // setRedirectTo("");
+    //         } else {
+    //           navigate(
+    //             localStorage.getItem("role")?.role === "Admin"
+    //               ? "/admin-panel"
+    //               : "/"
+    //           );
+    //         }
+    //       }, 1000);
+    //     }
+    //   } catch (error) {
+    //     toast.error("Login failed. Please check your credentials.");
+    //   }
+    // },
     onSubmit: async (data, { resetForm }) => {
       try {
         localStorage.setItem("role", data.role);
+
+        // Dispatch login action and unwrap the result
         const resultAction = await dispatch(loginUserAsync(data)).unwrap();
-        if (resultAction) {
+
+        if (resultAction && resultAction.access_token) {
+          // Decode token and store user info in localStorage
+          const decodedToken = jwtDecode(resultAction.access_token);
+          localStorage.setItem("user", JSON.stringify(decodedToken));
+
           resetForm();
+
           setTimeout(() => {
+            // Navigate based on role or redirectTo
             if (redirectTo) {
-              navigate(`/${redirectTo}`); // Navigate to the passed redirectTo path
+              navigate(`/${redirectTo}`); // Navigate to passed redirectTo path
             } else {
-              navigate(
-                localStorage.getItem("role")?.role === "Admin"
-                  ? "/adminpanel"
-                  : "/"
-              );
+              const storedRole = localStorage.getItem("role");
+              navigate(storedRole === "Admin" ? "/admin-panel" : "/");
             }
           }, 1000);
+        } else {
+          throw new Error("Invalid response structure or missing token");
         }
       } catch (error) {
+        console.error("Login error:", error); // Log for debugging
         toast.error("Login failed. Please check your credentials.");
       }
     },

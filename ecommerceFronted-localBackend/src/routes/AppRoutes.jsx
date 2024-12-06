@@ -18,17 +18,17 @@ import ResetPassword from "../components/ResetPassword";
 import ManageAccount from "../components/ManageAccount";
 import EmailUs from "../components/EmailUs";
 import AdminPanel from "../components/Admin/AdminPanel";
+import { useSelector } from "react-redux";
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ user, requiredRole, children }) => {
-  // Check if user is logged in and if the role matches the required role
-  if (!user) {
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  if (!storedUser) {
     return <Navigate to="/login" replace />;
   }
 
-  const userRole = user?.role; // Assuming 'role' is stored in user object
+  const userRole = storedUser.role; // Retrieve role
   if (requiredRole && userRole !== requiredRole) {
-    // If the role does not match, redirect to not found page or home
     return <Navigate to="/" replace />;
   }
 
@@ -36,7 +36,7 @@ const ProtectedRoute = ({ user, requiredRole, children }) => {
 };
 
 function AppRoutes() {
-  const user = JSON.parse(localStorage.getItem("user")); // Assuming user data is stored in localStorage
+  const user = useSelector((state) => state.auth.user);
 
   return (
     <BrowserRouter
