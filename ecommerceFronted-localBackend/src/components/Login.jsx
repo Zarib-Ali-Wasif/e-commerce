@@ -25,7 +25,6 @@ const Login = () => {
   const [redirectTo, setRedirectTo] = useState("");
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
-  console.log(storedUser);
   useEffect(() => {
     // Check if user is already logged in
     if (storedUser?.token && storedUser?.role) {
