@@ -36,8 +36,8 @@ const Checkout = () => {
   const [loading, setLoading] = useState(false);
 
   // Retrieve user details from localStorage or Redux (modify as needed)
-  const { user } = JSON.parse(localStorage.getItem("user")) ||
-    useSelector((state) => state.auth) || {
+  const user = JSON.parse(localStorage.getItem("user")) ||
+    useSelector((state) => state.auth.user) || {
       userId: "guest",
       name: "Guest User",
       email: "guest@example.com",
