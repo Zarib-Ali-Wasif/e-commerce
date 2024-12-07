@@ -101,6 +101,7 @@ const Checkout = () => {
 
     try {
       if (paymentMethod === "Credit Card") {
+        setLoading(true);
         // Trigger Stripe payment flow
         await makePayment(orderDetails);
       } else {
@@ -312,10 +313,13 @@ const Checkout = () => {
                   },
                 }}
                 onClick={handlePlaceOrder}
-                disabled={loading}
+                disabled={loading} // Disable the button when loading is true
               >
                 {loading ? (
-                  <CircularProgress size={24} color="inherit" />
+                  <CircularProgress
+                    size={24}
+                    sx={{ marginRight: 2, color: "#1C4771" }}
+                  />
                 ) : paymentMethod === "Credit Card" ? (
                   `$${cartSummary.total.toLocaleString("en-US", {
                     style: "currency",

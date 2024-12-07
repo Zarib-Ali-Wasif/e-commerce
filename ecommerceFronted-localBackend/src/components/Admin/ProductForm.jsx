@@ -8,6 +8,7 @@ import {
   Select,
   FormControl,
   CardMedia,
+  CircularProgress,
 } from "@mui/material";
 import { useFormik } from "formik";
 import { toast, ToastContainer } from "react-toastify";
@@ -46,7 +47,7 @@ const ProductForm = ({ productData, onSubmit, onClose }) => {
       .required("Price is required")
       .positive("Price must be positive"),
     category: Yup.string().required("Category is required"),
-    stock: Yup.number().positive("stock must be positive"),
+    stock: Yup.number().positive("Stock must be positive"),
   });
 
   const formik = useFormik({
@@ -284,8 +285,15 @@ const ProductForm = ({ productData, onSubmit, onClose }) => {
                 border: "none",
               },
             }}
+            disabled={formik.isSubmitting} // Disable the button while submitting
           >
-            {productData ? "Update Product" : "Add Product"}
+            {formik.isSubmitting ? (
+              <CircularProgress size={24} sx={{ color: "white" }} />
+            ) : productData ? (
+              "Update Product"
+            ) : (
+              "Add Product"
+            )}
           </Button>
           <Button
             onClick={onClose}

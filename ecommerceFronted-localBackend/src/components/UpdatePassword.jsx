@@ -6,6 +6,7 @@ import {
   Button,
   IconButton,
   InputAdornment,
+  CircularProgress,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useFormik } from "formik";
@@ -22,6 +23,7 @@ const UpdatePassword = () => {
     newPassword: false,
     confirmPassword: false,
   });
+  const [loading, setLoading] = useState(false); // Added loading state
 
   const togglePasswordVisibility = (field) => {
     setShowPassword((prev) => ({
@@ -53,6 +55,7 @@ const UpdatePassword = () => {
     },
     validationSchema,
     onSubmit: async (data, { resetForm }) => {
+      setLoading(true); // Set loading to true when form is submitted
       try {
         const response = await api.post("auth/updatePassword", data);
         toast.success("Password updated successfully.");
@@ -61,6 +64,8 @@ const UpdatePassword = () => {
       } catch (error) {
         console.error("Error updating password:", error.message);
         toast.error("Failed to update password. Please try again.");
+      } finally {
+        setLoading(false); // Set loading to false regardless of success or error
       }
     },
   });
@@ -70,21 +75,7 @@ const UpdatePassword = () => {
 
     // UI component to display when User is not authenticated
     return (
-      <Box
-        // sx={{
-        //   display: "flex",
-        //   flexDirection: "column",
-        //   alignItems: "center",
-        //   justifyContent: "center",
-        //   height: "90vh",
-        //   textAlign: "center",
-        // }}
-        mt={0}
-        mb={5}
-        p={2}
-        minHeight="90vh"
-        height="100%"
-      >
+      <Box mt={0} mb={5} p={2} minHeight="90vh" height="100%">
         <Typography
           sx={{
             fontSize: { xs: "32px", sm: "54px" },
@@ -235,8 +226,13 @@ const UpdatePassword = () => {
             backgroundColor: "#1C4771",
           },
         }}
+        disabled={loading} // Disable button during loading
       >
-        Update Password
+        {loading ? (
+          <CircularProgress size={24} sx={{ mr: 2, color: "white" }} />
+        ) : (
+          "Update Password"
+        )}
       </Button>
       <ToastContainer />
     </Box>
