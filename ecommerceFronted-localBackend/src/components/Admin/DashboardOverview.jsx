@@ -214,11 +214,6 @@ const DashboardOverview = () => {
       const productStock = product?.stock || 0; // Safely access stock and handle undefined
       return acc + productStock;
     }, 0) || 0;
-  console.log("inventory", inventory);
-  productsList?.forEach((product) => {
-    console.log("Product:", product, "Stock:", product?.stock);
-  });
-  console.log("productsList", productsList);
 
   // Metrics data
   const metrics = [
