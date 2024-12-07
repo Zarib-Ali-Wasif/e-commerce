@@ -1,151 +1,13 @@
-// import React from "react";
-// import { Card, Typography, Grid } from "@mui/material";
-// import { Doughnut, Bar, Line } from "react-chartjs-2";
-// import {
-//   Chart as ChartJS,
-//   ArcElement,
-//   PointElement,
-//   LineElement,
-//   BarElement,
-//   CategoryScale,
-//   LinearScale,
-//   Title,
-//   Tooltip,
-//   Legend,
-// } from "chart.js";
-
-// // Register the necessary Chart.js components
-// ChartJS.register(
-//   ArcElement, // Fix: Register ArcElement for Doughnut chart
-//   PointElement,
-//   LineElement,
-//   BarElement,
-//   CategoryScale,
-//   LinearScale,
-//   Title,
-//   Tooltip,
-//   Legend
-// );
-
-// const DashboardOverview = () => {
-//   // Metrics data
-//   const metrics = [
-//     { label: "Total Sales", value: 12345 },
-//     { label: "Total Orders", value: 345 },
-//     { label: "Active Customers", value: 120 },
-//     { label: "Inventory", value: 50 },
-//     { label: "Total Users", value: 500 },
-//     { label: "Pending Tasks", value: 5 },
-//   ];
-
-//   // Sales Data (Bar Chart)
-//   const salesData = {
-//     labels: ["January", "February", "March", "April", "May", "June"],
-//     datasets: [
-//       {
-//         label: "Monthly Sales ($)",
-//         data: [3000, 4000, 3500, 5000, 4500, 6000],
-//         backgroundColor: "#1C4771",
-//         borderColor: "#163b56",
-//         borderWidth: 1,
-//       },
-//     ],
-//   };
-
-//   // Order Breakdown Data (Pie Chart)
-//   const pieData = {
-//     labels: ["Completed Orders", "Pending Orders", "Cancelled Orders"],
-//     datasets: [
-//       {
-//         data: [280, 45, 20],
-//         backgroundColor: ["#4caf50", "#ff9800", "#f44336"],
-//       },
-//     ],
-//   };
-
-//   // Active Customers Data (Line Chart)
-//   const activeCustomersData = {
-//     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-//     datasets: [
-//       {
-//         label: "Active Customers",
-//         data: [80, 100, 120, 140, 160, 120],
-//         borderColor: "#1C4771",
-//         backgroundColor: "rgba(28, 71, 113, 0.2)",
-//         tension: 0.3,
-//       },
-//     ],
-//   };
-
-//   return (
-//     <Grid container spacing={3} style={{ padding: "20px" }}>
-//       {/* Summary Cards */}
-//       {metrics.map((metric, index) => (
-//         <Grid item xs={12} sm={6} md={4} key={index}>
-//           <Card style={{ padding: "20px", textAlign: "center" }}>
-//             <Typography variant="h6">{metric.label}</Typography>
-//             <Typography variant="h4" color="primary">
-//               {metric.value.toLocaleString()}
-//             </Typography>
-//           </Card>
-//         </Grid>
-//       ))}
-
-//       {/* Monthly Sales Bar Chart */}
-//       <Grid item xs={12} md={6}>
-//         <Card style={{ padding: "20px" }}>
-//           <Typography variant="h6" gutterBottom>
-//             Monthly Sales Trend
-//           </Typography>
-
-//           <Bar
-//             data={salesData}
-//             options={{
-//               maintainAspectRatio: true,
-//               aspectRatio: 1.95,
-
-//               elements: {
-//                 bar: {
-//                   // borderWidth: 2,
-//                   // borderRadius: 60,
-//                   barThickness: "2px", // controls the width of the bar
-//                 },
-//               },
-//             }}
-//           />
-//         </Card>
-//       </Grid>
-
-//       {/* Order Breakdown Pie Chart */}
-//       <Grid item xs={12} md={6}>
-//         <Card style={{ padding: "20px" }}>
-//           <Typography variant="h6" gutterBottom>
-//             Order Breakdown
-//           </Typography>
-//           <Doughnut data={pieData} />
-//         </Card>
-//       </Grid>
-
-//       {/* Active Customers Line Chart */}
-//       <Grid item xs={12}>
-//         <Card style={{ padding: "20px" }}>
-//           <Typography variant="h6" gutterBottom>
-//             Active Customers Over Time
-//           </Typography>
-//           <Line data={activeCustomersData} />
-//         </Card>
-//       </Grid>
-//     </Grid>
-//   );
-// };
-
 // export default DashboardOverview;
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Card, Typography, Grid } from "@mui/material";
 import { Doughnut, Bar, Line } from "react-chartjs-2";
 
-import { fetchProducts } from "../../lib/redux/slices/productsSlice";
+import {
+  fetchCategories,
+  fetchProducts,
+} from "../../lib/redux/slices/productsSlice";
 import { fetchOrders } from "../../lib/redux/slices/ordersSlice";
 import { fetchUsers } from "../../lib/redux/slices/usersSlice";
 
@@ -189,6 +51,7 @@ const DashboardOverview = () => {
   useEffect(() => {
     setLoading(true);
     dispatch(fetchProducts());
+    dispatch(fetchCategories());
     dispatch(fetchOrders());
     dispatch(fetchUsers());
     setLoading(false);
@@ -215,22 +78,39 @@ const DashboardOverview = () => {
       return acc + productStock;
     }, 0) || 0;
 
+  const totalCategories = categories?.length || 0;
+
   // Metrics data
   const metrics = [
-    { label: "Total Sales", value: totalSales },
-    { label: "Total Orders", value: totalOrders },
-    { label: "Active Customers", value: activeCustomers },
-    { label: "Inventory", value: inventory },
+    { label: "Total Sales", value: `$ ${totalSales}` },
     { label: "Total Users", value: users?.length || 0 },
+    { label: "Active Customers", value: activeCustomers },
+    { label: "Available Stock", value: inventory },
+    { label: "Product Categories", value: totalCategories },
+    { label: "Total Orders", value: totalOrders },
   ];
 
   // Prepare chart data
   const salesData = {
-    labels: ["January", "February", "March", "April", "May", "June"],
+    labels: [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ],
     datasets: [
       {
         label: "Monthly Sales ($)",
-        data: ordersList?.map((order) => order.monthlySales) || [],
+        // data: ordersList?.map((order) => order.monthlySales) || [],
+        data: [800, 400, 1200, 350, 1000, 500, 900, 600, 1100, 700, 650, 450],
         backgroundColor: "#1C4771",
         borderColor: "#163b56",
         borderWidth: 1,
@@ -239,27 +119,56 @@ const DashboardOverview = () => {
   };
 
   const pieData = {
-    labels: ["Completed Orders", "Pending Orders", "Cancelled Orders"],
+    labels: [
+      "Pending Orders",
+      "Processing Orders",
+      "Shipped Orders",
+      "Delivered Orders",
+      "Canceled Orders",
+    ],
     datasets: [
       {
         data: [
-          ordersList?.filter((order) => order.status === "completed").length ||
+          ordersList?.filter((order) => order.status === "Pending").length || 0,
+          ordersList?.filter((order) => order.status === "Processing").length ||
             0,
-          ordersList?.filter((order) => order.status === "pending").length || 0,
-          ordersList?.filter((order) => order.status === "cancelled").length ||
+          ordersList?.filter((order) => order.status === "Shipped").length || 0,
+          ordersList?.filter((order) => order.status === "Delivered").length ||
+            0,
+          ordersList?.filter((order) => order.status === "Canceled").length ||
             0,
         ],
-        backgroundColor: ["#4caf50", "#ff9800", "#f44336"],
+        backgroundColor: [
+          "#e91e63",
+          "#2196f3",
+          "#ff9800",
+          "#4caf50",
+          "#f44336",
+        ],
       },
     ],
   };
 
   const activeCustomersData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+    labels: [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ],
     datasets: [
       {
         label: "Active Customers",
-        data: users?.map((user) => user.activeTime) || [],
+        // data: users?.map((user) => user.is_Active) || [],
+        data: [12, 15, 10, 18, 22, 5, 30, 25, 7, 20, 8, 2],
         borderColor: "#1C4771",
         backgroundColor: "rgba(28, 71, 113, 0.2)",
         tension: 0.3,
@@ -301,12 +210,15 @@ const DashboardOverview = () => {
               <Typography variant="h6" gutterBottom>
                 Order Breakdown
               </Typography>
-              <Doughnut data={pieData} />
+              <Doughnut
+                data={pieData}
+                options={{ maintainAspectRatio: true, aspectRatio: 2 }}
+              />
             </Card>
           </Grid>
 
           {/* Active Customers Line Chart */}
-          <Grid item xs={12}>
+          <Grid item xs={12} md={6}>
             <Card style={{ padding: "20px" }}>
               <Typography variant="h6" gutterBottom>
                 Active Customers Over Time
