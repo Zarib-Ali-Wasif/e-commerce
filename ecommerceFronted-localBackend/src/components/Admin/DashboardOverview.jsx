@@ -194,13 +194,31 @@ const DashboardOverview = () => {
     setLoading(false);
   }, [dispatch]);
 
-  // Derived metrics (example calculations)
-  const totalSales =
-    ordersList?.reduce((acc, order) => acc + order.total, 0) || 0;
+  // ################################ Derived metrics (calculations ################################
+
+  // Calculate total sales from ordersList
+  const totalSales = ordersList.reduce((acc, order) => {
+    const orderTotal = parseFloat(order.summary?.total) || 0; // Ensure total is a number
+    return acc + orderTotal;
+  }, 0);
+
+  // Calculate total orders
   const totalOrders = ordersList?.length || 0;
-  const activeCustomers = users?.filter((user) => user.active).length || 0;
+
+  // Calculate active customers
+  const activeCustomers = users?.filter((user) => user.is_Active).length || 0;
+
+  // Calculate total stock
   const inventory =
-    productsList?.reduce((acc, product) => acc + product.stock, 0) || 0;
+    productsList?.reduce((acc, product) => {
+      const productStock = product?.stock || 0; // Safely access stock and handle undefined
+      return acc + productStock;
+    }, 0) || 0;
+  console.log("inventory", inventory);
+  productsList?.forEach((product) => {
+    console.log("Product:", product, "Stock:", product?.stock);
+  });
+  console.log("productsList", productsList);
 
   // Metrics data
   const metrics = [

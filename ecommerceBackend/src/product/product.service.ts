@@ -28,7 +28,12 @@ export class ProductService {
     }
 
     if (category) {
-      products = products.filter((product) => product.category === category);
+      products = products.filter((product) => {
+        return (
+          product.category.trim().toLowerCase() ===
+          category.trim().toLowerCase()
+        );
+      });
     }
 
     return products;

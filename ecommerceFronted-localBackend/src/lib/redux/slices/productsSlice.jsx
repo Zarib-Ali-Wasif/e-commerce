@@ -8,7 +8,7 @@ export const fetchProducts = createAsyncThunk(
   async (category, { rejectWithValue }) => {
     try {
       const endpoint =
-        category === "all"
+        !category || category === "all"
           ? "store/products"
           : `store/products?category=${category}`;
       const response = await api.get(endpoint);
