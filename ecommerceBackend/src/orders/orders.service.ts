@@ -97,7 +97,6 @@ export class OrdersService {
       const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
       const { orderItems } = orderDetails;
-      console.log('Testing get data susscess', orderItems);
       const lineItems = orderItems.map((item: any) => ({
         price_data: {
           currency: 'usd',
@@ -110,8 +109,6 @@ export class OrdersService {
         quantity: item.quantity,
       }));
 
-      console.log('Testing line item set');
-
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         mode: 'payment', // This is the key fix
@@ -119,7 +116,6 @@ export class OrdersService {
         success_url: `${process.env.FRONTEND_URL}/order-confirmation`,
         cancel_url: `${process.env.FRONTEND_URL}/payment-failed`,
       });
-      console.log('Testing line session success');
 
       return { id: session.id };
     } catch (err) {

@@ -127,8 +127,6 @@ const Checkout = () => {
     try {
       const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
-      // Prepare data for the payment session
-      // const body = { order: orderDetails };
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
