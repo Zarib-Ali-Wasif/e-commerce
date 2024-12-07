@@ -103,7 +103,7 @@ const OrderConfirmation = () => {
                 {new Date(orderDate).toLocaleString()}
               </Typography>
               <Typography variant="body2">
-                <strong>Status:</strong> {status || "Pending"}
+                <strong>Order Status:</strong> {status || "Pending"}
               </Typography>
               <Typography variant="body2">
                 <strong>Payment Method:</strong> {paymentMethod}
