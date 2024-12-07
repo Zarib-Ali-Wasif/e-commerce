@@ -39,6 +39,15 @@ const RecentOrders = () => {
     setSelectedOrder(null); // Reset selected order
   };
 
+  // Define a mapping for status and colors
+  const statusColorMap = {
+    Pending: "warning",
+    Processing: "secondary",
+    Shipped: "primary",
+    Delivered: "success",
+    Canceled: "error",
+  };
+
   return (
     <Box mt={0} mb={5} p={2} minHeight="70vh" height="100%">
       <Typography
@@ -96,7 +105,8 @@ const RecentOrders = () => {
                     </Typography>
                     <Chip
                       label={order.status}
-                      color={order.status === "Pending" ? "warning" : "success"}
+                      // color={order.status === "Pending" ? "warning" : "success"}
+                      color={statusColorMap[order.status] || "default"} // Default if status doesn't match
                       size="small"
                     />
                   </Box>
@@ -151,6 +161,12 @@ const RecentOrders = () => {
               </Typography>
               {selectedOrder.orderItems.map((item) => (
                 <Paper key={item.productId} sx={{ p: 2, mb: 1 }}>
+                  <img
+                    src={item.image}
+                    width={40}
+                    height={40}
+                    alt={`Image of ${item.productName.slice(0, 10)} ...`}
+                  />
                   <Typography variant="body2" fontWeight="bold">
                     {item.productName}
                   </Typography>

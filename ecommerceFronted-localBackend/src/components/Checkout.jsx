@@ -101,7 +101,12 @@ const Checkout = () => {
 
     try {
       if (paymentMethod === "Credit Card") {
+<<<<<<< HEAD
         dispatch(clearCart());
+=======
+        setLoading(true);
+        // Trigger Stripe payment flow
+>>>>>>> a35f115147fb55cd4c040fcef7623c12ec6510c9
         await makePayment(orderDetails);
         // Note for Stripe Integration:
         // In this implementation, the order is created in the backend only after the success of the checkout session.
@@ -318,10 +323,13 @@ const Checkout = () => {
                   },
                 }}
                 onClick={handlePlaceOrder}
-                disabled={loading}
+                disabled={loading} // Disable the button when loading is true
               >
                 {loading ? (
-                  <CircularProgress size={24} color="inherit" />
+                  <CircularProgress
+                    size={24}
+                    sx={{ marginRight: 2, color: "#1C4771" }}
+                  />
                 ) : paymentMethod === "Credit Card" ? (
                   `$${cartSummary.total.toLocaleString("en-US", {
                     style: "currency",
