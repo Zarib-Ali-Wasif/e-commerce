@@ -101,12 +101,10 @@ const Checkout = () => {
 
     try {
       if (paymentMethod === "Credit Card") {
-<<<<<<< HEAD
-        dispatch(clearCart());
-=======
         setLoading(true);
+        dispatch(clearCart());
         // Trigger Stripe payment flow
->>>>>>> a35f115147fb55cd4c040fcef7623c12ec6510c9
+
         await makePayment(orderDetails);
         // Note for Stripe Integration:
         // In this implementation, the order is created in the backend only after the success of the checkout session.
