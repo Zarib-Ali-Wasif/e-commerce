@@ -37,6 +37,7 @@ import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "./../lib/redux/slices/authSlice";
+import { clearCart } from "./../lib/redux/slices/cartSlice";
 import api from "./../lib/services/api";
 
 function Header() {
@@ -91,6 +92,7 @@ function Header() {
 
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(clearCart());
     navigate("/login");
   };
 
