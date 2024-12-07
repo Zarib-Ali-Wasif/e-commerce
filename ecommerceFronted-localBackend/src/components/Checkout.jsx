@@ -101,14 +101,33 @@ const Checkout = () => {
 
     try {
       if (paymentMethod === "Credit Card") {
+<<<<<<< HEAD
+        dispatch(clearCart());
+=======
         setLoading(true);
         // Trigger Stripe payment flow
+>>>>>>> a35f115147fb55cd4c040fcef7623c12ec6510c9
         await makePayment(orderDetails);
+        // Note for Stripe Integration:
+        // In this implementation, the order is created in the backend only after the success of the checkout session.
+        // However, the payment itself is not verified at this stage. For credit card payments, the order should only be created
+        // after the payment is successfully captured. To achieve this, a webhook is required.
+        //
+        // The webhook listens for payment confirmation events from Stripe (e.g., `checkout.session.completed`)
+        // and ensures the order is created only when the payment is successfully completed.
+        //
+        // Setting up a webhook:
+        // - In the Stripe Dashboard, add a webhook endpoint pointing to your backend's publicly accessible URL.
+        //   This allows Stripe to notify your backend of payment events.
+        //
+        // Local development considerations:
+        // - Stripe webhooks cannot communicate directly with a localhost address because it is not accessible from the internet.
+        // - To test webhooks during local development, use a tunneling service such as `ngrok` or `localtunnel`.
+        // - These tools create a public URL that maps to your local server, enabling Stripe to send events to your webhook during testing.
       } else {
         // Place the order directly for other payment methods
         setLoading(true);
         const response = await api.post(`orders`, orderDetails);
-        // localStorage.setItem("order", JSON.stringify(orderDetails));
         dispatch(clearCart());
         toast.success("Order placed successfully!");
         navigate("/order-confirmation", {
@@ -151,15 +170,6 @@ const Checkout = () => {
       if (result.error) {
         console.error("Stripe Checkout error:", result.error.message);
         toast.error("Payment failed. Please try again.");
-      } else {
-        // Payment successful, place the order
-        const orderResponse = await api.post(`orders`, orderDetails);
-        localStorage.setItem("order", JSON.stringify(orderDetails));
-        dispatch(clearCart());
-        toast.success("Payment successful and order placed!");
-        navigate("/order-confirmation", {
-          state: { orderNumber: orderDetails.orderNumber },
-        });
       }
     } catch (error) {
       console.error("Error during payment process:", error);
