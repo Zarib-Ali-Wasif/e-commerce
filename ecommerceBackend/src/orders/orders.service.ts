@@ -92,11 +92,11 @@ export class OrdersService {
   }
 
   // payment
-  async createCheckoutSession(order: any) {
+  async createCheckoutSession(orderDetails: any) {
     try {
       const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-      const { orderItems } = order;
+      const { orderItems } = orderDetails;
       console.log('Testing get data susscess', orderItems);
       const lineItems = orderItems.map((item: any) => ({
         price_data: {
@@ -114,6 +114,7 @@ export class OrdersService {
 
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
+        mode: 'payment', // This is the key fix
         line_items: lineItems,
         success_url: `${process.env.FRONTEND_URL}/order-confirmation`,
         cancel_url: `${process.env.FRONTEND_URL}/payment-failed`,

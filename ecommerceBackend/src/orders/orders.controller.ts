@@ -52,8 +52,8 @@ export class OrdersController {
 
   // Route to create a checkout session
   @Post('/create-checkout-session')
-  async createCheckoutSession(@Body() order: any) {
-    return this.ordersService.createCheckoutSession(order);
+  async createCheckoutSession(@Body() orderDetails: any) {
+    return this.ordersService.createCheckoutSession(orderDetails);
   }
 
   // Route to fetch order statistics

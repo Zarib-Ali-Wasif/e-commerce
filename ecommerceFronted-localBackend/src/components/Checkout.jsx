@@ -128,7 +128,7 @@ const Checkout = () => {
       const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
       // Prepare data for the payment session
-      const body = { order: orderDetails };
+      // const body = { order: orderDetails };
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -136,11 +136,11 @@ const Checkout = () => {
 
       // Create a checkout session
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}create-checkout-session`,
+        `${import.meta.env.VITE_API_URL}orders/create-checkout-session`,
         {
           method: "POST",
           headers,
-          body: JSON.stringify(body),
+          body: JSON.stringify(orderDetails),
         }
       );
 
