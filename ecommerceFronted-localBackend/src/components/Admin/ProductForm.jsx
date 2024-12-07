@@ -90,7 +90,6 @@ const ProductForm = ({ productData, onSubmit, onClose }) => {
 
   const categories = [
     "Electronics",
-    "Jewellery",
     "Men's Clothing",
     "Women's Clothing",
     "Fashion",
@@ -199,6 +198,7 @@ const ProductForm = ({ productData, onSubmit, onClose }) => {
         <FormControl fullWidth variant="standard" sx={{ mt: 2 }}>
           <Select
             name="category"
+            label="Category"
             value={formik.values.category}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}

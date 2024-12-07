@@ -148,7 +148,7 @@ const CustomerManagement = () => {
                       }}
                     >
                       <CircularProgress size={100} />
-                      <Typography>Loading products...</Typography>
+                      <Typography>Loading Customers...</Typography>
                     </Box>
                   </TableCell>
                 </TableRow>
