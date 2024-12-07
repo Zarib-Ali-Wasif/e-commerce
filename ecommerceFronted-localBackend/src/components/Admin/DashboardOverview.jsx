@@ -109,7 +109,10 @@ const DashboardOverview = () => {
     datasets: [
       {
         label: "Monthly Sales ($)",
-        data: [800, 400, 1200, 350, 1000, 500, 900, 600, 1100, 700, 650, 450],
+        data: [
+          8000, 4080, 12000, 3909, 10980, 5608, 9700, 6000, 11000, 7500, 6508,
+          4590,
+        ],
         backgroundColor: "rgba(28, 71, 113, 0.7)",
         borderColor: "#163b56",
         borderWidth: 2,
