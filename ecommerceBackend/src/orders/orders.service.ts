@@ -90,4 +90,36 @@ export class OrdersService {
       throw new Error('Failed to fetch recent orders.');
     }
   }
+
+  // payment
+  async createCheckoutSession(order: any) {
+    try {
+      const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+      const { orderItems } = order;
+      const lineItems = orderItems.map((item: any) => ({
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: item.productName,
+            images: [item.image],
+          },
+          unit_amount: Math.round(item.price * 100),
+        },
+        quantity: item.quantity,
+      }));
+
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: lineItems,
+        success_url: `${process.env.FRONTEND_URL}/order-confirmation`,
+        cancel_url: 'http://localhost:3000//payment-failed',
+      });
+
+      return { id: session.id };
+    } catch (err) {
+      console.error('Error creating checkout session:  ', err);
+      throw new Error('Failed to create checkout session.');
+    }
+  }
 }

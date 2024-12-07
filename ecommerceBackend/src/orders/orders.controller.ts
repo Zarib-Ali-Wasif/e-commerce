@@ -50,6 +50,27 @@ export class OrdersController {
     return this.ordersService.findRecentOrdersByEmail(userEmail);
   }
 
+  // Route to create a checkout session
+  @Post('/create-checkout-session')
+  async createCheckoutSession(@Body() order: any) {
+    return this.ordersService.createCheckoutSession(order);
+  }
+
+  // Route to fetch order statistics
+  @Get('/statistics')
+  async getStatistics() {
+    return await this.ordersService.getStatistics();
+  }
+
+  // Route to fetch revenue within a specific date range
+  @Get('/revenue')
+  async getRevenue(
+    @Query('startDate') startDate: string,
+    @Query('endDate') endDate: string,
+  ) {
+    return await this.ordersService.getRevenue(startDate, endDate);
+  }
+
   @Get('/:orderNumber')
   async getOrder(@Param('orderNumber') orderNumber: string) {
     return this.ordersService.findOne({ orderNumber });
@@ -66,20 +87,5 @@ export class OrdersController {
   @Delete('/:orderNumber')
   async deleteOrder(@Param('orderNumber') orderNumber: string) {
     return this.ordersService.delete(orderNumber);
-  }
-
-  // Route to fetch order statistics
-  @Get('/statistics')
-  async getStatistics() {
-    return await this.ordersService.getStatistics();
-  }
-
-  // Route to fetch revenue within a specific date range
-  @Get('/revenue')
-  async getRevenue(
-    @Query('startDate') startDate: string,
-    @Query('endDate') endDate: string,
-  ) {
-    return await this.ordersService.getRevenue(startDate, endDate);
   }
 }

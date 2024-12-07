@@ -28,6 +28,7 @@ const OrderConfirmation = () => {
 
   const handleContinueShopping = () => {
     navigate("/products");
+    localStorage.removeItem("order");
   };
 
   if (!order)

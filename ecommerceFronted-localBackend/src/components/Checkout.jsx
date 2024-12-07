@@ -12,13 +12,14 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
-import { clearCart } from "./../lib/redux/slices/cartSlice"; // Import your clearCart action
+import { clearCart } from "./../lib/redux/slices/cartSlice";
 import { useNavigate } from "react-router-dom";
 import api from "./../lib/services/api";
 import { getProductDetails } from "./../lib/utils/helperFunctions";
 import { fetchProducts } from "./../lib/redux/slices/productsSlice";
 import { toast } from "react-toastify";
 import { GST_PERCENT } from "./../lib/utils/helperFunctions";
+import { loadStripe } from "@stripe/stripe-js";
 
 const Checkout = () => {
   const dispatch = useDispatch();
@@ -80,6 +81,7 @@ const Checkout = () => {
         return {
           productId: item.cartItemId,
           productName: cartProduct.title,
+          image: cartProduct.image,
           productCategory: cartProduct.category,
           quantity: item.quantity,
           price: cartProduct.price,
@@ -95,18 +97,71 @@ const Checkout = () => {
       orderDate: new Date().toISOString(),
     };
 
+    localStorage.setItem("order", JSON.stringify(orderDetails));
+
     try {
-      setLoading(true); // Show loader
-      const response = await api.post(`orders`, orderDetails);
-      localStorage.setItem("order", JSON.stringify(orderDetails));
-      dispatch(clearCart()); // Clear cart via Redux
-      toast.success("Order placed successfully!");
-      navigate("/order-confirmation", { state: { orderNumber } });
+      if (paymentMethod === "Credit Card") {
+        // Trigger Stripe payment flow
+        await makePayment(orderDetails);
+      } else {
+        // Place the order directly for other payment methods
+        setLoading(true);
+        const response = await api.post(`orders`, orderDetails);
+        // localStorage.setItem("order", JSON.stringify(orderDetails));
+        dispatch(clearCart());
+        toast.success("Order placed successfully!");
+        navigate("/order-confirmation", {
+          state: { orderNumber: orderDetails.orderNumber },
+        });
+      }
     } catch (error) {
       console.error("Error placing order:", error);
       toast.error("Failed to place order. Please try again.");
     } finally {
-      setLoading(false); // Hide loader
+      setLoading(false);
+    }
+  };
+
+  // Function to initiate Stripe payment
+  const makePayment = async (orderDetails) => {
+    try {
+      const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+
+      // Prepare data for the payment session
+      const body = { order: orderDetails };
+      const headers = { "Content-Type": "application/json" };
+
+      // Create a checkout session
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}create-checkout-session`,
+        {
+          method: "POST",
+          headers,
+          body: JSON.stringify(body),
+        }
+      );
+
+      const session = await response.json();
+
+      // Redirect to Stripe Checkout
+      const result = await stripe.redirectToCheckout({ sessionId: session.id });
+
+      if (result.error) {
+        console.error("Stripe Checkout error:", result.error.message);
+        toast.error("Payment failed. Please try again.");
+      } else {
+        // Payment successful, place the order
+        const orderResponse = await api.post(`orders`, orderDetails);
+        localStorage.setItem("order", JSON.stringify(orderDetails));
+        dispatch(clearCart());
+        toast.success("Payment successful and order placed!");
+        navigate("/order-confirmation", {
+          state: { orderNumber: orderDetails.orderNumber },
+        });
+      }
+    } catch (error) {
+      console.error("Error during payment process:", error);
+      toast.error("Payment process failed. Please try again.");
     }
   };
 
@@ -243,7 +298,6 @@ const Checkout = () => {
                 sx={{ mb: 3 }}
               >
                 <MenuItem value="Credit Card">Credit Card</MenuItem>
-                <MenuItem value="PayPal">PayPal</MenuItem>
                 <MenuItem value="Cash on Delivery">Cash on Delivery</MenuItem>
               </TextField>
               <Button
@@ -261,8 +315,13 @@ const Checkout = () => {
               >
                 {loading ? (
                   <CircularProgress size={24} color="inherit" />
+                ) : paymentMethod === "Credit Card" ? (
+                  `$${cartSummary.total.toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })} (Pay Now)`
                 ) : (
-                  "Place Order"
+                  "Confirm Order"
                 )}
               </Button>
             </CardContent>
