@@ -97,6 +97,7 @@ export class OrdersService {
       const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
       const { orderItems } = order;
+      console.log('Testing get data susscess', orderItems);
       const lineItems = orderItems.map((item: any) => ({
         price_data: {
           currency: 'usd',
@@ -109,12 +110,15 @@ export class OrdersService {
         quantity: item.quantity,
       }));
 
+      console.log('Testing line item set');
+
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: lineItems,
         success_url: `${process.env.FRONTEND_URL}/order-confirmation`,
-        cancel_url: 'http://localhost:3000//payment-failed',
+        cancel_url: `${process.env.FRONTEND_URL}/payment-failed`,
       });
+      console.log('Testing line session success');
 
       return { id: session.id };
     } catch (err) {

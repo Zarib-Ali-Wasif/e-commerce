@@ -19,7 +19,7 @@ import ManageAccount from "../components/ManageAccount";
 import EmailUs from "../components/EmailUs";
 import AdminPanel from "../components/Admin/AdminPanel";
 import { useSelector } from "react-redux";
-import PaymentFailed from "../components/Admin/PaymentFailed";
+import PaymentFailed from "../components/PaymentFailed";
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ user, requiredRole, children }) => {

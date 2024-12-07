@@ -129,7 +129,10 @@ const Checkout = () => {
 
       // Prepare data for the payment session
       const body = { order: orderDetails };
-      const headers = { "Content-Type": "application/json" };
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      };
 
       // Create a checkout session
       const response = await fetch(
