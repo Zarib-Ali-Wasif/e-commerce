@@ -119,7 +119,7 @@ function TrackOrder() {
               fontWeight: "bold",
             }}
           >
-            Order Details
+            Order Overview
           </Typography>
           <Typography>
             <strong>Order Number:</strong> {orderData.orderNumber}
