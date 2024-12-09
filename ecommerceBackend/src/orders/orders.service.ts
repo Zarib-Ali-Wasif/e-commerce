@@ -36,6 +36,10 @@ export class OrdersService {
     return this.orderModel.findOne(filter).exec();
   }
 
+  async getOrderbyOrderNumber(orderNumber: string): Promise<Order> {
+    return this.orderModel.findOne({ orderNumber }).exec();
+  }
+
   async updateStatus(orderNumber: string, status: string): Promise<Order> {
     return this.orderModel
       .findOneAndUpdate({ orderNumber }, { status }, { new: true })

@@ -8,6 +8,7 @@ import {
   Grid,
   Paper,
   Chip,
+  Divider,
 } from "@mui/material";
 import api from "../lib/services/api";
 
@@ -15,17 +16,20 @@ function TrackOrder() {
   const [orderNumber, setOrderNumber] = useState("");
   const [orderData, setOrderData] = useState(null);
   const [error, setError] = useState("");
+  const [showDetails, setShowDetails] = useState(false); // State to toggle details visibility
 
   const handleFetchOrder = async () => {
     try {
       setError(""); // Clear any previous errors
       const response = await api.get(`orders/${orderNumber}`);
       setOrderData(response.data);
+      setShowDetails(false); // Reset details visibility when fetching new order
     } catch (err) {
       setError("Order not found. Please check the order number.");
       setOrderData(null);
     }
   };
+
   const statusColorMap = {
     Pending: "warning",
     Processing: "secondary",
@@ -135,54 +139,87 @@ function TrackOrder() {
             <strong>Address:</strong> {orderData.address}
           </Typography>
 
-          <Box sx={{ mt: 4 }}>
-            <Typography variant="h6">Order Summary</Typography>
-            <Typography>
-              <strong>Subtotal:</strong> ${orderData.summary.subtotal}
-            </Typography>
-            <Typography>
-              <strong>Discount:</strong> ${orderData.summary.discount}
-            </Typography>
-            <Typography>
-              <strong>GST:</strong> ${orderData.summary.gst}
-            </Typography>
-            <Typography>
-              <strong>Total:</strong> ${orderData.summary.total}
-            </Typography>
-          </Box>
+          <Button
+            variant="outlined"
+            sx={{ mt: 4, color: "#1c4771", borderColor: "#1c4771" }}
+            onClick={() => setShowDetails((prev) => !prev)}
+          >
+            {showDetails ? "Hide Details" : "Show Details"}
+          </Button>
 
-          <Box sx={{ mt: 4 }}>
-            <Typography variant="h6">Order Items</Typography>
-            <Grid container spacing={2} sx={{ mt: 1 }}>
-              {orderData.orderItems.map((item, index) => (
-                <Grid item xs={12} md={6} key={index}>
-                  <Paper sx={{ p: 2 }}>
-                    <img
-                      src={item.image}
-                      alt={item.productName.slice(0, 20)}
-                      width={30}
-                      height={30}
-                    />
-                    <Typography>
-                      <strong>Product:</strong> {item.productName}
-                    </Typography>
-                    <Typography>
-                      <strong>Category:</strong> {item.productCategory}
-                    </Typography>
-                    <Typography>
-                      <strong>Quantity:</strong> {item.quantity}
-                    </Typography>
-                    <Typography>
-                      <strong>Price:</strong> ${item.price}
-                    </Typography>
-                    <Typography>
-                      <strong>Subtotal:</strong> ${item.total}
-                    </Typography>
-                  </Paper>
+          {showDetails && (
+            <>
+              <Box
+                sx={{
+                  mt: 8,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <Box sx={{ p: 2, borderRadius: 1 }}>
+                  <Divider
+                    sx={{
+                      width: "800px",
+                      maxWidth: { xs: "30%", sm: "60%", md: "80%", lg: "50%" },
+                      margin: "0 auto",
+                      borderWidth: 1,
+                    }}
+                  />
+                </Box>
+                <Typography variant="h6" fontWeight="bold">
+                  Order Summary
+                </Typography>
+                <Typography>
+                  <strong>Subtotal:</strong> ${orderData.summary.subtotal}
+                </Typography>
+                <Typography>
+                  <strong>Discount:</strong> ${orderData.summary.discount}
+                </Typography>
+                <Typography>
+                  <strong>GST:</strong> ${orderData.summary.gst}
+                </Typography>
+                <Typography>
+                  <strong>Total:</strong> ${orderData.summary.total}
+                </Typography>
+              </Box>
+
+              <Box sx={{ mt: 4 }}>
+                <Typography variant="h6" fontWeight={"bold"}>
+                  Order Items
+                </Typography>
+                <Grid container spacing={2} sx={{ mt: 1 }}>
+                  {orderData.orderItems.map((item, index) => (
+                    <Grid item xs={12} md={6} key={index}>
+                      <Paper sx={{ p: 2 }}>
+                        <img
+                          src={item.image}
+                          alt={item.productName.slice(0, 20)}
+                          width={30}
+                          height={30}
+                        />
+                        <Typography>
+                          <strong>Product:</strong> {item.productName}
+                        </Typography>
+                        <Typography>
+                          <strong>Category:</strong> {item.productCategory}
+                        </Typography>
+                        <Typography>
+                          <strong>Quantity:</strong> {item.quantity}
+                        </Typography>
+                        <Typography>
+                          <strong>Price:</strong> ${item.price}
+                        </Typography>
+                        <Typography>
+                          <strong>Subtotal:</strong> ${item.total}
+                        </Typography>
+                      </Paper>
+                    </Grid>
+                  ))}
                 </Grid>
-              ))}
-            </Grid>
-          </Box>
+              </Box>
+            </>
+          )}
         </Paper>
       )}
     </Box>

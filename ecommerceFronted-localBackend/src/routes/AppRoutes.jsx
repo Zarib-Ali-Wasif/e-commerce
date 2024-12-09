@@ -20,6 +20,7 @@ import EmailUs from "../components/EmailUs";
 import AdminPanel from "../components/Admin/AdminPanel";
 import { useSelector } from "react-redux";
 import PaymentFailed from "../components/PaymentFailed";
+import TrackOrder from "../components/TrackOrder";
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ user, requiredRole, children }) => {
@@ -64,6 +65,7 @@ function AppRoutes() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/email-us" element={<EmailUs />} />
           <Route path="/payment-failed" element={<PaymentFailed />} />
+          <Route path="/track-order" element={<TrackOrder />} />
 
           {/* Protected Routes */}
 

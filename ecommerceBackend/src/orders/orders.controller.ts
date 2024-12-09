@@ -71,11 +71,6 @@ export class OrdersController {
     return await this.ordersService.getRevenue(startDate, endDate);
   }
 
-  @Get('/:orderNumber')
-  async getOrder(@Param('orderNumber') orderNumber: string) {
-    return this.ordersService.findOne({ orderNumber });
-  }
-
   @Patch('status/:orderNumber')
   async updateOrderStatus(
     @Param('orderNumber') orderNumber: string,
@@ -84,6 +79,15 @@ export class OrdersController {
     return this.ordersService.updateStatus(orderNumber, status);
   }
 
+  @Get('/:orderNumber')
+  async getOrderbyOrderNumber(@Param('orderNumber') orderNumber: string) {
+    return this.ordersService.getOrderbyOrderNumber(orderNumber);
+  }
+
+  @Get('/:id')
+  async getOrder(@Param('orderNumber') orderId: string) {
+    return this.ordersService.findOne({ orderId });
+  }
   @Delete('/:orderNumber')
   async deleteOrder(@Param('orderNumber') orderNumber: string) {
     return this.ordersService.delete(orderNumber);
