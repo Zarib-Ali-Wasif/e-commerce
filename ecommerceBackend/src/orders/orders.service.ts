@@ -92,23 +92,6 @@ export class OrdersService {
   }
 
   // payment
-
-  // In this implementation, the order is created in the backend only after the success of the checkout session.
-  // However, the payment itself is not verified at this stage. For credit card payments, the order should only be created
-  // after the payment is successfully captured. To achieve this, a webhook is required.
-  //
-  // The webhook listens for payment confirmation events from Stripe (e.g., `checkout.session.completed`)
-  // and ensures the order is created only when the payment is successfully completed.
-  //
-  // Setting up a webhook:
-  // - In the Stripe Dashboard, add a webhook endpoint pointing to your backend's publicly accessible URL.
-  //   This allows Stripe to notify your backend of payment events.
-  //
-  // Local development considerations:
-  // - Stripe webhooks cannot communicate directly with a localhost address because it is not accessible from the internet.
-  // - To test webhooks during local development, use a tunneling service such as `ngrok` or `localtunnel`.
-  // - These tools create a public URL that maps to your local server, enabling Stripe to send events to your webhook during testing.
-
   async createCheckoutSession(orderDetails: any) {
     try {
       const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -134,8 +117,6 @@ export class OrdersService {
         cancel_url: `${process.env.FRONTEND_URL}/payment-failed`,
       });
 
-      // Create the order
-      this.createOrder(orderDetails);
       return { id: session.id };
     } catch (err) {
       console.error('Error creating checkout session:  ', err);

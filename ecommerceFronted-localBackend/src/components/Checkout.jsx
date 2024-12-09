@@ -101,15 +101,11 @@ const Checkout = () => {
 
     try {
       if (paymentMethod === "Credit Card") {
-        setLoading(true);
-        dispatch(clearCart());
-        // Trigger Stripe payment flow
-
         await makePayment(orderDetails);
         // Note for Stripe Integration:
-        // In this implementation, the order is created in the backend only after the success of the checkout session.
+        // In this implementation, the order is created in the confirmation page after the success of the payment.
         // However, the payment itself is not verified at this stage. For credit card payments, the order should only be created
-        // after the payment is successfully captured. To achieve this, a webhook is required.
+        // after the payment is successfully captured. To achieve this, a webhook is required here in same component.
         //
         // The webhook listens for payment confirmation events from Stripe (e.g., `checkout.session.completed`)
         // and ensures the order is created only when the payment is successfully completed.
@@ -125,9 +121,10 @@ const Checkout = () => {
       } else {
         // Place the order directly for other payment methods
         setLoading(true);
-        const response = await api.post(`orders`, orderDetails);
-        dispatch(clearCart());
-        toast.success("Order placed successfully!");
+        api.post(`orders`, orderDetails).then((response) => {
+          dispatch(clearCart());
+          toast.success("Order placed successfully!");
+        });
         navigate("/order-confirmation", {
           state: { orderNumber: orderDetails.orderNumber },
         });

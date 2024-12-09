@@ -8,23 +8,50 @@ import {
   CardContent,
   Divider,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { GST_PERCENT } from "./../lib/utils/helperFunctions";
+import api from "./../lib/services/api";
+import { clearCart } from "./../lib/redux/slices/cartSlice";
 
 const OrderConfirmation = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(false);
   const { productsList } = useSelector((state) => state.products);
-
   useEffect(() => {
     const orderData = JSON.parse(localStorage.getItem("order"));
-    setOrder(orderData);
+    if (orderData) {
+      setOrder(orderData);
+
+      const timeoutId = setTimeout(() => {
+        placeOrder(orderData);
+      }, 2000);
+
+      return () => clearTimeout(timeoutId);
+    }
   }, []);
+
+  const placeOrder = async (orderData) => {
+    try {
+      setLoading(true);
+      if (orderData.paymentMethod === "Credit Card") {
+        await api.post(`orders`, orderData);
+        dispatch(clearCart());
+        toast.success("Order placed successfully!");
+      }
+    } catch (error) {
+      console.error("Error placing order:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleContinueShopping = () => {
     navigate("/products");
@@ -39,14 +66,11 @@ const OrderConfirmation = () => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          padding: "50px",
-          minHeight: "70vh",
-          mt: 15,
+          minHeight: "100vh",
         }}
       >
-        <Typography variant="h4" fontWeight={"bold"} color="textSecondary">
-          Loading...
-        </Typography>
+        <CircularProgress size={100} />
+        <Typography>Loading, Please Wait...</Typography>
       </Box>
     );
 
