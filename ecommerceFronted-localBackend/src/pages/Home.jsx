@@ -25,30 +25,87 @@ function Home() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            alignItems: "start",
+            alignItems: { xs: "center", sm: "start" },
             height: "60%",
             color: "#387DA3",
             gap: "20px",
-            ml: { xs: 2, sm: 4 },
+            ml: { xs: 0, sm: 4 },
+            textAlign: { xs: "center", sm: "left" },
+            px: { xs: 2, sm: 0 },
           }}
         >
-          <Typography variant="h2" fontWeight="bold">
+          <Typography
+            variant="h2"
+            fontWeight="bold"
+            sx={{
+              fontSize: { xs: "2rem", sm: "3rem" },
+            }}
+          >
             Welcome to ShopEasy
           </Typography>
-          <Typography variant="h5">Your One-Stop Online Store</Typography>
-          <Button variant="contained" sx={{ backgroundColor: "#1C4771" }}>
-            <NavLink
-              to="/products"
-              style={{
-                textDecoration: "none",
-                fontSize: "16px",
-                color: "white",
-                padding: "2px 10px",
+          <Typography
+            variant="h5"
+            sx={{
+              fontSize: { xs: "1.2rem", sm: "1.5rem" },
+            }}
+          >
+            Your One-Stop Online Store
+          </Typography>
+
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              gap: { xs: "10px", sm: "20px" },
+              alignItems: { xs: "center", sm: "start" },
+            }}
+          >
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#1C4771",
+                "&:hover": { backgroundColor: "#163a57" },
+                width: { xs: "100%", sm: "auto" },
               }}
             >
-              Explore Products
-            </NavLink>
-          </Button>
+              <NavLink
+                to="/products"
+                style={{
+                  textDecoration: "none",
+                  fontSize: "16px",
+                  color: "white",
+                  padding: "2px 10px",
+                }}
+              >
+                Explore Products
+              </NavLink>
+            </Button>
+
+            {/* Track Order Button */}
+            <Button
+              variant="outlined"
+              sx={{
+                borderColor: "#1C4771",
+                borderWidth: "1px",
+                color: "#1C4771",
+                backgroundColor: "#e5e5e5",
+                "&:hover": { backgroundColor: "#1C4771", color: "white" },
+                width: { xs: "100%", sm: "auto" },
+              }}
+            >
+              <NavLink
+                to="/track-order"
+                style={{
+                  textDecoration: "none",
+                  fontSize: "16px",
+                  color: "inherit",
+                  padding: "2px 10px",
+                }}
+              >
+                Track Order
+              </NavLink>
+            </Button>
+          </Box>
         </Box>
       </Box>
     </>
