@@ -1,6 +1,7 @@
 import React from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Toolbar } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import MailIcon from "@mui/icons-material/Mail";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
@@ -11,8 +12,12 @@ import {
   Button,
   Grid,
   Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import FAQ from "../components/FAQ";
 
 // Custom Theme with primary color #282c34
 const theme = createTheme({
@@ -76,9 +81,9 @@ const Contact = () => {
       <Toolbar />
       <Box
         sx={{
-          py: 12,
+          pt: 12,
           backgroundColor: "#d1dce8",
-          minHeight: "100vh",
+          minHeight: "60vh",
           height: "100%",
           display: "flex",
           flexDirection: "column",
@@ -282,6 +287,8 @@ const Contact = () => {
           </Grid>
         </Grid>
       </Box>
+      {/* FAQ section */}
+      <FAQ />
     </ThemeProvider>
   );
 };

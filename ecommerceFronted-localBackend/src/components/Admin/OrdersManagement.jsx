@@ -37,7 +37,6 @@ const OrdersManagement = () => {
   const dispatch = useDispatch();
   const { ordersList, loading } = useSelector((state) => state.orders);
 
-  console.log("ordersList :", ordersList);
   useEffect(() => {
     dispatch(fetchOrders());
   }, [dispatch]);
@@ -47,7 +46,6 @@ const OrdersManagement = () => {
   }, [orders, statusFilter, searchQuery, startDate, endDate]);
 
   useEffect(() => {
-    console.log("Testing");
     setFilteredOrders(ordersList);
   }, [ordersList]);
 
