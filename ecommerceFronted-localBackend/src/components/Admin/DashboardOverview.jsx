@@ -143,9 +143,9 @@ const DashboardOverview = () => {
             0,
         ],
         backgroundColor: [
-          "#e91e63",
-          "#2196f3",
           "#ff9800",
+          "#c51162",
+          "#2196f3",
           "#4caf50",
           "#f44336",
         ],
