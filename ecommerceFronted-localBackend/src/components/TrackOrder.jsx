@@ -11,21 +11,23 @@ import {
   Divider,
 } from "@mui/material";
 import api from "../lib/services/api";
-
 function TrackOrder() {
   const [orderNumber, setOrderNumber] = useState("");
   const [orderData, setOrderData] = useState(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false); // Set error state to boolean
+  const [errorMessage, setErrorMessage] = useState(""); // New state for error message
   const [showDetails, setShowDetails] = useState(false); // State to toggle details visibility
 
   const handleFetchOrder = async () => {
     try {
-      setError(""); // Clear any previous errors
+      setError(false); // Clear any previous errors
+      setErrorMessage(""); // Clear any previous error messages
       const response = await api.get(`orders/${orderNumber}`);
       setOrderData(response.data);
       setShowDetails(false); // Reset details visibility when fetching new order
     } catch (err) {
-      setError("Order not found. Please check the order number.");
+      setError(true); // Set error state to true if order fetch fails
+      setErrorMessage("Order not found. Please check the order number.");
       setOrderData(null);
     }
   };
@@ -37,7 +39,6 @@ function TrackOrder() {
     Delivered: "success",
     Canceled: "error",
   };
-
   return (
     <Box sx={{ px: 2, py: 22, mb: 60 }}>
       <Box
@@ -82,16 +83,21 @@ function TrackOrder() {
               required
               onChange={(e) => setOrderNumber(e.target.value)}
               error={error && orderNumber === ""}
-              helperText={error && orderNumber === "" ? "Required" : ""}
+              helperText={
+                error && orderNumber === "" ? "Required" : errorMessage
+              }
             />
+
             <Button
               variant="contained"
               sx={{ width: "30%", maxHeight: 55, backgroundColor: "#1c4771" }}
               onClick={() => {
                 if (orderNumber === "") {
                   setError(true);
+                  setErrorMessage("Order number is required.");
                 } else {
                   setError(false);
+                  setErrorMessage(""); // Reset the error message
                   handleFetchOrder();
                 }
               }}
