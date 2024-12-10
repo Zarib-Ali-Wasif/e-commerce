@@ -36,11 +36,33 @@ export class ProductService {
       });
     }
 
+    // Sort products by 'createdAt' field in descending order (latest first)
+    products.sort((a, b) => {
+      // Check if both createdAt exist, if so compare the dates
+      if (a.createdAt && b.createdAt) {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      }
+      return 0;
+    });
+
     return products;
   }
 
   async getAllProducts(): Promise<Product[]> {
     const products = await this.productModel.find().exec();
+
+    // Sort products by 'createdAt' field in descending order (latest first)
+    products.sort((a, b) => {
+      // Check if both createdAt exist, if so compare the dates
+      if (a.createdAt && b.createdAt) {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      }
+      return 0;
+    });
     return products;
   }
 
