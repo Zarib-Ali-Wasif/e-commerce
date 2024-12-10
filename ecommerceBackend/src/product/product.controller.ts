@@ -97,6 +97,13 @@ export class ProductController {
     return categories;
   }
 
+  // Get category stats
+  @Get('/categoryStats')
+  async getCategoryStats() {
+    const getStats = await this.productService.getCategoryStats();
+    return getStats;
+  }
+
   @Get('/:id')
   // @UseGuards(JwtGuard, RolesGuard)
   // @Roles(Role.User, Role.Admin)

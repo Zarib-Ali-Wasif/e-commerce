@@ -135,4 +135,45 @@ export class ProductService {
     const categories = await this.productModel.distinct('category').exec();
     return categories;
   }
+
+  // Get category statistics
+  async getCategoryStats(): Promise<any> {
+    // Fetch all products
+    const products = await this.getAllProducts();
+
+    // Calculate total product count and total stock count
+    const totalProducts = products.length;
+    const totalStock = products.reduce(
+      (sum, product) => sum + product.stock,
+      0,
+    );
+
+    // Initialize category statistics
+    const categoryStats = {};
+
+    // Aggregate product and stock counts for each category
+    products.forEach((product) => {
+      if (!categoryStats[product.category]) {
+        categoryStats[product.category] = {
+          productCount: 0,
+          stockCount: 0,
+        };
+      }
+
+      // Increment the product and stock count for the category
+      categoryStats[product.category].productCount += 1;
+      categoryStats[product.category].stockCount += product.stock;
+    });
+
+    // Calculate percentages for product and stock distribution per category
+    for (const category in categoryStats) {
+      categoryStats[category].productPercentage =
+        (categoryStats[category].productCount / totalProducts) * 100;
+      categoryStats[category].stockPercentage =
+        (categoryStats[category].stockCount / totalStock) * 100;
+    }
+
+    // Return the category statistics
+    return categoryStats;
+  }
 }

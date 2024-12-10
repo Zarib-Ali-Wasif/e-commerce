@@ -7,10 +7,12 @@ export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async (category, { rejectWithValue }) => {
     try {
+      console.log("category", category);
       const endpoint =
         !category || category === "all"
           ? "store/products"
-          : `store/products?category=${category}`;
+          : `store/products?category=${encodeURIComponent(category)}`;
+      console.log("endpoint", endpoint);
       const response = await api.get(endpoint);
       // toast.success("Products fetched successfully");
       return response.data;
@@ -132,11 +134,29 @@ export const removeDiscount = createAsyncThunk(
   }
 );
 
+//Async thunk to fetch categories stats
+export const fetchCategoryStats = createAsyncThunk(
+  "products/fetchCategoryStats",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get("store/products/categoryStats"); // Replace with your actual API endpoint
+      return response.data;
+    } catch (error) {
+      toast.error("Failed to fetch categoryStats");
+      return rejectWithValue(
+        error.response?.data || "Failed to fetch categoryStats"
+      );
+    }
+  }
+);
+
 const initialState = {
   productsList: [],
   categories: [],
+  categoryStats: {},
   loading: false,
   loadingCategories: false,
+  loadingCategoryStats: false,
   loadingDelete: false,
   loadingUpdate: false,
   error: null,
@@ -248,6 +268,19 @@ const productsSlice = createSlice({
       })
       .addCase(removeDiscount.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload;
+      })
+      // Fetch Categories stats
+      .addCase(fetchCategoryStats.pending, (state) => {
+        state.loadingCategoryStats = true;
+      })
+      .addCase(fetchCategoryStats.fulfilled, (state, action) => {
+        state.loadingCategoryStats = false;
+        state.categoryStats = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchCategoryStats.rejected, (state, action) => {
+        state.loadingCategoryStats = false;
         state.error = action.payload;
       });
   },
