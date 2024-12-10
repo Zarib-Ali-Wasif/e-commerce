@@ -25,7 +25,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import CategoryOverview from "./CategoryOverview";
+import CategoryStatsOverview from "./CategoryStatsOverview";
 
 ChartJS.register(
   CategoryScale,
@@ -193,8 +193,7 @@ const DashboardOverview = () => {
           padding: "30px 20px",
           margin: "auto",
           background: "#f4f7fc",
-          borderTopLeftRadius: "20px",
-          borderTopRightRadius: "20px",
+          borderRadius: "20px",
         }}
       >
         <Typography
@@ -355,11 +354,10 @@ const DashboardOverview = () => {
                 />
               </Card>
             </Grid>
+            <CategoryStatsOverview />
           </>
         )}
       </Grid>
-
-      <CategoryOverview />
     </Grid>
   );
 };

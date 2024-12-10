@@ -7,12 +7,10 @@ export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async (category, { rejectWithValue }) => {
     try {
-      console.log("category", category);
       const endpoint =
         !category || category === "all"
           ? "store/products"
           : `store/products?category=${encodeURIComponent(category)}`;
-      console.log("endpoint", endpoint);
       const response = await api.get(endpoint);
       // toast.success("Products fetched successfully");
       return response.data;
