@@ -102,7 +102,8 @@ const ProductForm = ({ productData, onSubmit, onClose }) => {
     "Groceries",
     "Furniture",
     "Automotive",
-    "Jewellery & Watches",
+    "Jewellery",
+    "Watches",
     "Pet Supplies",
     "Music & Instruments",
     "Baby Products",
@@ -110,6 +111,8 @@ const ProductForm = ({ productData, onSubmit, onClose }) => {
     "Footwear",
     "Gardening",
     "Hardware & Tools",
+    "Accessories",
+    "Home Decor",
     "Other",
   ];
 
