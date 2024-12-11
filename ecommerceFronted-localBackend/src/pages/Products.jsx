@@ -193,15 +193,46 @@ const Products = ({ showModal }) => {
                     display: "flex",
                     flexDirection: "column",
                     position: "relative",
+
+                    ".badge": {
+                      animation: "pulseBadge 1.5s ease-in-out infinite",
+                    },
+                    "@keyframes pulseBadge": {
+                      "0%": {
+                        transform: "scale(1)",
+                        opacity: 1,
+                      },
+                      "50%": {
+                        transform: "scale(1.08)",
+                        opacity: 0.8,
+                      },
+                      "100%": {
+                        transform: "scale(1)",
+                        opacity: 1,
+                      },
+                    },
+
+                    "&:hover .badge": {
+                      animation: "spinBadge 1.5s ease-in-out infinite", // Spinning animation on hover
+                    },
+                    "@keyframes spinBadge": {
+                      "0%": {
+                        transform: "rotate(0deg)", // Initial position
+                      },
+                      "100%": {
+                        transform: "rotate(360deg)", // Full rotation
+                      },
+                    },
                   }}
                 >
                   {/* Conditional Rendering for Discount Badge */}
                   {product.discount?.discountPercent > 0 && (
                     <Badge
+                      className="badge"
                       sx={{
                         position: "absolute",
-                        top: 12,
-                        left: 6,
+                        top: "12px",
+                        left: "6px",
                         borderRadius: "5px",
                         padding: "3px 6px",
                         backgroundColor: "#387DA3",
@@ -210,7 +241,9 @@ const Products = ({ showModal }) => {
                         px: 1.5,
                         py: 0.5,
                         fontSize: "0.75rem",
-                        zIndex: 2, // Make sure the badge is above the image
+                        zIndex: 2, // Ensure the badge is above the image
+                        opacity: 1, // Always visible
+                        transition: "all 0.3s ease-in-out", // Smooth transition
                       }}
                     >
                       {product.discount.discountPercent}% OFF
@@ -225,6 +258,10 @@ const Products = ({ showModal }) => {
                         width: "100%",
                         height: "200px",
                         objectFit: "contain",
+                        transition: "transform 0.3s ease-in-out", // Smooth hover zoom for image
+                        "&:hover": {
+                          transform: "scale(1.05)", // Slight zoom effect on hover
+                        },
                       }}
                       image={product.image}
                       alt={product.title}

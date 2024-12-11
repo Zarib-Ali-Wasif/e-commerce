@@ -405,20 +405,53 @@ const ProductsManagement = () => {
                   display: "flex",
                   flexDirection: "column",
                   position: "relative",
+
+                  ".badge": {
+                    animation: "pulseBadge 1.5s ease-in-out infinite",
+                  },
+                  "@keyframes pulseBadge": {
+                    "0%": {
+                      transform: "scale(1)",
+                      opacity: 1,
+                    },
+                    "50%": {
+                      transform: "scale(1.08)",
+                      opacity: 0.8,
+                    },
+                    "100%": {
+                      transform: "scale(1)",
+                      opacity: 1,
+                    },
+                  },
+
+                  "&:hover .badge": {
+                    animation: "spinBadge 1.5s ease-in-out infinite", // Spinning animation on hover
+                  },
+                  "@keyframes spinBadge": {
+                    "0%": {
+                      transform: "rotate(0deg)", // Initial position
+                    },
+                    "100%": {
+                      transform: "rotate(360deg)", // Full rotation
+                    },
+                  },
                 }}
               >
                 {/* Discount Badge */}
                 {product.discount?.discountPercent > 0 && (
                   <Badge
+                    className="badge"
                     sx={{
                       position: "absolute",
-                      top: 12,
-                      left: 6,
+                      top: "12px",
+                      left: "6px",
                       borderRadius: "5px",
                       padding: "3px 6px",
                       backgroundColor: "#387DA3",
                       color: "white",
-                      zIndex: 2, // Make sure the badge is above the image
+                      zIndex: 2, // Ensure the badge is above the image
+                      opacity: 1, // Always visible
+                      transition: "all 0.3s ease-in-out", // Smooth transition
                     }}
                   >
                     {product.discount.discountPercent}% OFF
