@@ -24,6 +24,7 @@ import {
   fetchCategories,
 } from "./../lib/redux/slices/productsSlice";
 import { addToCart, updateCartSummary } from "./../lib/redux/slices/cartSlice";
+import LazyLoad from "react-lazyload";
 
 const Products = ({ showModal }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -213,17 +214,21 @@ const Products = ({ showModal }) => {
                     </Badge>
                   )}
 
-                  <CardMedia
-                    component="img"
-                    sx={{
-                      width: "100%",
-                      height: "200px",
-                      objectFit: "contain",
-                      mt: product.discount?.discountPercent > 0 ? 3 : 0,
-                    }}
-                    image={product.image}
-                    alt={product.title}
-                  />
+                  {/* Lazy Load for CardMedia */}
+                  <LazyLoad height={200} offset={100}>
+                    <CardMedia
+                      component="img"
+                      sx={{
+                        width: "100%",
+                        height: "200px",
+                        objectFit: "contain",
+                        mt: product.discount?.discountPercent > 0 ? 3 : 0,
+                      }}
+                      image={product.image}
+                      alt={product.title}
+                    />
+                  </LazyLoad>
+
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Typography variant="h6" component="div" gutterBottom>
                       {product.title}

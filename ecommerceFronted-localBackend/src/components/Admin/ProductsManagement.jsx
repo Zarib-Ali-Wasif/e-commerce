@@ -28,7 +28,7 @@ import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
 import DiscountIcon from "@mui/icons-material/Discount";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-
+import LazyLoad from "react-lazyload";
 import { useDispatch, useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import {
@@ -421,17 +421,20 @@ const ProductsManagement = () => {
                     {product.discount.discountPercent}% OFF
                   </Badge>
                 )}
+                {/* Lazy Load for CardMedia */}
+                <LazyLoad height={200} offset={100}>
+                  <CardMedia
+                    component="img"
+                    sx={{
+                      width: "100%",
+                      height: "200px",
+                      objectFit: "contain",
+                    }}
+                    image={product.image}
+                    alt={product.title}
+                  />
+                </LazyLoad>
 
-                <CardMedia
-                  component="img"
-                  sx={{
-                    width: "100%",
-                    height: "200px",
-                    objectFit: "contain",
-                  }}
-                  image={product.image}
-                  alt={product.title}
-                />
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Typography variant="h6" gutterBottom>
                     {product.title}
