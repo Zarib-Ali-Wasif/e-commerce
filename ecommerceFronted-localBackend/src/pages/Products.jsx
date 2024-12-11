@@ -200,14 +200,17 @@ const Products = ({ showModal }) => {
                     <Badge
                       sx={{
                         position: "absolute",
-                        top: 16,
-                        left: 16,
+                        top: 12,
+                        left: 6,
+                        borderRadius: "5px",
+                        padding: "3px 6px",
                         backgroundColor: "#387DA3",
                         color: "white",
                         borderRadius: "8px",
                         px: 1.5,
                         py: 0.5,
                         fontSize: "0.75rem",
+                        zIndex: 2, // Make sure the badge is above the image
                       }}
                     >
                       {product.discount.discountPercent}% OFF
@@ -222,7 +225,6 @@ const Products = ({ showModal }) => {
                         width: "100%",
                         height: "200px",
                         objectFit: "contain",
-                        mt: product.discount?.discountPercent > 0 ? 3 : 0,
                       }}
                       image={product.image}
                       alt={product.title}

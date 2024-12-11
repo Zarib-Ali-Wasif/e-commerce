@@ -412,10 +412,13 @@ const ProductsManagement = () => {
                   <Badge
                     sx={{
                       position: "absolute",
-                      top: 16,
-                      left: 16,
+                      top: 12,
+                      left: 6,
+                      borderRadius: "5px",
+                      padding: "3px 6px",
                       backgroundColor: "#387DA3",
                       color: "white",
+                      zIndex: 2, // Make sure the badge is above the image
                     }}
                   >
                     {product.discount.discountPercent}% OFF
