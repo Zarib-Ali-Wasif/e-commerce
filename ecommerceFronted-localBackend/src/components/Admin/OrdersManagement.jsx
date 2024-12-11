@@ -229,7 +229,7 @@ const OrdersManagement = () => {
                 </TableRow>
               ) : (
                 paginatedOrders.map((order) => (
-                  <TableRow key={order.orderNumber}>
+                  <TableRow key={`${order.orderNumber}-${order.updatedAt}`}>
                     <TableCell>{order.orderNumber}</TableCell>
                     <TableCell>{order.userId.name}</TableCell>
                     <TableCell>{order.address}</TableCell>
