@@ -443,6 +443,7 @@ const ProductsManagement = () => {
                     className="badge"
                     sx={{
                       position: "absolute",
+                      fontSize: "12px",
                       top: "12px",
                       left: "6px",
                       borderRadius: "5px",
