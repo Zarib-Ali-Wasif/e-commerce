@@ -446,8 +446,8 @@ const ProductsManagement = () => {
                       fontSize: "12px",
                       top: "12px",
                       left: "6px",
-                      borderRadius: "4px",
-                      padding: "3px 5px",
+                      borderRadius: "8px",
+                      padding: "3px 6px",
                       backgroundColor: "#387DA3",
                       color: "white",
                       zIndex: 2, // Ensure the badge is above the image
