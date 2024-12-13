@@ -100,7 +100,9 @@ export class OrdersService {
     try {
       const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-      const { orderItems } = orderDetails;
+      const { orderItems, summary } = orderDetails;
+
+      // Map order items to Stripe line items
       const lineItems = orderItems.map((item: any) => ({
         price_data: {
           currency: 'usd',
@@ -108,22 +110,53 @@ export class OrdersService {
             name: item.productName,
             images: [item.image],
           },
-          unit_amount: Math.round(item.price * 100),
+          unit_amount: Math.round(item.price * 100), // Unit price in cents
         },
         quantity: item.quantity,
       }));
 
+      // Add GST as a separate line item (if applicable)
+      if (summary.gst > 0) {
+        lineItems.push({
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: 'GST',
+            },
+            unit_amount: Math.round(summary.gst * 100), // GST amount in cents
+          },
+          quantity: 1,
+        });
+      }
+
+      // Prepare discount as a coupon if applicable
+      let discounts = [];
+      if (summary.discount > 0) {
+        const coupon = await stripe.coupons.create({
+          amount_off: Math.round(summary.discount * 100), // Discount amount in cents
+          currency: 'usd',
+        });
+
+        discounts = [
+          {
+            coupon: coupon.id,
+          },
+        ];
+      }
+
+      // Create a Stripe Checkout Session
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
-        mode: 'payment', // This is the key fix
+        mode: 'payment',
         line_items: lineItems,
+        discounts, // Apply the discounts
         success_url: `${process.env.FRONTEND_URL}/order-confirmation`,
         cancel_url: `${process.env.FRONTEND_URL}/payment-failed`,
       });
 
       return { id: session.id };
     } catch (err) {
-      console.error('Error creating checkout session:  ', err);
+      console.error('Error creating checkout session: ', err);
       throw new Error('Failed to create checkout session.');
     }
   }

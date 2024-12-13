@@ -20,15 +20,11 @@ import { RolesGuard } from 'src/auth/guards/role.guard';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { UpdateProductDto } from './dtos/update-product.dto';
 
-// @UseGuards(JwtGuard, RolesGuard)
-// @Roles(Role.Admin)
 @Controller('store/products')
 export class ProductController {
   constructor(private productService: ProductService) {}
 
   @Get('/')
-  // @UseGuards(JwtGuard, RolesGuard)
-  // @Roles(Role.User, Role.Admin)
   async getProducts(@Query() filterProductDTO: FilterProductDTO) {
     if (Object.keys(filterProductDTO).length) {
       const filteredProducts = await this.productService.getFilteredProducts(
@@ -42,6 +38,8 @@ export class ProductController {
   }
 
   @Post('/')
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.Admin)
   async addProduct(@Body() createProductDTO: CreateProductDTO) {
     const product = await this.productService.addProduct(createProductDTO);
     return product;
@@ -49,6 +47,8 @@ export class ProductController {
 
   // Apply discount to all products (or a specific category)
   @Patch('/apply-discount')
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.Admin)
   async applyDiscount(
     @Body()
     discountDTO: {
@@ -68,6 +68,8 @@ export class ProductController {
 
   // Remove discount from all products or by category or discount name
   @Patch('/remove-discount')
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.Admin)
   async removeDiscount(
     @Body() removeDiscountDTO: { category?: string; discountName?: string },
   ) {
@@ -79,6 +81,8 @@ export class ProductController {
 
   // Apply discount category-wise (without existing offer)
   @Post('/apply-discount/:category')
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.Admin)
   async applyDiscountCategoryWise(
     @Param('category') category: string,
     @Body() discountDTO: { discountPercent: number },
@@ -99,14 +103,14 @@ export class ProductController {
 
   // Get category stats
   @Get('/categoryStats')
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.Admin)
   async getCategoryStats() {
     const getStats = await this.productService.getCategoryStats();
     return getStats;
   }
 
   @Get('/:id')
-  // @UseGuards(JwtGuard, RolesGuard)
-  // @Roles(Role.User, Role.Admin)
   async getProduct(@Param('id') id: string) {
     const product = await this.productService.getProduct(id);
     if (!product) throw new NotFoundException('Product does not exist!');
@@ -114,6 +118,8 @@ export class ProductController {
   }
 
   @Patch('/:id')
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.Admin)
   async updateProduct(
     @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto,
@@ -127,6 +133,8 @@ export class ProductController {
   }
 
   @Delete('/:id')
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.Admin)
   async deleteProduct(@Param('id') id: string) {
     const product = await this.productService.deleteProduct(id);
     if (!product) throw new NotFoundException('Product does not exist');

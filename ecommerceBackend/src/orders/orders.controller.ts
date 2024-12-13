@@ -14,12 +14,16 @@ import {
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dtos/create-order.dto';
+import { Role } from 'src/auth/enums/role.enum';
+import { RolesGuard } from 'src/auth/guards/role.guard';
+import { Roles } from 'src/auth/decorators/role.decorator';
 
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
+  @UseGuards(JwtGuard)
   async createOrder(@Body() createOrderDto: CreateOrderDto) {
     const newOrder = {
       ...createOrderDto,
@@ -29,6 +33,8 @@ export class OrdersController {
   }
 
   @Get()
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.Admin)
   async getAllOrders(
     @Query('status') status?: string,
     @Query('userId') userId?: string,
@@ -43,6 +49,7 @@ export class OrdersController {
     }
     return this.ordersService.findAll(filter);
   }
+
   @UseGuards(JwtGuard) // Protect the endpoint
   @Get('/recent')
   async getUserRecentOrders(@Req() req: any) {
@@ -52,18 +59,23 @@ export class OrdersController {
 
   // Route to create a checkout session
   @Post('/create-checkout-session')
+  @UseGuards(JwtGuard)
   async createCheckoutSession(@Body() orderDetails: any) {
     return this.ordersService.createCheckoutSession(orderDetails);
   }
 
   // Route to fetch order statistics
   @Get('/statistics')
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.Admin)
   async getStatistics() {
     return await this.ordersService.getStatistics();
   }
 
   // Route to fetch revenue within a specific date range
   @Get('/revenue')
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.Admin)
   async getRevenue(
     @Query('startDate') startDate: string,
     @Query('endDate') endDate: string,
@@ -72,6 +84,8 @@ export class OrdersController {
   }
 
   @Patch('status/:orderNumber')
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.Admin)
   async updateOrderStatus(
     @Param('orderNumber') orderNumber: string,
     @Body('status') status: string,
@@ -85,9 +99,13 @@ export class OrdersController {
   }
 
   @Get('/:id')
+  @UseGuards(JwtGuard)
   async getOrder(@Param('orderNumber') orderId: string) {
     return this.ordersService.findOne({ orderId });
   }
+
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.Admin)
   @Delete('/:orderNumber')
   async deleteOrder(@Param('orderNumber') orderNumber: string) {
     return this.ordersService.delete(orderNumber);
