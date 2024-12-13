@@ -220,7 +220,7 @@ const OrdersManagement = () => {
                       alignItems="center"
                       height="50vh"
                     >
-                      <CircularProgress size={100} />
+                      <CircularProgress size={50} />
                       <Typography variant="body1" mt={2}>
                         Loading orders...
                       </Typography>
@@ -274,41 +274,50 @@ const OrdersManagement = () => {
             ))}
           </Select>
 
-          <Box>
-            <Button
-              onClick={() => handlePageChange(1)}
-              disabled={currentPage === 1}
-            >
-              |&lt;
-            </Button>
-            <Button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              &lt;
-            </Button>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            flexWrap="wrap"
+          >
+            <Box display="flex" alignItems="center">
+              <Button
+                onClick={() => handlePageChange(1)}
+                disabled={currentPage === 1}
+              >
+                |&lt;
+              </Button>
+              <Button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                &lt;
+              </Button>
+            </Box>
             <Typography display="inline" mx={2}>
               {`${(currentPage - 1) * itemsPerPage + 1} - ${Math.min(
                 currentPage * itemsPerPage,
                 filteredOrders.length
               )} of ${filteredOrders.length}`}
             </Typography>
-            <Button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage * itemsPerPage >= filteredOrders.length}
-            >
-              &gt;
-            </Button>
-            <Button
-              onClick={() =>
-                handlePageChange(
-                  Math.ceil(filteredOrders.length / itemsPerPage)
-                )
-              }
-              disabled={currentPage * itemsPerPage >= filteredOrders.length}
-            >
-              &gt;|
-            </Button>
+            <Box display="flex" alignItems="center">
+              <Button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage * itemsPerPage >= filteredOrders.length}
+              >
+                &gt;
+              </Button>
+              <Button
+                onClick={() =>
+                  handlePageChange(
+                    Math.ceil(filteredOrders.length / itemsPerPage)
+                  )
+                }
+                disabled={currentPage * itemsPerPage >= filteredOrders.length}
+              >
+                &gt;|
+              </Button>
+            </Box>
           </Box>
         </Box>
       </Box>

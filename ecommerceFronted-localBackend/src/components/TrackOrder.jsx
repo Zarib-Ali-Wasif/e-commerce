@@ -10,6 +10,7 @@ import {
   Divider,
 } from "@mui/material";
 import api from "../lib/services/api";
+import LazyLoad from "react-lazyload";
 
 function TrackOrder() {
   const [orderNumber, setOrderNumber] = useState("");
@@ -199,12 +200,15 @@ function TrackOrder() {
                 {orderData.orderItems.map((item, index) => (
                   <Grid item xs={12} md={6} key={index}>
                     <Paper sx={{ p: 2 }}>
-                      <img
-                        src={item.image}
-                        alt={item.productName.slice(0, 20)}
-                        width={30}
-                        height={30}
-                      />
+                      <LazyLoad height={30} offset={100}>
+                        <img
+                          src={item.image}
+                          alt={item.productName.slice(0, 20)}
+                          width={30}
+                          height={30}
+                        />
+                      </LazyLoad>
+
                       <Typography>
                         <strong>Product:</strong> {item.productName}
                       </Typography>

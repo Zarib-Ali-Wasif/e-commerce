@@ -59,7 +59,7 @@ const ProfilePage = () => {
           minHeight: "60vh",
         }}
       >
-        <CircularProgress size={80} />
+        <CircularProgress size={50} />
         <Typography
           sx={{
             mt: 4,

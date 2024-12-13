@@ -245,11 +245,13 @@ function Header() {
           </Tabs>
 
           {/* Cart Icon with Badge */}
-          <IconButton component={NavLink} to="/cart">
+          <Box component={NavLink} to="/cart">
             <Badge
               badgeContent={cartCount}
               color="primary"
               sx={{
+                mr: 1.3,
+                ml: 0.5,
                 padding: 0.6,
                 "& .MuiBadge-badge": {
                   backgroundColor: "#1C4771",
@@ -261,7 +263,7 @@ function Header() {
                 sx={{ color: "#1C4771", fontSize: 28, ml: 2 }}
               />
             </Badge>
-          </IconButton>
+          </Box>
 
           {/* Account  with Dropdown */}
           {isAuthenticated ? (

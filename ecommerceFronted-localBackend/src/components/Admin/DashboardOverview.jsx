@@ -185,13 +185,13 @@ const DashboardOverview = () => {
   };
 
   return (
-    <Grid container sx={{ my: 14 }}>
+    <Grid container sx={{ my: 14, justifyContent: "center" }}>
       <Grid
         container
         spacing={3}
         style={{
           padding: "30px 20px",
-          margin: "auto",
+          margin: "0 auto",
           background: "#f4f7fc",
           borderRadius: "20px",
         }}
@@ -200,7 +200,7 @@ const DashboardOverview = () => {
           variant="h4"
           sx={{
             fontWeight: 600,
-            mb: 4,
+            mb: 7.5,
             textAlign: "center",
             width: "100%",
             color: "#1C4771",
@@ -217,7 +217,7 @@ const DashboardOverview = () => {
             Loading...
           </Typography>
         ) : (
-          <>
+          <Grid container spacing={3}>
             {/* Summary Cards */}
             {metrics.map((metric, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
@@ -355,7 +355,7 @@ const DashboardOverview = () => {
               </Card>
             </Grid>
             <CategoryStatsOverview />
-          </>
+          </Grid>
         )}
       </Grid>
     </Grid>

@@ -142,7 +142,7 @@ const Signup = () => {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        height: "80vh",
+        height: "100vh",
         textAlign: "center",
         maxWidth: "400px",
         margin: "auto",

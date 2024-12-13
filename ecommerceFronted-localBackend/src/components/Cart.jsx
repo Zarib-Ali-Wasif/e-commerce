@@ -23,6 +23,7 @@ import {
 import { fetchProducts } from "./../lib/redux/slices/productsSlice";
 import { getProductDetails } from "./../lib/utils/helperFunctions";
 import { GST_PERCENT } from "./../lib/utils/helperFunctions";
+import LazyLoad from "react-lazyload";
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -109,16 +110,18 @@ const Cart = () => {
                       <Grid container>
                         {/* Image Section */}
                         <Grid item xs={12}>
-                          <img
-                            src={cartProduct.image}
-                            alt={cartProduct.title}
-                            style={{
-                              width: "100%",
-                              height: "150px",
-                              objectFit: "contain",
-                              borderRadius: "8px 8px 0 0",
-                            }}
-                          />
+                          <LazyLoad height={150} offset={100}>
+                            <img
+                              src={cartProduct.image}
+                              alt={cartProduct.title}
+                              style={{
+                                width: "100%",
+                                height: "150px",
+                                objectFit: "contain",
+                                borderRadius: "8px 8px 0 0",
+                              }}
+                            />
+                          </LazyLoad>
                         </Grid>
 
                         {/* Typography Section */}

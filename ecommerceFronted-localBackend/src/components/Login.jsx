@@ -142,8 +142,9 @@ const Login = () => {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        height: "90vh",
+        height: "100vh",
         textAlign: "center",
+        mt: 8,
       }}
     >
       <Typography

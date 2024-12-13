@@ -42,14 +42,18 @@ const OrderConfirmation = () => {
     try {
       setLoading(true);
       if (orderData.paymentMethod === "Credit Card") {
-        await api.post(`orders`, orderData);
-        dispatch(clearCart());
-        toast.success("Order placed successfully!");
+        api
+          .post(`orders`, orderData)
+          .then((response) => {
+            dispatch(clearCart());
+            toast.success("Order placed successfully!");
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       }
     } catch (error) {
       console.error("Error placing order:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -69,7 +73,7 @@ const OrderConfirmation = () => {
           minHeight: "100vh",
         }}
       >
-        <CircularProgress size={100} />
+        <CircularProgress size={50} />
         <Typography>Loading, Please Wait...</Typography>
       </Box>
     );

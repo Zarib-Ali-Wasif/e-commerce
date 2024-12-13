@@ -72,6 +72,7 @@ const CategoryStatsOverview = () => {
           "#388e3c", // Dark Green
           "#1976d2", // Dark Blue
           "#512da8", // Dark Indigo
+          "#33cc99", // Sea Green
         ],
 
         borderColor: "transparent",

@@ -20,6 +20,7 @@ import { fetchProducts } from "./../lib/redux/slices/productsSlice";
 import { toast } from "react-toastify";
 import { GST_PERCENT } from "./../lib/utils/helperFunctions";
 import { loadStripe } from "@stripe/stripe-js";
+import LazyLoad from "react-lazyload";
 
 const Checkout = () => {
   const dispatch = useDispatch();
@@ -101,6 +102,7 @@ const Checkout = () => {
 
     try {
       if (paymentMethod === "Credit Card") {
+        setLoading(true);
         await makePayment(orderDetails);
         // Note for Stripe Integration:
         // In this implementation, the order is created in the confirmation page after the success of the payment.
@@ -121,10 +123,15 @@ const Checkout = () => {
       } else {
         // Place the order directly for other payment methods
         setLoading(true);
-        api.post(`orders`, orderDetails).then((response) => {
-          dispatch(clearCart());
-          toast.success("Order placed successfully!");
-        });
+        api
+          .post(`orders`, orderDetails)
+          .then((response) => {
+            dispatch(clearCart());
+            toast.success("Order placed successfully!");
+          })
+          .finally(() => {
+            setLoading(false);
+          });
         navigate("/order-confirmation", {
           state: { orderNumber: orderDetails.orderNumber },
         });
@@ -132,8 +139,6 @@ const Checkout = () => {
     } catch (error) {
       console.error("Error placing order:", error);
       toast.error("Failed to place order. Please try again.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -206,11 +211,14 @@ const Checkout = () => {
                       alignItems: "center",
                     }}
                   >
-                    <img
-                      src={cartproduct.image}
-                      alt={cartproduct.title}
-                      style={{ width: "50px", height: "50px" }}
-                    />
+                    <LazyLoad height={50} offset={100}>
+                      <img
+                        src={cartproduct.image}
+                        alt={cartproduct.title}
+                        style={{ width: "50px", height: "50px" }}
+                      />
+                    </LazyLoad>
+
                     <Box
                       sx={{
                         ml: 4,

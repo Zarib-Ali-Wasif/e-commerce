@@ -391,7 +391,7 @@ const ProductsManagement = () => {
             minHeight: "60vh",
           }}
         >
-          <CircularProgress size={100} />
+          <CircularProgress size={50} />
           <Typography>Loading products...</Typography>
         </Box>
       ) : (

@@ -70,7 +70,7 @@ const RecentOrders = () => {
           alignItems="center"
           height="50vh"
         >
-          <CircularProgress size={100} />
+          <CircularProgress size={50} />
           <Typography variant="body1" mt={2}>
             Loading orders...
           </Typography>
@@ -167,6 +167,7 @@ const RecentOrders = () => {
                     height={40}
                     alt={`Image of ${item.productName.slice(0, 10)} ...`}
                   />
+
                   <Typography variant="body2" fontWeight="bold">
                     {item.productName}
                   </Typography>

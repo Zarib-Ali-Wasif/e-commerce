@@ -170,7 +170,7 @@ const Products = ({ showModal }) => {
               minHeight: "60vh",
             }}
           >
-            <CircularProgress size={100} />
+            <CircularProgress size={50} />
             <Typography
               sx={{
                 mt: 4,
