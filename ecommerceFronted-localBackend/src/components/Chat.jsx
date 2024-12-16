@@ -10,9 +10,16 @@ import {
   Avatar,
   CircularProgress,
   Tooltip,
+  IconButton,
+  InputAdornment,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { ChatBubbleOutline } from "@mui/icons-material";
+import {
+  ChatBubbleOutline,
+  AttachFile,
+  Mic,
+  Search,
+} from "@mui/icons-material";
 
 const socket = io("http://localhost:3000"); // Replace with your backend URL.
 
@@ -195,6 +202,7 @@ const Chat = () => {
               >
                 <Box
                   sx={{
+                    marginTop: 1,
                     maxWidth: "70%",
                     padding: 1.5,
                     borderRadius: 2,
@@ -266,6 +274,18 @@ const Chat = () => {
             },
           }}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton>
+                  <AttachFile />
+                </IconButton>
+                <IconButton>
+                  <Mic />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
         <Button
           onClick={sendMessage}
