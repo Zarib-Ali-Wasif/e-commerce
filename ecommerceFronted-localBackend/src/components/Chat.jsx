@@ -1,10 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import axios from "axios";
+import {
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Paper,
+  Avatar,
+  CircularProgress,
+  Tooltip,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { ChatBubbleOutline } from "@mui/icons-material";
 
 const socket = io("http://localhost:3000"); // Replace with your backend URL.
 
 const Chat = () => {
+  const theme = useTheme(); // Using Material UI theme
   const [roomId, setRoomId] = useState(null); // Chat room ID
   const [messages, setMessages] = useState([]); // Messages state
   const [newMessage, setNewMessage] = useState(""); // New message input
@@ -106,89 +119,175 @@ const Chat = () => {
   };
 
   return (
-    <div
-      style={{
-        padding: "20px",
-        marginTop: "200px",
+    <Box
+      sx={{
+        padding: 3,
+        marginTop: 15,
         minHeight: "60vh",
         height: "100%",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        backgroundColor: theme.palette.background.default,
+        boxShadow: 3,
+        borderRadius: 3,
+        overflow: "hidden",
+        position: "relative",
+        border: `2px solid ${theme.palette.divider}`,
       }}
     >
-      <h2>Quick Chat</h2>
+      <Typography
+        variant="h4"
+        color="primary"
+        sx={{
+          marginBottom: 3,
+          fontWeight: "bold",
+          fontFamily: "'Roboto', sans-serif",
+          letterSpacing: "1px",
+          textShadow: "2px 2px 4px rgba(0, 0, 0, 0.2)",
+        }}
+      >
+        Chat with Admin
+      </Typography>
 
       {loading ? (
-        <p>Loading...</p>
+        <CircularProgress sx={{ marginTop: 2 }} />
       ) : error ? (
-        <p style={{ color: "red" }}>{error}</p>
+        <Typography
+          color="error"
+          sx={{ marginTop: 2, fontStyle: "italic", fontSize: "1.1rem" }}
+        >
+          {error}
+        </Typography>
       ) : (
-        <div
-          style={{
+        <Paper
+          sx={{
             maxWidth: "600px",
             width: "100%",
             maxHeight: "300px",
             overflowY: "auto",
-            border: "1px solid #ccc",
-            padding: "10px",
-            marginBottom: "10px",
+            borderRadius: 3,
+            padding: 2,
+            marginBottom: 2,
+            backgroundColor: theme.palette.grey[100], // Gray background for chat box
+            boxShadow: "0px 10px 15px rgba(0, 0, 0, 0.1)",
+            position: "relative",
+            zIndex: 1,
+            "&::-webkit-scrollbar": {
+              width: "8px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: theme.palette.primary.main,
+              borderRadius: "5px",
+            },
           }}
         >
           {messages.length > 0 ? (
             messages.map((msg) => (
-              <div
+              <Box
                 key={msg._id || Math.random()}
-                style={{ marginBottom: "10px" }}
+                sx={{
+                  marginBottom: 2,
+                  display: "flex",
+                  justifyContent:
+                    msg.userId === userId ? "flex-end" : "flex-start",
+                }}
               >
-                <strong>
-                  {msg.userId === userId
-                    ? "You"
-                    : `${msg.userId.charAt(0).toUpperCase()}${msg.userId.slice(
-                        1
-                      )}`}
-                  :
-                </strong>
-                <p>{msg.content}</p>
-              </div>
+                <Box
+                  sx={{
+                    maxWidth: "70%",
+                    padding: 1.5,
+                    borderRadius: 2,
+                    backgroundColor:
+                      msg.userId === userId
+                        ? theme.palette.primary.main
+                        : theme.palette.grey[200],
+                    color: msg.userId === userId ? "#fff" : "#000",
+                    boxShadow: 2,
+                    position: "relative",
+                    zIndex: 1,
+                  }}
+                >
+                  {msg.userId !== userId && (
+                    <Avatar
+                      sx={{
+                        width: 30,
+                        height: 30,
+                        marginRight: 1,
+                        border: `2px solid ${theme.palette.primary.main}`,
+                      }}
+                    />
+                  )}
+                  <Typography variant="body1">{msg.content}</Typography>
+                  <Tooltip title="Sent at" arrow>
+                    <Typography
+                      sx={{
+                        fontSize: "0.8rem",
+                        color: theme.palette.grey[500],
+                        position: "absolute",
+                        bottom: "-15px",
+                        right: "10px",
+                      }}
+                    >
+                      {new Date(msg.createdAt).toLocaleTimeString()}
+                    </Typography>
+                  </Tooltip>
+                </Box>
+              </Box>
             ))
           ) : (
-            <p>No messages yet. Start the conversation!</p>
+            <Typography
+              sx={{ color: theme.palette.grey[600], fontStyle: "italic" }}
+            >
+              No messages yet. Start the conversation!
+            </Typography>
           )}
           <div ref={messagesEndRef} />
-        </div>
+        </Paper>
       )}
 
-      <div style={{ marginTop: "10px", display: "flex" }}>
-        <input
+      <Box sx={{ display: "flex", width: "100%", marginTop: 2 }}>
+        <TextField
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Type a message"
-          style={{
-            width: "80%",
-            padding: "8px",
-            marginRight: "10px",
-            borderRadius: "4px",
-            border: "1px solid #ccc",
+          placeholder="Type a message..."
+          variant="outlined"
+          fullWidth
+          sx={{
+            marginRight: 2,
+            backgroundColor: theme.palette.common.white,
+            borderRadius: 2,
+            padding: 1.5,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "10px",
+            },
+            "&:focus": {
+              backgroundColor: theme.palette.grey[50],
+            },
           }}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
         />
-        <button
+        <Button
           onClick={sendMessage}
-          style={{
-            padding: "8px 16px",
-            borderRadius: "4px",
-            backgroundColor: "#007bff",
-            color: "#fff",
-            border: "none",
-            cursor: "pointer",
+          variant="contained"
+          color="secondary"
+          sx={{
+            height: "100%",
+            borderRadius: 2,
+            paddingX: 3,
+            fontSize: "16px",
+            backgroundColor: theme.palette.secondary.main,
+            "&:hover": {
+              backgroundColor: theme.palette.secondary.dark,
+            },
           }}
           disabled={!newMessage.trim()}
         >
+          <ChatBubbleOutline sx={{ marginRight: 1 }} />
           Send
-        </button>
-      </div>
-    </div>
+        </Button>
+      </Box>
+    </Box>
   );
 };
 
