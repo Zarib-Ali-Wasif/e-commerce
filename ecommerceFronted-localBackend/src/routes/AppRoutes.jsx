@@ -21,6 +21,8 @@ import AdminPanel from "../components/Admin/AdminPanel";
 import { useSelector } from "react-redux";
 import PaymentFailed from "../components/PaymentFailed";
 import TrackOrder from "../components/TrackOrder";
+import Chat from "../components/Chat";
+import AdminChat from "../components/Admin/AdminChat";
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ user, requiredRole, children }) => {
@@ -66,6 +68,8 @@ function AppRoutes() {
           <Route path="/email-us" element={<EmailUs />} />
           <Route path="/payment-failed" element={<PaymentFailed />} />
           <Route path="/track-order" element={<TrackOrder />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/admin-chat" element={<AdminChat />} />
 
           {/* Protected Routes */}
 

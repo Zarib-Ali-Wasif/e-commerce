@@ -10,6 +10,7 @@ import { OrderModule } from './orders/orders.module';
 import { UserModule } from './users/users.module';
 import { VerifyUserModule } from './verify-user/verify-user.module';
 import { ImageModule } from './image/image.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ImageModule } from './image/image.module';
     OrderModule,
     VerifyUserModule,
     ImageModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],
