@@ -18,7 +18,7 @@ export class ChatService {
       .populate('messages')
       .populate({
         path: 'users', // Populate users
-        select: 'name email role avatar', // Select only the specified fields
+        select: '_id name email role avatar', // Select only the specified fields
       });
 
     if (!room) {

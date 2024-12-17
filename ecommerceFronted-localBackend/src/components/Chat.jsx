@@ -14,13 +14,7 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import {
-  ChatBubbleOutline,
-  AttachFile,
-  PhotoCamera,
-  Mic,
-  Search,
-} from "@mui/icons-material";
+import { AttachFile, PhotoCamera, Send } from "@mui/icons-material";
 
 const socket = io("http://localhost:3000"); // Replace with your backend URL.
 
@@ -154,69 +148,68 @@ const Chat = () => {
   return (
     <Box
       sx={{
-        padding: 3,
         marginTop: 15,
-        minHeight: "60vh",
         height: "100%",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        backgroundColor: theme.palette.background.default,
-        boxShadow: 3,
-        borderRadius: 3,
-        overflow: "hidden",
-        position: "relative",
-        border: `2px solid ${theme.palette.divider}`,
+        minHeight: "70vh",
+        padding: 3,
       }}
     >
       <Typography
         variant="h4"
         color="primary"
         sx={{
-          marginBottom: 3,
+          paddingBottom: 1,
+          textAlign: "center",
           fontWeight: "bold",
           fontFamily: "'Roboto', sans-serif",
           letterSpacing: "1px",
           textShadow: "2px 2px 4px rgba(0, 0, 0, 0.2)",
         }}
       >
-        Chat with Admin
+        Customer Support
       </Typography>
 
-      {loading ? (
-        <CircularProgress sx={{ marginTop: 2 }} />
-      ) : error ? (
-        <Typography
-          color="error"
-          sx={{ marginTop: 2, fontStyle: "italic", fontSize: "1.1rem" }}
-        >
-          {error}
-        </Typography>
-      ) : (
-        <Paper
-          sx={{
-            maxWidth: "600px",
-            width: "100%",
-            maxHeight: "300px",
-            overflowY: "auto",
-            borderRadius: 3,
-            padding: 2,
-            marginBottom: 2,
-            backgroundColor: theme.palette.grey[100], // Gray background for chat box
-            boxShadow: "0px 10px 15px rgba(0, 0, 0, 0.1)",
-            position: "relative",
-            zIndex: 1,
-            "&::-webkit-scrollbar": {
-              width: "8px",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: theme.palette.primary.main,
-              borderRadius: "5px",
-            },
-          }}
-        >
-          {messages.length > 0 ? (
-            messages.map((msg) => (
+      <Box
+        sx={{
+          maxWidth: { xs: "100%", sm: "80%", md: "50%" },
+          margin: "auto",
+        }}
+      >
+        {loading ? (
+          <CircularProgress sx={{ marginTop: 2 }} />
+        ) : error ? (
+          <Typography
+            color="error"
+            sx={{ marginTop: 2, fontStyle: "italic", fontSize: "1.1rem" }}
+          >
+            {error}
+          </Typography>
+        ) : (
+          <Paper
+            sx={{
+              width: "100%",
+              maxHeight: "50vh",
+              overflowY: "auto",
+              borderRadius: 3,
+              px: 0.5,
+              marginBottom: 2,
+              backgroundColor: theme.palette.grey[100], // Gray background for chat box
+              boxShadow: "0px 10px 15px rgba(0, 0, 0, 0.1)",
+              position: "relative",
+              zIndex: 1,
+              "&::-webkit-scrollbar": {
+                width: "4px",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: theme.palette.primary.main,
+                borderRadius: "5px",
+              },
+            }}
+          >
+            {messages.map((msg) => (
               <Box
                 key={msg._id || Math.random()}
                 sx={{
@@ -228,121 +221,207 @@ const Chat = () => {
               >
                 <Box
                   sx={{
-                    my: 0.8,
-                    maxWidth: "70%",
-                    py: 0.5,
-                    px: 1.5,
-                    borderRadius: 2,
-                    backgroundColor:
-                      msg.userId === userId
-                        ? theme.palette.primary.main
-                        : theme.palette.grey[200],
-                    color: msg.userId === userId ? "#fff" : "#000",
-                    boxShadow: 3,
-                    position: "relative",
-                    zIndex: 1,
+                    my: 0.4,
+                    display: "flex",
+                    flexDirection: "row", // Default flex direction
+                    alignItems: "flex-start", // Align avatars and content to the top
+                    width: "100%", // Ensure full width to avoid horizontal scroll
                   }}
                 >
-                  {msg.userId !== userId ? (
-                    <Avatar
+                  {/* Admin's Avatar */}
+                  {msg.userId !== userId && (
+                    <Box
                       sx={{
-                        width: 20,
-                        height: 20,
-                        marginRight: 1,
-                        border: `1px solid ${theme.palette.primary.main}`,
-                      }}
-                      src={adminAvatar}
-                    />
-                  ) : (
-                    <Avatar
-                      sx={{ width: 20, height: 20, marginRight: 1 }}
-                      src={userAvatar}
-                    />
-                  )}
-                  <Typography variant="body1">{msg.content}</Typography>
-                  <Tooltip title="Sent at" arrow>
-                    <Typography
-                      sx={{
-                        fontSize: "0.8rem",
-                        color: theme.palette.grey[500],
-                        position: "absolute",
-                        bottom: "-20px",
-                        right: "0px",
-                        minWidth: "80px",
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: 0.6,
                       }}
                     >
-                      {new Date(msg.createdAt).toLocaleTimeString()}
-                    </Typography>
-                  </Tooltip>
+                      <Avatar
+                        sx={{
+                          width: 20,
+                          height: 20,
+                          marginTop: 0.5, // Add margin below avatar for spacing
+                        }}
+                        src={adminAvatar}
+                      />
+                      {/* Admin's Content */}
+                      <Box
+                        sx={{
+                          display: "inline-block",
+                          maxWidth: "70%",
+                          py: 0.5,
+                          px: 1.5,
+                          borderRadius: 2,
+                          backgroundColor: theme.palette.grey[200],
+                          color: "#000",
+                          position: "relative",
+                          zIndex: 1,
+                          marginTop: 0.5, // Add space above content
+                        }}
+                      >
+                        <Typography variant="body1">{msg.content}</Typography>
+                        <Tooltip title="Sent at" arrow>
+                          <Typography
+                            sx={{
+                              fontSize: "0.8rem",
+                              color: theme.palette.grey[500],
+                              position: "absolute",
+                              bottom: "-20px",
+                              right: "-22px",
+                              minWidth: "80px",
+                            }}
+                          >
+                            {new Date(msg.createdAt).toLocaleTimeString(
+                              "en-US",
+                              {
+                                hour: "numeric",
+                                minute: "numeric",
+                              }
+                            )}
+                          </Typography>
+                        </Tooltip>
+                      </Box>
+                    </Box>
+                  )}
+
+                  {/* User's Content */}
+                  {msg.userId === userId && (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        width: "100%",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "flex-end",
+                          justifyContent: "flex-end",
+                          gap: 0.5,
+                        }}
+                      >
+                        {/* User's Content */}
+                        <Box
+                          sx={{
+                            display: "flex",
+                            maxWidth: "70%",
+                            py: 0.5,
+                            px: 1.5,
+                            borderRadius: 2,
+                            backgroundColor: theme.palette.primary.main,
+                            color: "#fff",
+                            position: "relative",
+                            zIndex: 1,
+                            marginBottom: 0.5, // Add space below content
+                          }}
+                        >
+                          <Typography variant="body1">
+                            {msg.content}{" "}
+                          </Typography>
+                          <Tooltip title="Sent at" arrow>
+                            <Typography
+                              sx={{
+                                fontSize: "0.8rem",
+                                color: theme.palette.grey[500],
+                                position: "absolute",
+                                bottom: "-20px",
+                                right: "-22px",
+                                minWidth: "80px",
+                              }}
+                            >
+                              {new Date(msg.createdAt).toLocaleTimeString(
+                                "en-US",
+                                { hour: "numeric", minute: "numeric" }
+                              )}
+                            </Typography>
+                          </Tooltip>
+                        </Box>
+
+                        {/* User's Avatar */}
+                        <Avatar
+                          sx={{
+                            width: 20,
+                            height: 20,
+                            marginBottom: 0.5, // Add margin below avatar for spacing
+                          }}
+                          src={userAvatar}
+                        />
+                      </Box>
+                    </Box>
+                  )}
                 </Box>
               </Box>
-            ))
-          ) : (
-            <Typography
-              sx={{ color: theme.palette.grey[600], fontStyle: "italic" }}
-            >
-              <CircularProgress />
-            </Typography>
-          )}
-          <div ref={messagesEndRef} />
-        </Paper>
-      )}
+            ))}
 
-      <Box sx={{ display: "flex", width: "100%", marginTop: 2 }}>
-        <TextField
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Type a message..."
-          variant="outlined"
-          fullWidth
+            <div ref={messagesEndRef} />
+          </Paper>
+        )}
+
+        <Box
           sx={{
-            marginRight: 2,
-            backgroundColor: theme.palette.common.white,
-            borderRadius: 2,
-            padding: 1.5,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "10px",
-            },
-            "&:focus": {
-              backgroundColor: theme.palette.grey[50],
-            },
+            display: "flex",
+            width: "100%",
+            alignItems: "center",
+            px: 0.5,
+            gap: 1,
+            mt: 4,
           }}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton sx={{ marginRight: 1 }} color="primary">
-                  <AttachFile />
-                </IconButton>
-                <IconButton sx={{ marginRight: 1 }} color="primary">
-                  <PhotoCamera />
-                </IconButton>
-                <IconButton sx={{ marginRight: 1 }} color="primary">
-                  <Mic />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
-        <Button
-          onClick={sendMessage}
-          variant="contained"
-          color="secondary"
-          sx={{
-            height: "100%",
-            borderRadius: 2,
-            paddingX: 3,
-            fontSize: "16px",
-            backgroundColor: theme.palette.secondary.main,
-            "&:hover": {
-              backgroundColor: theme.palette.secondary.dark,
-            },
-          }}
-          disabled={!newMessage.trim()}
         >
-          <ChatBubbleOutline sx={{ marginRight: 1 }} />
-          Send
-        </Button>
+          <TextField
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder="Type a message..."
+            variant="outlined"
+            fullWidth
+            sx={{
+              backgroundColor: theme.palette.common.white,
+              borderRadius: 2,
+              // padding: 1.5,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+              "&:focus": {
+                backgroundColor: theme.palette.grey[50],
+              },
+            }}
+            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton>
+                    <AttachFile />
+                  </IconButton>
+                  <IconButton>
+                    <PhotoCamera />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Button
+            onClick={sendMessage}
+            variant="contained"
+            color="primary"
+            sx={{
+              borderRadius: "50% / 70%",
+              width: 50,
+              height: 50,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              cursor: "pointer",
+              "&:disabled": {
+                backgroundColor: theme.palette.action.disabledBackground,
+                color: theme.palette.action.disabled,
+              },
+            }}
+            disabled={!newMessage.trim()}
+          >
+            <Send />
+          </Button>
+        </Box>
       </Box>
     </Box>
   );
