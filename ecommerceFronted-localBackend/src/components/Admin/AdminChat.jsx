@@ -26,6 +26,7 @@ const AdminChat = () => {
   const [chatRooms, setChatRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [userName, setUserName] = useState("");
   const [userAvatar, setUserAvatar] = useState(""); // User avatar
   const [adminAvatar, setAdminAvatar] = useState(""); // Admin avatar
   const [messages, setMessages] = useState([]);
@@ -40,8 +41,6 @@ const AdminChat = () => {
       try {
         setLoading(true);
         const response = await axios.get("http://localhost:3000/chat/all");
-        console.log("selected All Rooms data: ", response.data);
-
         setChatRooms(response.data);
         setLoading(false);
       } catch (err) {
@@ -60,7 +59,6 @@ const AdminChat = () => {
       const response = await axios.post(
         `http://localhost:3000/chat/user/${userId}`
       );
-
       setUserAvatar(
         response.data.length != 0
           ? response.data.users.find(
@@ -86,7 +84,6 @@ const AdminChat = () => {
   useEffect(() => {
     const fetchMessages = async () => {
       if (!selectedRoom) return;
-
       try {
         setLoading(true);
         setError(null);
@@ -119,16 +116,13 @@ const AdminChat = () => {
   useEffect(() => {
     if (selectedRoom) {
       socket.emit("joinRoom", selectedRoom);
-
       const handleNewMessage = (message) => {
         if (message.roomId === selectedRoom) {
           setMessages((prev) => [...prev, message]);
           scrollToBottom();
         }
       };
-
       socket.on("newMessage", handleNewMessage);
-
       return () => {
         socket.off("newMessage", handleNewMessage);
         socket.emit("leaveRoom", selectedRoom);
@@ -154,6 +148,7 @@ const AdminChat = () => {
       setError("Failed to send message. Please try again.");
     }
   };
+
   // Auto-scroll to the latest message
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
