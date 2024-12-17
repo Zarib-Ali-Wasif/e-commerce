@@ -261,26 +261,18 @@ const Chat = () => {
                         }}
                       >
                         <Typography variant="body1">{msg.content}</Typography>
-                        <Tooltip title="Sent at" arrow>
-                          <Typography
-                            sx={{
-                              fontSize: "0.8rem",
-                              color: theme.palette.grey[500],
-                              position: "absolute",
-                              bottom: "-20px",
-                              right: "-22px",
-                              minWidth: "80px",
-                            }}
-                          >
-                            {new Date(msg.createdAt).toLocaleTimeString(
-                              "en-US",
-                              {
-                                hour: "numeric",
-                                minute: "numeric",
-                              }
-                            )}
-                          </Typography>
-                        </Tooltip>
+                        <Typography
+                          sx={{
+                            fontSize: "0.8rem",
+                            color: theme.palette.grey[500],
+                            textAlign: "right",
+                          }}
+                        >
+                          {new Date(msg.createdAt).toLocaleTimeString("en-US", {
+                            hour: "numeric",
+                            minute: "numeric",
+                          })}
+                        </Typography>
                       </Box>
                     </Box>
                   )}
@@ -305,7 +297,7 @@ const Chat = () => {
                         {/* User's Content */}
                         <Box
                           sx={{
-                            display: "flex",
+                            display: "inline-block",
                             maxWidth: "70%",
                             py: 0.5,
                             px: 1.5,
@@ -320,23 +312,18 @@ const Chat = () => {
                           <Typography variant="body1">
                             {msg.content}{" "}
                           </Typography>
-                          <Tooltip title="Sent at" arrow>
-                            <Typography
-                              sx={{
-                                fontSize: "0.8rem",
-                                color: theme.palette.grey[500],
-                                position: "absolute",
-                                bottom: "-20px",
-                                right: "-22px",
-                                minWidth: "80px",
-                              }}
-                            >
-                              {new Date(msg.createdAt).toLocaleTimeString(
-                                "en-US",
-                                { hour: "numeric", minute: "numeric" }
-                              )}
-                            </Typography>
-                          </Tooltip>
+                          <Typography
+                            sx={{
+                              fontSize: "0.8rem",
+                              color: theme.palette.grey[500],
+                              textAlign: "right",
+                            }}
+                          >
+                            {new Date(msg.createdAt).toLocaleTimeString(
+                              "en-US",
+                              { hour: "numeric", minute: "numeric" }
+                            )}
+                          </Typography>
                         </Box>
 
                         {/* User's Avatar */}
