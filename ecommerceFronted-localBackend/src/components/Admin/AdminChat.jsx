@@ -1,64 +1,139 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import axios from "axios";
+import {
+  Box,
+  Typography,
+  Paper,
+  CircularProgress,
+  Avatar,
+  TextField,
+  Button,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { AttachFile, PhotoCamera, Send } from "@mui/icons-material";
 
-const socket = io("http://localhost:3000"); // Update this with your backend URL.
+const socket = io("http://localhost:3000"); // Update with your backend URL.
 
 const AdminChat = () => {
-  const [chatRooms, setChatRooms] = useState([]); // List of all chat rooms.
-  const [selectedRoom, setSelectedRoom] = useState(null); // Currently selected chat room.
-  const [messages, setMessages] = useState([]); // Messages for the selected room.
-  const [newMessage, setNewMessage] = useState(""); // Message to send.
-  const [loading, setLoading] = useState(false); // Loading state for fetching rooms/messages.
-  const [error, setError] = useState(""); // Error state.
+  const theme = useTheme(); // Using Material UI theme
+  const [chatRooms, setChatRooms] = useState([]);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userAvatar, setUserAvatar] = useState(""); // User avatar
+  const [adminAvatar, setAdminAvatar] = useState(""); // Admin avatar
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const messagesEndRef = useRef(null); // Reference for auto-scroll
 
-  // Fetch all chat rooms on component mount.
+  // Fetch chat rooms
   useEffect(() => {
     const fetchChatRooms = async () => {
       try {
         setLoading(true);
         const response = await axios.get("http://localhost:3000/chat/all");
+        console.log("selected All Rooms data: ", response.data);
+
         setChatRooms(response.data);
         setLoading(false);
       } catch (err) {
-        console.error("Error fetching chat rooms:", err);
         setError("Failed to fetch chat rooms. Please try again later.");
         setLoading(false);
       }
     };
-
     fetchChatRooms();
   }, []);
 
-  // Join the selected chat room and fetch messages.
-  const selectRoom = async (roomId) => {
-    setSelectedRoom(roomId);
+  const selectUserRoom = async (userId) => {
+    setSelectedUser(userId);
     try {
       setLoading(true);
-      const response = await axios.get(
-        `http://localhost:3000/chat/room/${roomId}`
+      setError(null);
+      const response = await axios.post(
+        `http://localhost:3000/chat/user/${userId}`
       );
-      setMessages(response.data);
-      socket.emit("joinRoom", roomId); // Join the room via Socket.IO.
-      setLoading(false);
+
+      setUserAvatar(
+        response.data.length != 0
+          ? response.data.users.find(
+              (user) => user.role === "User" && user._id === userId
+            ).avatar
+          : null
+      );
+      setAdminAvatar(
+        response.data.length != 0
+          ? response.data.users.find((user) => user.role === "Admin").avatar
+          : null
+      );
+      setSelectedRoom(response.data._id); // Assuming the API returns the room ID as `_id`
     } catch (err) {
-      console.error("Error fetching messages:", err);
-      setError("Failed to load messages for the selected chat room.");
+      console.error("Error fetching/creating room:", err);
+      setError("Failed to fetch or create chat room. Please try again.");
+    } finally {
       setLoading(false);
     }
   };
 
-  // Listen for new messages in real time.
+  // Fetch messages for the room
   useEffect(() => {
-    socket.on("newMessage", (message) => {
-      if (message.roomId === selectedRoom) {
-        setMessages((prev) => [...prev, message]);
-      }
-    });
+    const fetchMessages = async () => {
+      if (!selectedRoom) return;
 
-    return () => {
-      socket.off("newMessage");
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await axios.get(
+          `http://localhost:3000/chat/room/${selectedRoom}`
+        );
+        setMessages(
+          response.data.length != 0
+            ? response.data
+            : [
+                {
+                  content: "Hey there! How can I help you today?",
+                  userId: null,
+                  createdAt: Date.now(),
+                },
+              ]
+        );
+      } catch (err) {
+        console.error("Error fetching messages:", err);
+        setError("Failed to load messages. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
     };
+
+    fetchMessages();
+  }, [selectedRoom]);
+
+  // Join room and handle incoming messages
+  useEffect(() => {
+    if (selectedRoom) {
+      socket.emit("joinRoom", selectedRoom);
+
+      const handleNewMessage = (message) => {
+        if (message.roomId === selectedRoom) {
+          setMessages((prev) => [...prev, message]);
+          scrollToBottom();
+        }
+      };
+
+      socket.on("newMessage", handleNewMessage);
+
+      return () => {
+        socket.off("newMessage", handleNewMessage);
+        socket.emit("leaveRoom", selectedRoom);
+      };
+    }
   }, [selectedRoom]);
 
   // Send a new message.
@@ -79,79 +154,300 @@ const AdminChat = () => {
       setError("Failed to send message. Please try again.");
     }
   };
+  // Auto-scroll to the latest message
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Scroll to the bottom on new messages
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         display: "flex",
-        flexDirection: "row",
-        height: "100vh",
-        marginTop: "200px",
+        marginTop: 15,
+        height: "85vh",
+        width: "100%",
       }}
     >
-      {/* Sidebar for listing chat rooms */}
-      <div
-        style={{ width: "30%", borderRight: "1px solid #ccc", padding: "10px" }}
+      {/* Sidebar for chat rooms */}
+      <Box
+        sx={{
+          width: "30%",
+          borderRight: "1px solid #ddd",
+          overflowY: "auto",
+          p: 2,
+          backgroundColor: "#f9f9f9",
+        }}
       >
-        <h2>Chat Rooms</h2>
-        {loading && <p>Loading chat rooms...</p>}
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <ul style={{ listStyle: "none", padding: 0 }}>
-          {chatRooms.map((room) => (
-            <li
-              key={room._id}
-              onClick={() => selectRoom(room._id)}
-              style={{
-                padding: "10px",
-                cursor: "pointer",
-                background:
-                  selectedRoom === room._id ? "#e0e0e0" : "transparent",
-              }}
-            >
-              Room ID: {room._id} | Users: {room.users.join(", ")}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Chat window for the selected room */}
-      <div style={{ width: "70%", padding: "10px" }}>
-        {selectedRoom ? (
-          <>
-            <h2>Chat Room: {selectedRoom}</h2>
-            <div
-              style={{
-                height: "70vh",
-                overflowY: "auto",
-                border: "1px solid #ccc",
-                padding: "10px",
-                marginBottom: "10px",
-              }}
-            >
-              {messages.map((msg) => (
-                <div key={msg._id}>
-                  <strong>{msg.userId}:</strong> {msg.content}
-                </div>
-              ))}
-            </div>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type a message"
-                style={{ flex: 1, padding: "10px", marginRight: "10px" }}
-              />
-              <button onClick={sendMessage} style={{ padding: "10px" }}>
-                Send
-              </button>
-            </div>
-          </>
+        <Typography variant="h5" sx={{ mb: 2, textAlign: "center" }}>
+          Chat Rooms
+        </Typography>
+        {loading ? (
+          <CircularProgress />
+        ) : error ? (
+          <Typography color="error">{error}</Typography>
         ) : (
-          <p>Select a chat room to view messages.</p>
+          <List>
+            {chatRooms.map((room) => (
+              <ListItem key={room._id} disablePadding>
+                <ListItemButton
+                  selected={selectedRoom === room._id}
+                  onClick={() => selectUserRoom(room.users[0])}
+                >
+                  <ListItemText
+                    primary={`Room: ${room._id}`}
+                    secondary={`Users: ${room.users.join(", ")}`}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
         )}
-      </div>
-    </div>
+      </Box>
+
+      <Box
+        sx={{
+          maxWidth: { xs: "100%", sm: "80%", md: "50%" },
+          margin: "auto",
+        }}
+      >
+        {loading ? (
+          <CircularProgress sx={{ marginTop: 2 }} />
+        ) : error ? (
+          <Typography
+            color="error"
+            sx={{ marginTop: 2, fontStyle: "italic", fontSize: "1.1rem" }}
+          >
+            {error}
+          </Typography>
+        ) : (
+          <Paper
+            sx={{
+              width: "100%",
+              maxHeight: "50vh",
+              overflowY: "auto",
+              borderRadius: 3,
+              px: 0.5,
+              marginBottom: 2,
+              backgroundColor: theme.palette.grey[100], // Gray background for chat box
+              boxShadow: "0px 10px 15px rgba(0, 0, 0, 0.1)",
+              position: "relative",
+              zIndex: 1,
+              "&::-webkit-scrollbar": {
+                width: "4px",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: theme.palette.primary.main,
+                borderRadius: "5px",
+              },
+            }}
+          >
+            {messages.map((msg) => (
+              <Box
+                key={msg._id || Math.random()}
+                sx={{
+                  marginBottom: 2,
+                  display: "flex",
+                  justifyContent:
+                    msg.userId === "admin" ? "flex-end" : "flex-start",
+                }}
+              >
+                <Box
+                  sx={{
+                    my: 0.4,
+                    display: "flex",
+                    flexDirection: "row", // Default flex direction
+                    alignItems: "flex-start", // Align avatars and content to the top
+                    width: "100%", // Ensure full width to avoid horizontal scroll
+                  }}
+                >
+                  {/* Admin's Avatar */}
+                  {msg.userId === "admin" && (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: 0.6,
+                      }}
+                    >
+                      <Avatar
+                        sx={{
+                          width: 20,
+                          height: 20,
+                          marginTop: 0.5, // Add margin below avatar for spacing
+                        }}
+                        src={adminAvatar}
+                      />
+                      {/* Admin's Content */}
+                      <Box
+                        sx={{
+                          display: "inline-block",
+                          maxWidth: "70%",
+                          py: 0.5,
+                          px: 1.5,
+                          borderRadius: 2,
+                          backgroundColor: theme.palette.grey[200],
+                          color: "#000",
+                          position: "relative",
+                          zIndex: 1,
+                          marginTop: 0.5, // Add space above content
+                        }}
+                      >
+                        <Typography variant="body1">{msg.content}</Typography>
+                        <Typography
+                          sx={{
+                            fontSize: "0.8rem",
+                            color: theme.palette.grey[500],
+                            textAlign: "right",
+                          }}
+                        >
+                          {new Date(msg.createdAt).toLocaleTimeString("en-US", {
+                            hour: "numeric",
+                            minute: "numeric",
+                          })}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  )}
+
+                  {/* User's Content */}
+                  {msg.userId !== "admin" && (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        width: "100%",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "flex-end",
+                          justifyContent: "flex-end",
+                          gap: 0.5,
+                        }}
+                      >
+                        {/* User's Content */}
+                        <Box
+                          sx={{
+                            display: "inline-block",
+                            maxWidth: "70%",
+                            py: 0.5,
+                            px: 1.5,
+                            borderRadius: 2,
+                            backgroundColor: theme.palette.primary.main,
+                            color: "#fff",
+                            position: "relative",
+                            zIndex: 1,
+                            marginBottom: 0.5, // Add space below content
+                          }}
+                        >
+                          <Typography variant="body1">
+                            {msg.content}{" "}
+                          </Typography>
+                          <Typography
+                            sx={{
+                              fontSize: "0.8rem",
+                              color: theme.palette.grey[500],
+                              textAlign: "right",
+                            }}
+                          >
+                            {new Date(msg.createdAt).toLocaleTimeString(
+                              "en-US",
+                              { hour: "numeric", minute: "numeric" }
+                            )}
+                          </Typography>
+                        </Box>
+
+                        {/* User's Avatar */}
+                        <Avatar
+                          sx={{
+                            width: 20,
+                            height: 20,
+                            marginBottom: 0.5, // Add margin below avatar for spacing
+                          }}
+                          src={userAvatar}
+                        />
+                      </Box>
+                    </Box>
+                  )}
+                </Box>
+              </Box>
+            ))}
+
+            <div ref={messagesEndRef} />
+          </Paper>
+        )}
+
+        <Box
+          sx={{
+            display: "flex",
+            width: "100%",
+            alignItems: "center",
+            px: 0.5,
+            gap: 1,
+            mt: 4,
+          }}
+        >
+          <TextField
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder="Type a message..."
+            variant="outlined"
+            fullWidth
+            sx={{
+              backgroundColor: theme.palette.common.white,
+              borderRadius: 2,
+              // padding: 1.5,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+              "&:focus": {
+                backgroundColor: theme.palette.grey[50],
+              },
+            }}
+            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton>
+                    <AttachFile />
+                  </IconButton>
+                  <IconButton>
+                    <PhotoCamera />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Button
+            onClick={sendMessage}
+            variant="contained"
+            color="primary"
+            sx={{
+              borderRadius: "50% / 70%",
+              width: 50,
+              height: 50,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              cursor: "pointer",
+              "&:disabled": {
+                backgroundColor: theme.palette.action.disabledBackground,
+                color: theme.palette.action.disabled,
+              },
+            }}
+            disabled={!newMessage.trim()}
+          >
+            <Send />
+          </Button>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
