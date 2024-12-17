@@ -17,6 +17,7 @@ import { useTheme } from "@mui/material/styles";
 import {
   ChatBubbleOutline,
   AttachFile,
+  PhotoCamera,
   Mic,
   Search,
 } from "@mui/icons-material";
@@ -27,6 +28,7 @@ const Chat = () => {
   const theme = useTheme(); // Using Material UI theme
   const [roomId, setRoomId] = useState(null); // Chat room ID
   const [messages, setMessages] = useState([]); // Messages state
+  const [adminAvatar, setAdminAvatar] = useState(""); // Admin avatar
   const [newMessage, setNewMessage] = useState(""); // New message input
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
@@ -45,6 +47,9 @@ const Chat = () => {
         setError(null);
         const response = await axios.post(
           `http://localhost:3000/chat/user/${userId}`
+        );
+        setAdminAvatar(
+          response.data.length != 0 ? response.data.users[1].avatar : null
         );
         setRoomId(response.data._id); // Assuming the API returns the room ID as `_id`
       } catch (err) {
@@ -69,7 +74,17 @@ const Chat = () => {
         const response = await axios.get(
           `http://localhost:3000/chat/room/${roomId}`
         );
-        setMessages(Array.isArray(response.data) ? response.data : []);
+        setMessages(
+          response.data.length != 0
+            ? response.data
+            : [
+                {
+                  content: "Hey there! How can I help you today?",
+                  userId: null,
+                  createdAt: Date.now(),
+                },
+              ]
+        );
       } catch (err) {
         console.error("Error fetching messages:", err);
         setError("Failed to load messages. Please try again later.");
@@ -202,16 +217,17 @@ const Chat = () => {
               >
                 <Box
                   sx={{
-                    marginTop: 1,
+                    my: 0.8,
                     maxWidth: "70%",
-                    padding: 1.5,
+                    py: 0.5,
+                    px: 1.5,
                     borderRadius: 2,
                     backgroundColor:
                       msg.userId === userId
                         ? theme.palette.primary.main
                         : theme.palette.grey[200],
                     color: msg.userId === userId ? "#fff" : "#000",
-                    boxShadow: 2,
+                    boxShadow: 3,
                     position: "relative",
                     zIndex: 1,
                   }}
@@ -219,11 +235,12 @@ const Chat = () => {
                   {msg.userId !== userId && (
                     <Avatar
                       sx={{
-                        width: 30,
-                        height: 30,
+                        width: 20,
+                        height: 20,
                         marginRight: 1,
-                        border: `2px solid ${theme.palette.primary.main}`,
+                        border: `1px solid ${theme.palette.primary.main}`,
                       }}
+                      src={adminAvatar}
                     />
                   )}
                   <Typography variant="body1">{msg.content}</Typography>
@@ -233,8 +250,9 @@ const Chat = () => {
                         fontSize: "0.8rem",
                         color: theme.palette.grey[500],
                         position: "absolute",
-                        bottom: "-15px",
-                        right: "10px",
+                        bottom: "-20px",
+                        right: "0px",
+                        minWidth: "80px",
                       }}
                     >
                       {new Date(msg.createdAt).toLocaleTimeString()}
@@ -277,10 +295,13 @@ const Chat = () => {
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton>
+                <IconButton sx={{ marginRight: 1 }} color="primary">
                   <AttachFile />
                 </IconButton>
-                <IconButton>
+                <IconButton sx={{ marginRight: 1 }} color="primary">
+                  <PhotoCamera />
+                </IconButton>
+                <IconButton sx={{ marginRight: 1 }} color="primary">
                   <Mic />
                 </IconButton>
               </InputAdornment>

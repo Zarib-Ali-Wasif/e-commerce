@@ -6,7 +6,7 @@ export class ChatRoom extends Document {
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Message' }] })
   messages: Types.ObjectId[];
 
-  @Prop({ type: [Types.ObjectId], required: true })
+  @Prop({ type: [Types.ObjectId], ref: 'User', required: true })
   users: Types.ObjectId[];
 }
 

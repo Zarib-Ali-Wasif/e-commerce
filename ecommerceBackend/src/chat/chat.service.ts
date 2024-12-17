@@ -15,7 +15,11 @@ export class ChatService {
   async findOrCreateRoom(userIds: Types.ObjectId[]): Promise<ChatRoom> {
     let room = await this.chatRoomModel
       .findOne({ users: { $all: userIds } })
-      .populate('messages');
+      .populate('messages')
+      .populate({
+        path: 'users', // Populate users
+        select: 'name email role avatar', // Select only the specified fields
+      });
 
     if (!room) {
       room = await this.chatRoomModel.create({ users: userIds, messages: [] });
