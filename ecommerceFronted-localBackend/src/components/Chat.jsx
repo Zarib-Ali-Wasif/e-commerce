@@ -28,6 +28,7 @@ const Chat = () => {
   const theme = useTheme(); // Using Material UI theme
   const [roomId, setRoomId] = useState(null); // Chat room ID
   const [messages, setMessages] = useState([]); // Messages state
+  const [userAvatar, setUserAvatar] = useState(""); // User avatar
   const [adminAvatar, setAdminAvatar] = useState(""); // Admin avatar
   const [newMessage, setNewMessage] = useState(""); // New message input
   const [loading, setLoading] = useState(true); // Loading state
@@ -48,8 +49,18 @@ const Chat = () => {
         const response = await axios.post(
           `http://localhost:3000/chat/user/${userId}`
         );
+
+        setUserAvatar(
+          response.data.length != 0
+            ? response.data.users.find(
+                (user) => user.role === "User" && user._id === userId
+              ).avatar
+            : null
+        );
         setAdminAvatar(
-          response.data.length != 0 ? response.data.users[1].avatar : null
+          response.data.length != 0
+            ? response.data.users.find((user) => user.role === "Admin").avatar
+            : null
         );
         setRoomId(response.data._id); // Assuming the API returns the room ID as `_id`
       } catch (err) {
@@ -232,7 +243,7 @@ const Chat = () => {
                     zIndex: 1,
                   }}
                 >
-                  {msg.userId !== userId && (
+                  {msg.userId !== userId ? (
                     <Avatar
                       sx={{
                         width: 20,
@@ -241,6 +252,11 @@ const Chat = () => {
                         border: `1px solid ${theme.palette.primary.main}`,
                       }}
                       src={adminAvatar}
+                    />
+                  ) : (
+                    <Avatar
+                      sx={{ width: 20, height: 20, marginRight: 1 }}
+                      src={userAvatar}
                     />
                   )}
                   <Typography variant="body1">{msg.content}</Typography>
@@ -265,7 +281,7 @@ const Chat = () => {
             <Typography
               sx={{ color: theme.palette.grey[600], fontStyle: "italic" }}
             >
-              No messages yet. Start the conversation!
+              <CircularProgress />
             </Typography>
           )}
           <div ref={messagesEndRef} />
