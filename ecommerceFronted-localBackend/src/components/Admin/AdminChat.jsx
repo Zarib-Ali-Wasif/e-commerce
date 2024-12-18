@@ -13,6 +13,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  ListItemAvatar,
   InputAdornment,
   IconButton,
 } from "@mui/material";
@@ -41,6 +42,7 @@ const AdminChat = () => {
       try {
         setLoading(true);
         const response = await axios.get("http://localhost:3000/chat/all");
+        console.log("Chat rooms:", response.data);
         setChatRooms(response.data);
         setLoading(false);
       } catch (err) {
@@ -52,6 +54,7 @@ const AdminChat = () => {
   }, []);
 
   const selectUserRoom = async (userId) => {
+    setMessages([]); // Clear messages when a new user is selected
     setSelectedUser(userId);
     try {
       setLoading(true);
@@ -171,14 +174,13 @@ const AdminChat = () => {
       {/* Sidebar for chat rooms */}
       <Box
         sx={{
-          width: "30%",
+          width: "20%",
           borderRight: "1px solid #ddd",
           overflowY: "auto",
-          p: 2,
           backgroundColor: "#f9f9f9",
         }}
       >
-        <Typography variant="h5" sx={{ mb: 2, textAlign: "center" }}>
+        <Typography variant="h5" sx={{ my: 4, textAlign: "center" }}>
           Chat Rooms
         </Typography>
         {loading ? (
@@ -190,12 +192,19 @@ const AdminChat = () => {
             {chatRooms.map((room) => (
               <ListItem key={room._id} disablePadding>
                 <ListItemButton
+                  sx={{ borderRadius: "8px" }}
                   selected={selectedRoom === room._id}
-                  onClick={() => selectUserRoom(room.users[0])}
+                  onClick={() => selectUserRoom(room.users[0]._id)}
                 >
+                  <ListItemAvatar>
+                    <Avatar
+                      alt={room.users[0].name}
+                      src={room.users[0].avatar}
+                    />
+                  </ListItemAvatar>
                   <ListItemText
-                    primary={`Room: ${room._id}`}
-                    secondary={`Users: ${room.users.join(", ")}`}
+                    primary={room.users[0].name} // Display user name instead of room ID
+                    secondary={`${room.users[0].email}`} // You can also display email or other info here
                   />
                 </ListItemButton>
               </ListItem>
@@ -204,6 +213,7 @@ const AdminChat = () => {
         )}
       </Box>
 
+      {/* Chat Box */}
       <Box
         sx={{
           maxWidth: { xs: "100%", sm: "80%", md: "50%" },

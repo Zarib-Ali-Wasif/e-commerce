@@ -49,6 +49,9 @@ export class ChatService {
 
   // Get all chat rooms with populated messages
   async getAllChats(): Promise<ChatRoom[]> {
-    return this.chatRoomModel.find().populate('messages');
+    return this.chatRoomModel.find().populate('messages').populate({
+      path: 'users', // Populate users
+      select: '_id name email role avatar', // Select only the specified fields
+    });
   }
 }
