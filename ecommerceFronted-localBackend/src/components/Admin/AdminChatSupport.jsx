@@ -23,7 +23,7 @@ import { AttachFile, PhotoCamera, Send } from "@mui/icons-material";
 
 const socket = io("http://localhost:3000"); // Update with your backend URL.
 
-const AdminChat = () => {
+const AdminChatSupport = () => {
   const theme = useTheme(); // Using Material UI theme
   const [chatRooms, setChatRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -205,7 +205,7 @@ const AdminChat = () => {
                 fontWeight: "bold",
               }}
             >
-              Chat Support
+              Customer Support
             </Typography>
           </Box>
 
@@ -611,4 +611,4 @@ const AdminChat = () => {
   );
 };
 
-export default AdminChat;
+export default AdminChatSupport;

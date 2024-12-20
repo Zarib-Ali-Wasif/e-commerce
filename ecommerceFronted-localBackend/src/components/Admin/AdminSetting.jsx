@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Grid, Button, Typography, Box } from "@mui/material";
-import RecentOrders from "./RecentOrders";
-import UpdatePassword from "./UpdatePassword";
 import { AccountCircle, ShoppingCart, Lock } from "@mui/icons-material";
-import ProfilePage from "./ProfilePage";
+import RecentOrders from "../RecentOrders";
+import UpdatePassword from "../UpdatePassword";
+import ProfilePage from "../ProfilePage";
 
-const ManageAccount = () => {
+const AdminSetting = () => {
   const [activeSection, setActiveSection] = useState("ProfilePage");
 
   return (
@@ -22,7 +22,7 @@ const ManageAccount = () => {
         // color="primary"
         sx={{ fontWeight: 600, mb: 6, textAlign: "center", color: "#1C4771" }}
       >
-        Manage Account
+        Admin Settings
       </Typography>
 
       {/* Section with buttons to navigate to different sub-sections */}
@@ -57,7 +57,7 @@ const ManageAccount = () => {
           <Button
             variant="outlined"
             startIcon={<ShoppingCart />}
-            onClick={() => setActiveSection("RecentOrders")}
+            onClick={() => setActiveSection("MyTestOrders")}
             sx={{
               minWidth: 180,
               borderRadius: "12px",
@@ -77,7 +77,7 @@ const ManageAccount = () => {
               transition: "all 0.3s ease",
             }}
           >
-            My Orders
+            My Test Orders
           </Button>
         </Grid>
         <Grid item>
@@ -112,7 +112,7 @@ const ManageAccount = () => {
       {activeSection === "ProfilePage" && <ProfilePage />}
 
       {/* Recent Orders Section */}
-      {activeSection === "RecentOrders" && <RecentOrders />}
+      {activeSection === "MyTestOrders" && <RecentOrders />}
 
       {/* Update Password Section */}
       {activeSection === "UpdatePassword" && <UpdatePassword />}
@@ -120,4 +120,4 @@ const ManageAccount = () => {
   );
 };
 
-export default ManageAccount;
+export default AdminSetting;

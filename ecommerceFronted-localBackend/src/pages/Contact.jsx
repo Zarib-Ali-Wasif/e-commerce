@@ -62,6 +62,10 @@ const theme = createTheme({
 
 const Contact = () => {
   const navigate = useNavigate();
+  const handleChat = (e) => {
+    e.preventDefault();
+    navigate("/customer-chat-support");
+  };
   const handleEmail = (e) => {
     e.preventDefault();
     navigate("/email-us");
@@ -170,6 +174,7 @@ const Contact = () => {
                     color: theme.palette.primary.main,
                     borderColor: theme.palette.primary.main,
                   }}
+                  onClick={handleChat}
                 >
                   Chat Now
                 </Button>

@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Home from "../pages/Home";
 import About from "../pages/About";
 import Products from "../pages/Products";
@@ -18,11 +19,11 @@ import ResetPassword from "../components/ResetPassword";
 import ManageAccount from "../components/ManageAccount";
 import EmailUs from "../components/EmailUs";
 import AdminPanel from "../components/Admin/AdminPanel";
-import { useSelector } from "react-redux";
 import PaymentFailed from "../components/PaymentFailed";
 import TrackOrder from "../components/TrackOrder";
-import Chat from "../components/Chat";
-import AdminChat from "../components/Admin/AdminChat";
+import CustomerChatSupport from "../components/CustomerChatSupport";
+import AdminChatSupport from "../components/Admin/AdminChatSupport";
+import AdminSetting from "../components/Admin/AdminSetting";
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ user, requiredRole, children }) => {
@@ -68,11 +69,10 @@ function AppRoutes() {
           <Route path="/email-us" element={<EmailUs />} />
           <Route path="/payment-failed" element={<PaymentFailed />} />
           <Route path="/track-order" element={<TrackOrder />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/admin-chat" element={<AdminChat />} />
 
           {/* Protected Routes */}
 
+          {/* User Protected Route */}
           <Route
             path="/order-confirmation"
             element={
@@ -81,8 +81,15 @@ function AppRoutes() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/customer-chat-support"
+            element={
+              <ProtectedRoute user={user} requiredRole="User">
+                <CustomerChatSupport />
+              </ProtectedRoute>
+            }
+          />
 
-          {/* User Protected Route */}
           <Route
             path="/manage-account"
             element={
@@ -101,6 +108,24 @@ function AppRoutes() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/admin-panel-chat-support"
+            element={
+              <ProtectedRoute user={user} requiredRole="Admin">
+                <AdminChatSupport />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin-settings"
+            element={
+              <ProtectedRoute user={user} requiredRole="Admin">
+                <AdminSetting />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>

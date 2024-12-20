@@ -19,7 +19,7 @@ import { AttachFile, PhotoCamera, Send } from "@mui/icons-material";
 
 const socket = io("http://localhost:3000"); // Replace with your backend URL.
 
-const Chat = () => {
+const CustomerChatSupport = () => {
   const theme = useTheme(); // Using Material UI theme
   const [roomId, setRoomId] = useState(null); // Chat room ID
   const [messages, setMessages] = useState([]); // Messages state
@@ -206,7 +206,7 @@ const Chat = () => {
           color: "#1C4771",
         }}
       >
-        Chat Support
+        Customer Support
       </Typography>
 
       <Grid
@@ -492,4 +492,4 @@ const Chat = () => {
   );
 };
 
-export default Chat;
+export default CustomerChatSupport;

@@ -4,17 +4,22 @@ import DashboardOverview from "./DashboardOverview";
 import OrdersManagement from "./OrdersManagement";
 import ProductsManagement from "./ProductsManagement";
 import CustomerManagement from "./CustomerManagement";
-import UpdatePassword from "../UpdatePassword";
+import { useNavigate } from "react-router-dom";
 import {
   Dashboard,
   ShoppingCart,
   Inventory,
   People,
-  Lock,
+  SupportAgent,
 } from "@mui/icons-material";
 
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState("DashboardOverview");
+  const navigate = useNavigate();
+
+  const handleAdminChatSupport = () => {
+    navigate("/admin-panel-chat-support");
+  };
 
   return (
     <Box sx={{ mt: 20, minHeight: "100vh", padding: "20px" }}>
@@ -135,8 +140,8 @@ const AdminPanel = () => {
         <Grid item>
           <Button
             variant="outlined"
-            startIcon={<Lock />}
-            onClick={() => setActiveSection("UpdatePassword")}
+            startIcon={<SupportAgent />}
+            onClick={() => handleAdminChatSupport()}
             sx={{
               minWidth: 180,
               borderRadius: "12px",
@@ -154,7 +159,7 @@ const AdminPanel = () => {
               transition: "all 0.3s ease",
             }}
           >
-            Update Password
+            Customer Support
           </Button>
         </Grid>
       </Grid>
@@ -164,7 +169,6 @@ const AdminPanel = () => {
       {activeSection === "OrdersManagement" && <OrdersManagement />}
       {activeSection === "ProductsManagement" && <ProductsManagement />}
       {activeSection === "CustomerManagement" && <CustomerManagement />}
-      {activeSection === "UpdatePassword" && <UpdatePassword />}
     </Box>
   );
 };

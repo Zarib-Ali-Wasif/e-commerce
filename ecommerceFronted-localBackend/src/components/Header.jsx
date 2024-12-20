@@ -22,7 +22,6 @@ import {
   MenuItem,
   Avatar,
 } from "@mui/material";
-import LockResetIcon from "@mui/icons-material/LockReset";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import LoginIcon from "@mui/icons-material/Login";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
@@ -35,6 +34,7 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import SettingsIcon from "@mui/icons-material/Settings";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "./../lib/redux/slices/authSlice";
 import { clearCart } from "./../lib/redux/slices/cartSlice";
@@ -150,6 +150,21 @@ function Header() {
                 />
               </ListItemButton>
             </ListItem>
+
+            {/* Show Admin Settings only if Admin and Authenticated */}
+            {userInfo.role === "Admin" && isAuthenticated && (
+              <ListItem>
+                <ListItemButton onClick={() => navigate("/admin-settings")}>
+                  <ListItemIcon sx={{ color: "#1C4771" }}>
+                    <SettingsIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Admin Settings"
+                    sx={{ color: "#1C4771" }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            )}
 
             {/* Logout Menu Item */}
             <ListItem>
@@ -368,6 +383,20 @@ function Header() {
                 </ListItemIcon>
                 {userInfo.role === "Admin" ? "Admin Panel" : "Manage Account"}
               </MenuItem>,
+              userInfo.role === "Admin" && (
+                <MenuItem
+                  key="admin-settings"
+                  onClick={() => {
+                    navigate("/admin-settings");
+                    handleClose();
+                  }}
+                >
+                  <ListItemIcon>
+                    <SettingsIcon sx={{ color: "#1C4771" }} />
+                  </ListItemIcon>
+                  Admin Settings
+                </MenuItem>
+              ),
               <MenuItem
                 key="logout"
                 onClick={() => {
