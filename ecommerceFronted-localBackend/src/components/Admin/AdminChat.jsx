@@ -232,258 +232,267 @@ const AdminChat = () => {
         ) : (
           <>
             {selectedUser && (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  border: "1px solid #ddd",
-                  borderTopLeftRadius: 10,
-                  borderTopRightRadius: 10,
-                  borderBottom: "1px solid #ddd",
-                  pb: 1,
-                }}
-              >
-                <Avatar
-                  src={userAvatar}
-                  alt="User Avatar"
-                  sx={{ width: 40, height: 40, mr: 2 }}
-                />
-                <Typography variant="h6" sx={{ fontWeight: 500 }}>
-                  {chatRooms
-                    .find((room) =>
-                      room.users.some((user) => user._id === selectedUser)
-                    )
-                    ?.users.find((user) => user._id === selectedUser)?.name ||
-                    "User"}
-                </Typography>
-              </Box>
-            )}
-
-            <Paper
-              sx={{
-                width: "100%",
-                maxHeight: "50vh",
-                overflowY: "auto",
-                borderRadius: 0,
-                borderBottomLeftRadius: 10,
-                borderBottomRightRadius: 10,
-                marginBottom: 2,
-                backgroundColor: theme.palette.grey[100], // Gray background for chat box
-                boxShadow: "0px 10px 15px rgba(0, 0, 0, 0.1)",
-                position: "relative",
-                zIndex: 1,
-                "&::-webkit-scrollbar": {
-                  width: "4px",
-                },
-                "&::-webkit-scrollbar-thumb": {
-                  backgroundColor: theme.palette.primary.main,
-                  borderRadius: "5px",
-                },
-              }}
-            >
-              {messages.map((msg) => (
+              <>
+                {/* Header */}
                 <Box
-                  key={msg._id || Math.random()}
                   sx={{
-                    marginBottom: 2,
                     display: "flex",
-                    justifyContent:
-                      msg.userId === "admin" ? "flex-end" : "flex-start",
+                    alignItems: "center",
+                    border: "1px solid #ddd",
+                    borderTopLeftRadius: 10,
+                    borderTopRightRadius: 10,
+                    borderBottom: "1px solid #ddd",
+                    padding: 1.5,
+                    backgroundColor: "#1c4771",
                   }}
                 >
-                  <Box
-                    sx={{
-                      my: 0.4,
-                      display: "flex",
-                      flexDirection: "row", // Default flex direction
-                      alignItems: "flex-start", // Align avatars and content to the top
-                      width: "100%", // Ensure full width to avoid horizontal scroll
-                    }}
-                  >
-                    {/* Admin's Avatar */}
-                    {msg.userId !== "admin" && (
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          gap: 0.6,
-                          px: 0.6,
-                        }}
-                      >
-                        <Avatar
-                          sx={{
-                            width: 20,
-                            height: 20,
-                            marginTop: 0.5, // Add margin below avatar for spacing
-                          }}
-                          src={userAvatar}
-                        />
-                        {/* Admin's Content */}
-                        <Box
-                          sx={{
-                            display: "inline-block",
-                            maxWidth: "70%",
-                            py: 0.5,
-                            px: 1.5,
-                            borderRadius: 2,
-                            backgroundColor: theme.palette.grey[200],
-                            color: "#000",
-                            position: "relative",
-                            zIndex: 1,
-                            marginTop: 0.5, // Add space above content
-                          }}
-                        >
-                          <Typography variant="body1">{msg.content}</Typography>
-                          <Typography
-                            sx={{
-                              fontSize: "0.8rem",
-                              color: theme.palette.grey[500],
-                              textAlign: "right",
-                            }}
-                          >
-                            {new Date(msg.createdAt).toLocaleTimeString(
-                              "en-US",
-                              {
-                                hour: "numeric",
-                                minute: "numeric",
-                              }
-                            )}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    )}
+                  <Avatar
+                    src={userAvatar}
+                    alt="User Avatar"
+                    sx={{ width: 40, height: 40, mr: 2 }}
+                  />
+                  <Typography variant="h6" sx={{ fontWeight: 500 }}>
+                    {chatRooms
+                      .find((room) =>
+                        room.users.some((user) => user._id === selectedUser)
+                      )
+                      ?.users.find((user) => user._id === selectedUser)?.name ||
+                      "User"}
+                  </Typography>
+                </Box>
 
-                    {/* User's Box  */}
-                    {msg.userId === "admin" && (
+                {/* Chat Box Content */}
+                <Paper
+                  sx={{
+                    width: "100%",
+                    maxHeight: "50vh",
+                    overflowY: "auto",
+                    borderRadius: 0,
+                    borderBottomLeftRadius: 10,
+                    borderBottomRightRadius: 10,
+                    marginBottom: 2,
+                    backgroundColor: theme.palette.grey[100], // Gray background for chat box
+                    boxShadow: "0px 10px 15px rgba(0, 0, 0, 0.1)",
+                    position: "relative",
+                    zIndex: 1,
+                    "&::-webkit-scrollbar": {
+                      width: "4px",
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: theme.palette.primary.main,
+                      borderRadius: "5px",
+                    },
+                  }}
+                >
+                  {messages.map((msg) => (
+                    <Box
+                      key={msg._id || Math.random()}
+                      sx={{
+                        marginBottom: 2,
+                        display: "flex",
+                        justifyContent:
+                          msg.userId === "admin" ? "flex-end" : "flex-start",
+                      }}
+                    >
                       <Box
                         sx={{
+                          my: 0.4,
                           display: "flex",
-                          justifyContent: "flex-end",
-                          width: "100%",
+                          flexDirection: "row", // Default flex direction
+                          alignItems: "flex-start", // Align avatars and content to the top
+                          width: "100%", // Ensure full width to avoid horizontal scroll
                         }}
                       >
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "flex-end",
-                            justifyContent: "flex-end",
-                            gap: 0.5,
-                            px: 0.6,
-                          }}
-                        >
-                          {/* User's Content */}
+                        {/* Admin's Avatar */}
+                        {msg.userId !== "admin" && (
                           <Box
                             sx={{
-                              display: "inline-block",
-                              maxWidth: "70%",
-                              py: 0.5,
-                              px: 1.5,
-                              borderRadius: 2,
-                              backgroundColor: theme.palette.primary.main,
-                              color: "#fff",
-                              position: "relative",
-                              zIndex: 1,
-                              marginBottom: 0.5, // Add space below content
+                              display: "flex",
+                              alignItems: "flex-start",
+                              gap: 0.6,
+                              px: 0.6,
                             }}
                           >
-                            <Typography variant="body1">
-                              {msg.content}{" "}
-                            </Typography>
-                            <Typography
+                            <Avatar
                               sx={{
-                                fontSize: "0.8rem",
-                                color: theme.palette.grey[500],
-                                textAlign: "right",
+                                width: 20,
+                                height: 20,
+                                marginTop: 0.5, // Add margin below avatar for spacing
+                              }}
+                              src={userAvatar}
+                            />
+                            {/* Admin's Content */}
+                            <Box
+                              sx={{
+                                display: "inline-block",
+                                maxWidth: "70%",
+                                py: 0.5,
+                                px: 1.5,
+                                borderRadius: 2,
+                                backgroundColor: theme.palette.grey[200],
+                                color: "#000",
+                                position: "relative",
+                                zIndex: 1,
+                                marginTop: 0.5, // Add space above content
                               }}
                             >
-                              {new Date(msg.createdAt).toLocaleTimeString(
-                                "en-US",
-                                { hour: "numeric", minute: "numeric" }
-                              )}
-                            </Typography>
+                              <Typography variant="body1">
+                                {msg.content}
+                              </Typography>
+                              <Typography
+                                sx={{
+                                  fontSize: "0.8rem",
+                                  color: theme.palette.grey[500],
+                                  textAlign: "right",
+                                }}
+                              >
+                                {new Date(msg.createdAt).toLocaleTimeString(
+                                  "en-US",
+                                  {
+                                    hour: "numeric",
+                                    minute: "numeric",
+                                  }
+                                )}
+                              </Typography>
+                            </Box>
                           </Box>
+                        )}
 
-                          {/* User's Avatar */}
-                          <Avatar
+                        {/* User's Box  */}
+                        {msg.userId === "admin" && (
+                          <Box
                             sx={{
-                              width: 20,
-                              height: 20,
-                              marginBottom: 0.5, // Add margin below avatar for spacing
+                              display: "flex",
+                              justifyContent: "flex-end",
+                              width: "100%",
                             }}
-                            src={adminAvatar}
-                          />
-                        </Box>
+                          >
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "flex-end",
+                                justifyContent: "flex-end",
+                                gap: 0.5,
+                                px: 0.6,
+                              }}
+                            >
+                              {/* User's Content */}
+                              <Box
+                                sx={{
+                                  display: "inline-block",
+                                  maxWidth: "70%",
+                                  py: 0.5,
+                                  px: 1.5,
+                                  borderRadius: 2,
+                                  backgroundColor: theme.palette.primary.main,
+                                  color: "#fff",
+                                  position: "relative",
+                                  zIndex: 1,
+                                  marginBottom: 0.5, // Add space below content
+                                }}
+                              >
+                                <Typography variant="body1">
+                                  {msg.content}{" "}
+                                </Typography>
+                                <Typography
+                                  sx={{
+                                    fontSize: "0.8rem",
+                                    color: theme.palette.grey[500],
+                                    textAlign: "right",
+                                  }}
+                                >
+                                  {new Date(msg.createdAt).toLocaleTimeString(
+                                    "en-US",
+                                    { hour: "numeric", minute: "numeric" }
+                                  )}
+                                </Typography>
+                              </Box>
+
+                              {/* User's Avatar */}
+                              <Avatar
+                                sx={{
+                                  width: 20,
+                                  height: 20,
+                                  marginBottom: 0.5, // Add margin below avatar for spacing
+                                }}
+                                src={adminAvatar}
+                              />
+                            </Box>
+                          </Box>
+                        )}
                       </Box>
-                    )}
-                  </Box>
+                    </Box>
+                  ))}
+
+                  <div ref={messagesEndRef} />
+                </Paper>
+
+                {/* Chat Input */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    width: "100%",
+                    alignItems: "center",
+                    px: 0.5,
+                    gap: 1,
+                    mt: 4,
+                  }}
+                >
+                  <TextField
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder="Type a message..."
+                    variant="outlined"
+                    fullWidth
+                    sx={{
+                      backgroundColor: theme.palette.common.white,
+                      borderRadius: 2,
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "10px",
+                      },
+                      "&:focus": {
+                        backgroundColor: theme.palette.grey[50],
+                      },
+                    }}
+                    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton>
+                            <AttachFile />
+                          </IconButton>
+                          <IconButton>
+                            <PhotoCamera />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <Button
+                    onClick={sendMessage}
+                    variant="contained"
+                    color="primary"
+                    sx={{
+                      borderRadius: "50% / 70%",
+                      width: 50,
+                      height: 50,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      cursor: "pointer",
+                      "&:disabled": {
+                        backgroundColor:
+                          theme.palette.action.disabledBackground,
+                        color: theme.palette.action.disabled,
+                      },
+                    }}
+                    disabled={!newMessage.trim()}
+                  >
+                    <Send />
+                  </Button>
                 </Box>
-              ))}
-
-              <div ref={messagesEndRef} />
-            </Paper>
-
-            <Box
-              sx={{
-                display: "flex",
-                width: "100%",
-                alignItems: "center",
-                px: 0.5,
-                gap: 1,
-                mt: 4,
-              }}
-            >
-              <TextField
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type a message..."
-                variant="outlined"
-                fullWidth
-                sx={{
-                  backgroundColor: theme.palette.common.white,
-                  borderRadius: 2,
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "10px",
-                  },
-                  "&:focus": {
-                    backgroundColor: theme.palette.grey[50],
-                  },
-                }}
-                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton>
-                        <AttachFile />
-                      </IconButton>
-                      <IconButton>
-                        <PhotoCamera />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <Button
-                onClick={sendMessage}
-                variant="contained"
-                color="primary"
-                sx={{
-                  borderRadius: "50% / 70%",
-                  width: 50,
-                  height: 50,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  "&:disabled": {
-                    backgroundColor: theme.palette.action.disabledBackground,
-                    color: theme.palette.action.disabled,
-                  },
-                }}
-                disabled={!newMessage.trim()}
-              >
-                <Send />
-              </Button>
-            </Box>
+              </>
+            )}
           </>
         )}
       </Box>
