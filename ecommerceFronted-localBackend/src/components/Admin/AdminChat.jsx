@@ -182,7 +182,7 @@ const AdminChat = () => {
         {/* Header */}
         <Box
           sx={{
-            padding: "24px 16px",
+            padding: "28px 16px",
             background: "linear-gradient(90deg, #1C4771, #27649D)",
             color: "#FFF",
             textAlign: "center",
@@ -204,7 +204,7 @@ const AdminChat = () => {
         {/* Chat rooms list */}
         <List
           sx={{
-            padding: "8px",
+            padding: "4px",
             overflowY: "auto",
             "&::-webkit-scrollbar": {
               width: "6px",
@@ -233,7 +233,7 @@ const AdminChat = () => {
                   borderRadius: "8px",
                   transition: "all 0.3s",
                   "&:hover": {
-                    backgroundColor: "#EDF4FF",
+                    backgroundColor: "#EDF4FF", // Optional hover effect on the whole item
                   },
                   "&.Mui-selected": {
                     backgroundColor: "#1C4771",
@@ -264,8 +264,10 @@ const AdminChat = () => {
                       sx={{
                         display: "flex",
                         flexDirection: "column",
+                        alignItems: "flex-start",
+                        width: "100%",
                         "&:hover .email": {
-                          visibility: "visible", // Show email on hover of the entire Box
+                          display: "block", // Show the email on hover
                         },
                       }}
                     >
@@ -283,8 +285,9 @@ const AdminChat = () => {
                           fontSize: "0.9rem",
                           color:
                             selectedRoom === room._id ? "#E0E0E0" : "#6A6A6A",
-                          visibility: "hidden", // Initially hide the email
-                          transition: "visibility 0.3s ease",
+                          display: "none", // Hide the email by default
+                          transition: "all 0.3s ease",
+                          // marginTop: "4px", // Optional: Adds space between the name and email
                         }}
                       >
                         {room.users[0].email}
