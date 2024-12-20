@@ -173,25 +173,85 @@ const AdminChat = () => {
       {/* Sidebar for chat rooms */}
       <Box
         sx={{
-          width: "20%",
+          width: "22%",
+          position: "fixed",
           borderRight: "1px solid #ddd",
+          backgroundColor: "#F3F6FA",
+          boxShadow: "2px 0 5px rgba(0, 0, 0, 0.1)",
           overflowY: "auto",
-          backgroundColor: "#f9f9f9",
+          height: "100vh",
+          "&::-webkit-scrollbar": {
+            width: "6px",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "#1C4771",
+            borderRadius: "10px",
+          },
         }}
       >
-        <Typography variant="h5" sx={{ my: 4, textAlign: "center" }}>
-          Chat Rooms
-        </Typography>
+        {/* Header */}
+        <Box
+          sx={{
+            padding: "16px",
+            background: "linear-gradient(90deg, #1C4771, #27649D)",
+            color: "#FFF",
+            textAlign: "center",
+            borderBottom: "2px solid #ddd",
+          }}
+        >
+          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+            Chat Rooms
+          </Typography>
+        </Box>
+
         {loading ? (
-          <CircularProgress />
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              mt: 4,
+            }}
+          >
+            <CircularProgress sx={{ color: "#1C4771" }} />
+          </Box>
         ) : error ? (
-          <Typography color="error">{error}</Typography>
+          <Typography
+            color="error"
+            sx={{
+              padding: "16px",
+              textAlign: "center",
+              fontStyle: "italic",
+              fontSize: "1.1rem",
+            }}
+          >
+            {error}
+          </Typography>
         ) : (
-          <List>
+          <List sx={{ padding: "8px" }}>
             {chatRooms.map((room) => (
-              <ListItem key={room._id} disablePadding>
+              <ListItem
+                key={room._id}
+                disablePadding
+                sx={{
+                  marginBottom: "8px",
+                  borderRadius: "8px",
+                  "&:hover": {
+                    backgroundColor: "#EDF4FF",
+                  },
+                }}
+              >
                 <ListItemButton
-                  sx={{ borderRadius: "8px" }}
+                  sx={{
+                    borderRadius: "8px",
+                    transition: "all 0.3s",
+                    "&.Mui-selected": {
+                      backgroundColor: "#1C4771",
+                      color: "#FFF",
+                      "&:hover": {
+                        backgroundColor: "#27649D",
+                      },
+                    },
+                  }}
                   selected={selectedRoom === room._id}
                   onClick={() => selectUserRoom(room.users[0]._id)}
                 >
@@ -199,11 +259,35 @@ const AdminChat = () => {
                     <Avatar
                       alt={room.users[0].name}
                       src={room.users[0].avatar}
+                      sx={{
+                        width: 50,
+                        height: 50,
+                        border: "2px solid #1C4771",
+                      }}
                     />
                   </ListItemAvatar>
                   <ListItemText
-                    primary={room.users[0].name} // Display user name instead of room ID
-                    secondary={`${room.users[0].email}`} // You can also display email or other info here
+                    primary={
+                      <Typography
+                        sx={{
+                          fontWeight: "bold",
+                          color: selectedRoom === room._id ? "#FFF" : "#1C4771",
+                        }}
+                      >
+                        {room.users[0].name}
+                      </Typography>
+                    }
+                    secondary={
+                      <Typography
+                        sx={{
+                          fontSize: "0.9rem",
+                          color:
+                            selectedRoom === room._id ? "#E0E0E0" : "#6A6A6A",
+                        }}
+                      >
+                        {room.users[0].email}
+                      </Typography>
+                    }
                   />
                 </ListItemButton>
               </ListItem>
