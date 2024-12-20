@@ -232,6 +232,9 @@ const AdminChat = () => {
                   gap: "8px",
                   borderRadius: "8px",
                   transition: "all 0.3s",
+                  "&:hover": {
+                    backgroundColor: "#EDF4FF",
+                  },
                   "&.Mui-selected": {
                     backgroundColor: "#1C4771",
                     color: "#FFF",
@@ -254,27 +257,39 @@ const AdminChat = () => {
                     }}
                   />
                 </ListItemAvatar>
+
                 <ListItemText
                   primary={
-                    <Typography
+                    <Box
                       sx={{
-                        fontWeight: "bold",
-                        color: selectedRoom === room._id ? "#FFF" : "#1C4771",
+                        display: "flex",
+                        flexDirection: "column",
+                        "&:hover .email": {
+                          visibility: "visible", // Show email on hover of the entire Box
+                        },
                       }}
                     >
-                      {room.users[0].name}
-                    </Typography>
-                  }
-                  secondary={
-                    <Typography
-                      sx={{
-                        fontSize: "0.9rem",
-                        color:
-                          selectedRoom === room._id ? "#E0E0E0" : "#6A6A6A",
-                      }}
-                    >
-                      {room.users[0].email}
-                    </Typography>
+                      <Typography
+                        sx={{
+                          fontWeight: "bold",
+                          color: selectedRoom === room._id ? "#FFF" : "#1C4771",
+                        }}
+                      >
+                        {room.users[0].name}
+                      </Typography>
+                      <Typography
+                        className="email"
+                        sx={{
+                          fontSize: "0.9rem",
+                          color:
+                            selectedRoom === room._id ? "#E0E0E0" : "#6A6A6A",
+                          visibility: "hidden", // Initially hide the email
+                          transition: "visibility 0.3s ease",
+                        }}
+                      >
+                        {room.users[0].email}
+                      </Typography>
+                    </Box>
                   }
                 />
               </ListItemButton>
