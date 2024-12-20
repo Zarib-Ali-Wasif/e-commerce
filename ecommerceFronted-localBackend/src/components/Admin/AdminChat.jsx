@@ -213,19 +213,27 @@ const AdminChat = () => {
       </Box>
 
       {/* Chat Box */}
-
       <Box
         sx={{
           width: { xs: "100%", sm: "80%", md: "50%" },
           margin: "auto",
+          backgroundColor: "#F9F9F9",
+          borderRadius: 2,
+          overflow: "hidden",
+          boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
         }}
       >
         {loading ? (
-          <CircularProgress sx={{ marginTop: 2 }} />
+          <CircularProgress sx={{ marginTop: 2, color: "#1C4771" }} />
         ) : error ? (
           <Typography
             color="error"
-            sx={{ marginTop: 2, fontStyle: "italic", fontSize: "1.1rem" }}
+            sx={{
+              marginTop: 2,
+              fontStyle: "italic",
+              fontSize: "1.1rem",
+              textAlign: "center",
+            }}
           >
             {error}
           </Typography>
@@ -238,18 +246,17 @@ const AdminChat = () => {
                   sx={{
                     display: "flex",
                     alignItems: "center",
-                    border: "1px solid #ddd",
+                    padding: 2,
+                    background: "linear-gradient(90deg, #1C4771, #27649D)",
+                    color: "#FFF",
                     borderTopLeftRadius: 10,
                     borderTopRightRadius: 10,
-                    borderBottom: "1px solid #ddd",
-                    padding: 1.5,
-                    backgroundColor: "#1c4771",
                   }}
                 >
                   <Avatar
                     src={userAvatar}
                     alt="User Avatar"
-                    sx={{ width: 40, height: 40, mr: 2 }}
+                    sx={{ width: 50, height: 50, mr: 2 }}
                   />
                   <Typography variant="h6" sx={{ fontWeight: 500 }}>
                     {chatRooms
@@ -261,26 +268,19 @@ const AdminChat = () => {
                   </Typography>
                 </Box>
 
-                {/* Chat Box Content */}
+                {/* Chat Content */}
                 <Paper
                   sx={{
-                    width: "100%",
                     maxHeight: "50vh",
                     overflowY: "auto",
-                    borderRadius: 0,
-                    borderBottomLeftRadius: 10,
-                    borderBottomRightRadius: 10,
-                    marginBottom: 2,
-                    backgroundColor: theme.palette.grey[100], // Gray background for chat box
-                    boxShadow: "0px 10px 15px rgba(0, 0, 0, 0.1)",
-                    position: "relative",
-                    zIndex: 1,
+                    backgroundColor: "#FAFAFA",
+                    padding: 2,
                     "&::-webkit-scrollbar": {
-                      width: "4px",
+                      width: "6px",
                     },
                     "&::-webkit-scrollbar-thumb": {
-                      backgroundColor: theme.palette.primary.main,
-                      borderRadius: "5px",
+                      background: "linear-gradient(90deg, #1C4771, #27649D)",
+                      borderRadius: "10px",
                     },
                   }}
                 >
@@ -288,10 +288,10 @@ const AdminChat = () => {
                     <Box
                       key={msg._id || Math.random()}
                       sx={{
-                        marginBottom: 2,
                         display: "flex",
                         justifyContent:
                           msg.userId === "admin" ? "flex-end" : "flex-start",
+                        mb: 2,
                       }}
                     >
                       <Box
@@ -384,8 +384,8 @@ const AdminChat = () => {
                                   py: 0.5,
                                   px: 1.5,
                                   borderRadius: 2,
-                                  backgroundColor: theme.palette.primary.main,
-                                  color: "#fff",
+                                  backgroundColor: "#E0F0FF",
+                                  color: "#000",
                                   position: "relative",
                                   zIndex: 1,
                                   marginBottom: 0.5, // Add space below content
@@ -423,19 +423,19 @@ const AdminChat = () => {
                       </Box>
                     </Box>
                   ))}
-
                   <div ref={messagesEndRef} />
                 </Paper>
 
-                {/* Chat Input */}
+                {/* Input Section */}
                 <Box
                   sx={{
                     display: "flex",
-                    width: "100%",
+                    maxWidth: "100%",
                     alignItems: "center",
-                    px: 0.5,
-                    gap: 1,
-                    mt: 4,
+                    padding: 2,
+                    backgroundColor: "#FFF",
+                    borderTop: "1px solid #E0E0E0",
+                    gap: 2,
                   }}
                 >
                   <TextField
@@ -445,14 +445,10 @@ const AdminChat = () => {
                     variant="outlined"
                     fullWidth
                     sx={{
-                      backgroundColor: theme.palette.common.white,
-                      borderRadius: 2,
                       "& .MuiOutlinedInput-root": {
-                        borderRadius: "10px",
+                        borderRadius: "25px",
                       },
-                      "&:focus": {
-                        backgroundColor: theme.palette.grey[50],
-                      },
+                      backgroundColor: "#F9F9F9",
                     }}
                     onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                     InputProps={{
@@ -471,8 +467,8 @@ const AdminChat = () => {
                   <Button
                     onClick={sendMessage}
                     variant="contained"
-                    color="primary"
                     sx={{
+                      backgroundColor: "#1C4771",
                       borderRadius: "50% / 70%",
                       width: 50,
                       height: 50,
@@ -484,6 +480,9 @@ const AdminChat = () => {
                         backgroundColor:
                           theme.palette.action.disabledBackground,
                         color: theme.palette.action.disabled,
+                      },
+                      "&:hover": {
+                        backgroundColor: "#27649D",
                       },
                     }}
                     disabled={!newMessage.trim()}
