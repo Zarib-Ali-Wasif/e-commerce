@@ -303,7 +303,7 @@ const CustomerChatSupport = () => {
                       }}
                     >
                       {/* Admin's Avatar */}
-                      {msg.userId !== "admin" && (
+                      {msg.userId === "admin" && (
                         <Box
                           sx={{
                             display: "flex",
@@ -357,7 +357,7 @@ const CustomerChatSupport = () => {
                       )}
 
                       {/* User's Box */}
-                      {msg.userId === "admin" && (
+                      {msg.userId !== "admin" && (
                         <Box
                           sx={{
                             display: "flex",
@@ -410,7 +410,7 @@ const CustomerChatSupport = () => {
                                 height: 20,
                                 marginBottom: 0.5,
                               }}
-                              src={adminAvatar}
+                              src={userAvatar}
                             />
                           </Box>
                         </Box>
