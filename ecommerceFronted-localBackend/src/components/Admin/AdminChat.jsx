@@ -173,28 +173,22 @@ const AdminChat = () => {
       {/* Sidebar for chat rooms */}
       <Box
         sx={{
+          display: "flex",
+          flexDirection: "column",
           width: "22%",
-          borderRight: "1px solid #ddd",
           backgroundColor: "#F3F6FA",
-          boxShadow: "2px 0 5px rgba(0, 0, 0, 0.1)",
-          overflowY: "auto",
-          "&::-webkit-scrollbar": {
-            width: "6px",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            background: "linear-gradient(90deg, #1C4771, #27649D)",
-            borderRadius: "10px",
-          },
         }}
       >
         {/* Header */}
         <Box
           sx={{
-            padding: "16px",
+            padding: "24px 16px",
             background: "linear-gradient(90deg, #1C4771, #27649D)",
             color: "#FFF",
             textAlign: "center",
-            position: "fixed",
+            position: "sticky",
+            top: 0, // Ensure the header stays at the top
+            zIndex: 10, // To make sure it's above other elements
           }}
         >
           <Typography
@@ -206,20 +200,21 @@ const AdminChat = () => {
             Customer Inquiries
           </Typography>
         </Box>
-        {/* 
-        <Typography
-          color="error"
+
+        {/* Chat rooms list */}
+        <List
           sx={{
-            padding: "16px",
-            textAlign: "center",
-            fontStyle: "italic",
-            fontSize: "1.1rem",
+            padding: "8px",
+            overflowY: "auto",
+            "&::-webkit-scrollbar": {
+              width: "6px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              background: "linear-gradient(90deg, #1C4771, #27649D)",
+              borderRadius: "10px",
+            },
           }}
         >
-          {error}
-        </Typography> */}
-
-        <List sx={{ padding: "8px" }}>
           {chatRooms.map((room) => (
             <ListItem
               key={room._id}
@@ -234,6 +229,7 @@ const AdminChat = () => {
             >
               <ListItemButton
                 sx={{
+                  gap: "8px",
                   borderRadius: "8px",
                   transition: "all 0.3s",
                   "&.Mui-selected": {
