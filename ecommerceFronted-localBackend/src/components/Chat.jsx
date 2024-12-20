@@ -36,7 +36,11 @@ const Chat = () => {
   useEffect(() => {
     const fetchOrCreateRoom = async () => {
       try {
-        if (!userId) throw new Error("User ID not found in local storage.");
+        if (!userId) {
+          console.error("User ID not found in local storage.");
+          alert("User ID not found in local storage.");
+          return;
+        }
 
         setLoading(true);
         setError(null);
@@ -44,19 +48,51 @@ const Chat = () => {
           `http://localhost:3000/chat/user/${userId}`
         );
 
-        setUserAvatar(
-          response.data.length != 0
-            ? response.data.users.find(
-                (user) => user.role === "User" && user._id === userId
-              ).avatar
-            : null
-        );
-        setAdminAvatar(
-          response.data.length != 0
-            ? response.data.users.find((user) => user.role === "Admin").avatar
-            : null
-        );
-        setRoomId(response.data._id); // Assuming the API returns the room ID as `_id`
+        if (response.data.length != 0) {
+          setUserAvatar(
+            response.data.users.find(
+              (user) => user.role === "User" && user._id === userId
+            ).avatar
+          );
+          setAdminAvatar(
+            response.data.users.find((user) => user.role === "Admin").avatar
+          );
+          setRoomId(response.data._id); // Assuming the API returns the room ID as `_id`
+        } else {
+          // If no room is found, create one
+          const createRoom = async () => {
+            try {
+              const response = await axios.post(
+                `http://localhost:3000/chat/user/${userId}`,
+                {
+                  users: [
+                    {
+                      _id: userId,
+                      role: "User",
+                    },
+                    {
+                      _id: "admin",
+                      role: "Admin",
+                    },
+                  ],
+                }
+              );
+
+              setUserAvatar(
+                response.data.users.find((user) => user.role === "User").avatar
+              );
+              setAdminAvatar(
+                response.data.users.find((user) => user.role === "Admin").avatar
+              );
+              setRoomId(response.data._id); // Assuming the API returns the room ID as `_id`
+            } catch (err) {
+              console.error("Error creating room:", err);
+              setError("Failed to create chat room. Please try again.");
+            }
+          };
+
+          createRoom();
+        }
       } catch (err) {
         console.error("Error fetching/creating room:", err);
         setError("Failed to fetch or create chat room. Please try again.");
@@ -174,7 +210,7 @@ const Chat = () => {
 
       <Box
         sx={{
-          maxWidth: { xs: "100%", sm: "80%", md: "50%" },
+          width: { xs: "100%", sm: "80%", md: "50%" },
           margin: "auto",
         }}
       >
@@ -292,6 +328,7 @@ const Chat = () => {
                           alignItems: "flex-end",
                           justifyContent: "flex-end",
                           gap: 0.5,
+                          paddingTop: 0.5,
                         }}
                       >
                         {/* User's Content */}

@@ -42,7 +42,6 @@ const AdminChat = () => {
       try {
         setLoading(true);
         const response = await axios.get("http://localhost:3000/chat/all");
-        console.log("Chat rooms:", response.data);
         setChatRooms(response.data);
         setLoading(false);
       } catch (err) {
@@ -216,7 +215,7 @@ const AdminChat = () => {
       {/* Chat Box */}
       <Box
         sx={{
-          maxWidth: { xs: "100%", sm: "80%", md: "50%" },
+          width: { xs: "100%", sm: "80%", md: "50%" },
           margin: "auto",
         }}
       >
@@ -271,7 +270,7 @@ const AdminChat = () => {
                   }}
                 >
                   {/* Admin's Avatar */}
-                  {msg.userId === "admin" && (
+                  {msg.userId !== "admin" && (
                     <Box
                       sx={{
                         display: "flex",
@@ -285,7 +284,7 @@ const AdminChat = () => {
                           height: 20,
                           marginTop: 0.5, // Add margin below avatar for spacing
                         }}
-                        src={adminAvatar}
+                        src={userAvatar}
                       />
                       {/* Admin's Content */}
                       <Box
@@ -320,7 +319,7 @@ const AdminChat = () => {
                   )}
 
                   {/* User's Content */}
-                  {msg.userId !== "admin" && (
+                  {msg.userId === "admin" && (
                     <Box
                       sx={{
                         display: "flex",
@@ -375,7 +374,7 @@ const AdminChat = () => {
                             height: 20,
                             marginBottom: 0.5, // Add margin below avatar for spacing
                           }}
-                          src={userAvatar}
+                          src={adminAvatar}
                         />
                       </Box>
                     </Box>
