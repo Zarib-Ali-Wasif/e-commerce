@@ -169,7 +169,6 @@ const AdminChatSupport = () => {
         display: "flex",
         marginTop: 15,
         height: "85vh",
-        overflow: "auto",
         width: "100%",
       }}
     >
@@ -213,7 +212,9 @@ const AdminChatSupport = () => {
           <List
             sx={{
               padding: "4px",
+              height: "74vh",
               overflowY: "auto",
+              overflowX: "hidden",
               "&::-webkit-scrollbar": {
                 width: "6px",
               },
@@ -326,7 +327,6 @@ const AdminChatSupport = () => {
         <Box
           sx={{
             width: { xs: "100%", sm: "80%" },
-            // width: "78%",
             margin: "auto",
             backgroundColor: "#F9F9F9",
             borderRadius: 2,
