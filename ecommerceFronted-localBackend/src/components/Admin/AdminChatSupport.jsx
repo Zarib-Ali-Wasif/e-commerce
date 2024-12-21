@@ -22,7 +22,8 @@ import {
 import { useTheme } from "@mui/material/styles";
 import { AttachFile, PhotoCamera, Send } from "@mui/icons-material";
 
-const socket = io("http://localhost:3000"); // Update with your backend URL.
+const API_URL = import.meta.env.VITE_API_URL;
+const socket = io(API_URL); // Update with your backend URL.
 
 const AdminChatSupport = () => {
   const theme = useTheme(); // Using Material UI theme
@@ -44,7 +45,7 @@ const AdminChatSupport = () => {
     const fetchAndJoinChatRooms = async () => {
       try {
         setListLoading(true);
-        const response = await axios.get("http://localhost:3000/chat/all");
+        const response = await axios.get(`${API_URL}chat/all`);
         const rooms = response.data;
         setChatRooms(rooms);
 
@@ -96,9 +97,7 @@ const AdminChatSupport = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.post(
-        `http://localhost:3000/chat/user/${userId}`
-      );
+      const response = await axios.post(`${API_URL}chat/user/${userId}`);
       setUserAvatar(
         response.data.length != 0
           ? response.data.users.find(
@@ -131,9 +130,7 @@ const AdminChatSupport = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await axios.get(
-          `http://localhost:3000/chat/room/${selectedRoom}`
-        );
+        const response = await axios.get(`${API_URL}chat/room/${selectedRoom}`);
         setMessages(
           response.data.length != 0
             ? response.data

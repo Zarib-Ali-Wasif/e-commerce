@@ -17,7 +17,8 @@ import {
 import { useTheme } from "@mui/material/styles";
 import { AttachFile, PhotoCamera, Send } from "@mui/icons-material";
 
-const socket = io("http://localhost:3000"); // Replace with your backend URL.
+const API_URL = import.meta.env.VITE_API_URL;
+const socket = io(API_URL); // Replace with your backend URL.
 
 const CustomerChatSupport = () => {
   const theme = useTheme(); // Using Material UI theme
@@ -45,9 +46,7 @@ const CustomerChatSupport = () => {
 
         setLoading(true);
         setError(null);
-        const response = await axios.post(
-          `http://localhost:3000/chat/user/${userId}`
-        );
+        const response = await axios.post(`${API_URL}chat/user/${userId}`);
 
         if (response.data.messages.length !== 0) {
           // Room already exists
@@ -62,7 +61,7 @@ const CustomerChatSupport = () => {
         } else {
           // No room found, create a new one
           const createResponse = await axios.post(
-            `http://localhost:3000/chat/user/${userId}`,
+            `${API_URL}chat/user/${userId}`,
             {
               users: [
                 { _id: userId, role: "User" },
@@ -104,9 +103,7 @@ const CustomerChatSupport = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await axios.get(
-          `http://localhost:3000/chat/room/${roomId}`
-        );
+        const response = await axios.get(`${API_URL}chat/room/${roomId}`);
         setMessages(
           response.data.length != 0
             ? response.data
