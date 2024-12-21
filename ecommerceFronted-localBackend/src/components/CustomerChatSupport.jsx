@@ -39,7 +39,7 @@ const CustomerChatSupport = () => {
       try {
         if (!userId) {
           console.error("User ID not found in local storage.");
-          alert("User ID not found in local storage.");
+          setError("User ID not found in local storage.");
           return;
         }
 
@@ -70,8 +70,6 @@ const CustomerChatSupport = () => {
               ],
             }
           );
-
-          console.log("Room Created Response:", createResponse);
 
           const user = createResponse.data.users.find(
             (u) => u.role === "User" && u._id === userId
