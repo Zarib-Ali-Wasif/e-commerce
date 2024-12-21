@@ -17,6 +17,7 @@ import {
   InputAdornment,
   IconButton,
   Grid,
+  Badge,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { AttachFile, PhotoCamera, Send } from "@mui/icons-material";
@@ -34,20 +35,22 @@ const AdminChatSupport = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [listLoading, setListLoading] = useState(false);
   const [error, setError] = useState("");
+  const [unreadMessages, setUnreadMessages] = useState({}); // Keeps track of unread messages by room ID
   const messagesEndRef = useRef(null); // Reference for auto-scroll
 
   // Fetch chat rooms
   useEffect(() => {
     const fetchChatRooms = async () => {
       try {
-        setLoading(true);
+        setListLoading(true);
         const response = await axios.get("http://localhost:3000/chat/all");
         setChatRooms(response.data);
-        setLoading(false);
+        setListLoading(false);
       } catch (err) {
         setError("Failed to fetch chat rooms. Please try again later.");
-        setLoading(false);
+        setListLoading(false);
       }
     };
     fetchChatRooms();
@@ -74,7 +77,11 @@ const AdminChatSupport = () => {
           ? response.data.users.find((user) => user.role === "Admin").avatar
           : null
       );
-      setSelectedRoom(response.data._id); // Assuming the API returns the room ID as `_id`
+      const roomId = response.data._id;
+      setSelectedRoom(roomId);
+
+      // Reset unread messages for the selected room
+      setUnreadMessages((prev) => ({ ...prev, [roomId]: 0 }));
     } catch (err) {
       console.error("Error fetching/creating room:", err);
       setError("Failed to fetch or create chat room. Please try again.");
@@ -119,13 +126,22 @@ const AdminChatSupport = () => {
   useEffect(() => {
     if (selectedRoom) {
       socket.emit("joinRoom", selectedRoom);
+
       const handleNewMessage = (message) => {
         if (message.roomId === selectedRoom) {
           setMessages((prev) => [...prev, message]);
           scrollToBottom();
+        } else {
+          // Increment unread messages for other rooms
+          setUnreadMessages((prev) => ({
+            ...prev,
+            [message.roomId]: (prev[message.roomId] || 0) + 1,
+          }));
         }
       };
+
       socket.on("newMessage", handleNewMessage);
+
       return () => {
         socket.off("newMessage", handleNewMessage);
         socket.emit("leaveRoom", selectedRoom);
@@ -224,90 +240,120 @@ const AdminChatSupport = () => {
               },
             }}
           >
-            {chatRooms.map((room) => (
-              <ListItem
-                key={room._id}
-                disablePadding
-                sx={{
-                  marginBottom: "8px",
-                  borderRadius: "8px",
-                  "&:hover": {
-                    backgroundColor: "#EDF4FF",
-                  },
-                }}
+            {listLoading ? (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                height="100%"
               >
-                <ListItemButton
+                <CircularProgress sx={{ color: "#1C4771" }} />
+              </Box>
+            ) : (
+              chatRooms.map((room) => (
+                <ListItem
+                  key={room._id}
+                  disablePadding
                   sx={{
-                    gap: "8px",
+                    marginBottom: "8px",
                     borderRadius: "8px",
-                    transition: "all 0.3s",
                     "&:hover": {
-                      backgroundColor: "#EDF4FF", // Optional hover effect on the whole item
-                    },
-                    "&.Mui-selected": {
-                      backgroundColor: "#1C4771",
-                      color: "#FFF",
-                      "&:hover": {
-                        backgroundColor: "#27649D",
-                      },
+                      backgroundColor: "#EDF4FF",
                     },
                   }}
-                  selected={selectedRoom === room._id}
-                  onClick={() => selectUserRoom(room.users[0]._id)}
                 >
-                  <ListItemAvatar>
-                    <Avatar
-                      alt={room.users[0].name}
-                      src={room.users[0].avatar}
-                      sx={{
-                        width: 50,
-                        height: 50,
-                        border: "2px solid #1C4771",
-                      }}
-                    />
-                  </ListItemAvatar>
-
-                  <ListItemText
-                    primary={
-                      <Box
+                  <ListItemButton
+                    sx={{
+                      gap: "8px",
+                      borderRadius: "8px",
+                      transition: "all 0.3s",
+                      "&:hover": {
+                        backgroundColor: "#EDF4FF",
+                      },
+                      "&.Mui-selected": {
+                        backgroundColor: "#1C4771",
+                        color: "#FFF",
+                        "&:hover": {
+                          backgroundColor: "#27649D",
+                        },
+                      },
+                    }}
+                    selected={selectedRoom === room._id}
+                    onClick={() => selectUserRoom(room.users[0]._id)}
+                  >
+                    <ListItemAvatar>
+                      <Badge
+                        badgeContent={unreadMessages[room._id] || 0}
                         sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "flex-start",
-                          width: "100%",
-                          "&:hover .email": {
-                            display: "block", // Show the email on hover
+                          "& .MuiBadge-badge": {
+                            backgroundColor: "#1C4771",
+                            color: "#FFFFFF",
                           },
                         }}
+                        overlap="rectangular"
+                        anchorOrigin={{
+                          vertical: "top",
+                          horizontal: "right",
+                        }}
                       >
-                        <Typography
+                        <Avatar
+                          alt={room.users[0].name}
+                          src={room.users[0].avatar}
                           sx={{
-                            fontWeight: "bold",
-                            color:
-                              selectedRoom === room._id ? "#FFF" : "#1C4771",
+                            width: 50,
+                            height: 50,
+                            border: "2px solid #1C4771",
                           }}
                         >
-                          {room.users[0].name}
-                        </Typography>
-                        <Typography
-                          className="email"
+                          {room.users[0].name[0]}
+                        </Avatar>
+                      </Badge>
+                    </ListItemAvatar>
+
+                    <ListItemText
+                      primary={
+                        <Box
                           sx={{
-                            fontSize: "0.9rem",
-                            color:
-                              selectedRoom === room._id ? "#E0E0E0" : "#6A6A6A",
-                            display: "none", // Hide the email by default
-                            transition: "all 0.3s ease",
-                            // marginTop: "4px", // Optional: Adds space between the name and email
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "flex-start",
+                            width: "100%",
+                            "&:hover .email": {
+                              display: "block", // Show the email on hover
+                            },
                           }}
                         >
-                          {room.users[0].email}
-                        </Typography>
-                      </Box>
-                    }
-                  />
-                </ListItemButton>
-              </ListItem>
-            ))}
+                          <Typography
+                            sx={{
+                              fontWeight: "bold",
+                              color:
+                                selectedRoom === room._id ? "#FFF" : "#1C4771",
+                            }}
+                          >
+                            {room.users[0].name}
+                          </Typography>
+                          <Typography
+                            className="email"
+                            sx={{
+                              fontSize: "0.9rem",
+                              color:
+                                selectedRoom === room._id
+                                  ? "#E0E0E0"
+                                  : "#6A6A6A",
+                              display: "none", // Hide the email by default
+                              transition: "all 0.3s ease",
+                              // marginTop: "4px", // Optional: Adds space between the name and email
+                            }}
+                          >
+                            {room.users[0].email}
+                          </Typography>
+                        </Box>
+                      }
+                    />
+                  </ListItemButton>
+                </ListItem>
+              ))
+            )}
           </List>
         </Box>
       </Grid>
@@ -335,7 +381,16 @@ const AdminChatSupport = () => {
           }}
         >
           {loading ? (
-            <CircularProgress sx={{ marginTop: 2, color: "#1C4771" }} />
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              }}
+            >
+              <CircularProgress sx={{ color: "#1C4771" }} />
+            </Box>
           ) : error ? (
             <Typography
               color="error"

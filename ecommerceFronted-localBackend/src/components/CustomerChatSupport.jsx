@@ -221,7 +221,16 @@ const CustomerChatSupport = () => {
           }}
         >
           {loading ? (
-            <CircularProgress sx={{ marginTop: 2, color: "#1C4771" }} />
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              }}
+            >
+              <CircularProgress sx={{ color: "#1C4771" }} />
+            </Box>
           ) : error ? (
             <Typography
               color="error"
