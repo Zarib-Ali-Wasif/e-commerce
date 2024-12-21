@@ -9,7 +9,7 @@ import { ChatService } from './chat.service';
 
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:5173', // Frontend origin
+    origin: 'http://localhost:5173' || '*', // Frontend origin, or all origins with '*'
     methods: ['GET', 'POST'],
     credentials: true, // Allow cookies if needed
   },
