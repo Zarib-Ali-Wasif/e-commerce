@@ -29,7 +29,6 @@ const AdminChatSupport = () => {
   const [chatRooms, setChatRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [userName, setUserName] = useState("");
   const [userAvatar, setUserAvatar] = useState(""); // User avatar
   const [adminAvatar, setAdminAvatar] = useState(""); // Admin avatar
   const [messages, setMessages] = useState([]);
@@ -42,23 +41,58 @@ const AdminChatSupport = () => {
 
   // Fetch chat rooms
   useEffect(() => {
-    const fetchChatRooms = async () => {
+    const fetchAndJoinChatRooms = async () => {
       try {
         setListLoading(true);
         const response = await axios.get("http://localhost:3000/chat/all");
-        setChatRooms(response.data);
+        const rooms = response.data;
+        setChatRooms(rooms);
+
+        rooms.forEach((room) => {
+          socket.emit("joinRoom", room._id);
+        });
         setListLoading(false);
       } catch (err) {
-        setError("Failed to fetch chat rooms. Please try again later.");
+        console.error("Error fetching chat rooms:", err);
         setListLoading(false);
       }
     };
-    fetchChatRooms();
+
+    fetchAndJoinChatRooms();
+
+    return () => {
+      chatRooms.forEach((room) => {
+        socket.emit("leaveRoom", room._id);
+      });
+    };
   }, []);
 
+  // Handle incoming messages
+  useEffect(() => {
+    const handleNewMessage = (message) => {
+      if (message.roomId === selectedRoom) {
+        setMessages((prev) => [...prev, message]);
+        scrollToBottom();
+      } else {
+        setUnreadMessages((prev) => ({
+          ...prev,
+          [message.roomId]: (prev[message.roomId] || 0) + 1,
+        }));
+      }
+    };
+
+    socket.on("newMessage", handleNewMessage);
+
+    return () => {
+      socket.off("newMessage", handleNewMessage);
+    };
+  }, [selectedRoom]);
+
+  // Select user room
   const selectUserRoom = async (userId) => {
     setMessages([]); // Clear messages when a new user is selected
     setSelectedUser(userId);
+
     try {
       setLoading(true);
       setError(null);
@@ -90,7 +124,7 @@ const AdminChatSupport = () => {
     }
   };
 
-  // Fetch messages for the room
+  // Fetch messages for the selected room
   useEffect(() => {
     const fetchMessages = async () => {
       if (!selectedRoom) return;
@@ -120,33 +154,6 @@ const AdminChatSupport = () => {
     };
 
     fetchMessages();
-  }, [selectedRoom]);
-
-  // Join room and handle incoming messages
-  useEffect(() => {
-    if (selectedRoom) {
-      socket.emit("joinRoom", selectedRoom);
-
-      const handleNewMessage = (message) => {
-        if (message.roomId === selectedRoom) {
-          setMessages((prev) => [...prev, message]);
-          scrollToBottom();
-        } else {
-          // Increment unread messages for other rooms
-          setUnreadMessages((prev) => ({
-            ...prev,
-            [message.roomId]: (prev[message.roomId] || 0) + 1,
-          }));
-        }
-      };
-
-      socket.on("newMessage", handleNewMessage);
-
-      return () => {
-        socket.off("newMessage", handleNewMessage);
-        socket.emit("leaveRoom", selectedRoom);
-      };
-    }
   }, [selectedRoom]);
 
   // Send a new message.
