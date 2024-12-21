@@ -217,7 +217,7 @@ const Contact = () => {
                   shopeasy.mern@gmail.com
                 </Typography>
                 <Typography variant="body1" color="textSecondary" mb={2}>
-                  Quick response within 24 hours
+                  We usually respond within 24 hours.
                 </Typography>
                 <Button
                   variant="outlined"

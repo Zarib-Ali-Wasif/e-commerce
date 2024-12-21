@@ -49,53 +49,46 @@ const CustomerChatSupport = () => {
           `http://localhost:3000/chat/user/${userId}`
         );
 
-        if (response.data.length != 0) {
-          setUserAvatar(
-            response.data.users.find(
-              (user) => user.role === "User" && user._id === userId
-            ).avatar
+        if (response.data.messages.length !== 0) {
+          // Room already exists
+          const user = response.data.users.find(
+            (u) => u.role === "User" && u._id === userId
           );
-          setAdminAvatar(
-            response.data.users.find((user) => user.role === "Admin").avatar
-          );
-          setRoomId(response.data._id); // Assuming the API returns the room ID as `_id`
+          const admin = response.data.users.find((a) => a.role === "Admin");
+
+          setUserAvatar(user?.avatar || "");
+          setAdminAvatar(admin?.avatar || "");
+          setRoomId(response.data._id);
         } else {
-          // If no room is found, create one
-          const createRoom = async () => {
-            try {
-              const response = await axios.post(
-                `http://localhost:3000/chat/user/${userId}`,
-                {
-                  users: [
-                    {
-                      _id: userId,
-                      role: "User",
-                    },
-                    {
-                      _id: "admin",
-                      role: "Admin",
-                    },
-                  ],
-                }
-              );
-
-              setUserAvatar(
-                response.data.users.find((user) => user.role === "User").avatar
-              );
-              setAdminAvatar(
-                response.data.users.find((user) => user.role === "Admin").avatar
-              );
-              setRoomId(response.data._id); // Assuming the API returns the room ID as `_id`
-            } catch (err) {
-              console.error("Error creating room:", err);
-              setError("Failed to create chat room. Please try again.");
+          // No room found, create a new one
+          const createResponse = await axios.post(
+            `http://localhost:3000/chat/user/${userId}`,
+            {
+              users: [
+                { _id: userId, role: "User" },
+                { _id: "admin", role: "Admin" },
+              ],
             }
-          };
+          );
 
-          createRoom();
+          console.log("Room Created Response:", createResponse);
+
+          const user = createResponse.data.users.find(
+            (u) => u.role === "User" && u._id === userId
+          );
+          const admin = createResponse.data.users.find(
+            (u) => u.role === "Admin"
+          );
+
+          setUserAvatar(user?.avatar || "");
+          setAdminAvatar(admin?.avatar || "");
+          setRoomId(createResponse.data._id);
         }
       } catch (err) {
-        console.error("Error fetching/creating room:", err);
+        console.error(
+          "Error fetching/creating room:",
+          err.response || err.message
+        );
         setError("Failed to fetch or create chat room. Please try again.");
       } finally {
         setLoading(false);
@@ -122,7 +115,7 @@ const CustomerChatSupport = () => {
             : [
                 {
                   content: "Hey there! How can I help you today?",
-                  userId: null,
+                  userId: "admin",
                   createdAt: Date.now(),
                 },
               ]
