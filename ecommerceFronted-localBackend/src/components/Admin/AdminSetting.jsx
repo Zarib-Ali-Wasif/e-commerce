@@ -26,8 +26,14 @@ const AdminSetting = () => {
       </Typography>
 
       {/* Section with buttons to navigate to different sub-sections */}
-      <Grid container spacing={4} justifyContent="center" marginBottom={10}>
-        <Grid item>
+      <Grid
+        container
+        spacing={4}
+        justifyContent="center"
+        textAlign="center"
+        marginBottom={10}
+      >
+        <Grid item xs={12} sm="auto">
           <Button
             variant="outlined"
             startIcon={<AccountCircle />}
@@ -53,7 +59,7 @@ const AdminSetting = () => {
             My Profile
           </Button>
         </Grid>
-        <Grid item>
+        <Grid item xs={12} sm="auto">
           <Button
             variant="outlined"
             startIcon={<ShoppingCart />}
@@ -80,7 +86,7 @@ const AdminSetting = () => {
             My Test Orders
           </Button>
         </Grid>
-        <Grid item>
+        <Grid item xs={12} sm="auto">
           <Button
             variant="outlined"
             startIcon={<Lock />}
