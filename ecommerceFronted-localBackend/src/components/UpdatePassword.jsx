@@ -98,9 +98,8 @@ const UpdatePassword = () => {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "start",
-        minHeight: "60vh",
-        height: "100%",
         textAlign: "center",
+        pb: 5,
       }}
     >
       <Typography

@@ -20,7 +20,7 @@ import {
   Badge,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { AttachFile, PhotoCamera, Send } from "@mui/icons-material";
+import { AttachFile, PhotoCamera, Send, Close } from "@mui/icons-material";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const socket = io(API_URL); // Update with your backend URL.
@@ -39,6 +39,7 @@ const AdminChatSupport = () => {
   const [error, setError] = useState("");
   const [unreadMessages, setUnreadMessages] = useState({}); // Keeps track of unread messages by room ID
   const messagesEndRef = useRef(null); // Reference for auto-scroll
+  const [isChatSelected, setIsChatSelected] = useState(false);
 
   // Fetch chat rooms
   useEffect(() => {
@@ -93,6 +94,7 @@ const AdminChatSupport = () => {
   const selectUserRoom = async (userId) => {
     setMessages([]); // Clear messages when a new user is selected
     setSelectedUser(userId);
+    setIsChatSelected(true);
 
     try {
       setLoading(true);
@@ -182,13 +184,18 @@ const AdminChatSupport = () => {
     scrollToBottom();
   }, [messages]);
 
+  // Handle close button click
+  const handleCloseButtonClick = () => {
+    setIsChatSelected(false);
+  };
+
   return (
     <Grid
       container
       sx={{
         display: "flex",
         marginTop: 15,
-        height: "85vh",
+        height: "100vh",
         width: "100%",
       }}
     >
@@ -199,7 +206,7 @@ const AdminChatSupport = () => {
         sm={4}
         md={3}
         sx={{
-          display: "flex",
+          display: { xs: isChatSelected ? "none" : "flex", sm: "flex" },
           flexDirection: "column",
           backgroundColor: "#F3F6FA",
           mb: { xs: 4, md: 0 },
@@ -232,7 +239,7 @@ const AdminChatSupport = () => {
           <List
             sx={{
               padding: "4px",
-              height: "74vh",
+              height: "calc(100vh - 100px)",
               overflowY: "auto",
               overflowX: "hidden",
               "&::-webkit-scrollbar": {
@@ -369,14 +376,14 @@ const AdminChatSupport = () => {
         sm={8}
         md={9}
         sx={{
-          display: "flex",
+          display: { xs: isChatSelected ? "flex" : "none" },
           justifyContent: "center",
           alignItems: "center",
         }}
       >
         <Box
           sx={{
-            width: { xs: "100%", sm: "80%" },
+            width: { xs: "95%", sm: "80%" },
             margin: "auto",
             backgroundColor: "#F9F9F9",
             borderRadius: 2,
@@ -436,6 +443,26 @@ const AdminChatSupport = () => {
                         ?.users.find((user) => user._id === selectedUser)
                         ?.name || "User"}
                     </Typography>
+                    {/* Back Button for small screens */}
+                    {isChatSelected && (
+                      <IconButton
+                        onClick={handleCloseButtonClick}
+                        sx={{
+                          position: "relative",
+                          ml: "auto",
+                        }}
+                      >
+                        <Close
+                          sx={{
+                            color: "#FFF",
+                            position: "absolute",
+                            top: { xs: -20, sm: -15 },
+                            right: { xs: -6, sm: -2 },
+                            fontSize: "1.6rem",
+                          }}
+                        />
+                      </IconButton>
+                    )}
                   </Box>
 
                   {/* Chat Content */}

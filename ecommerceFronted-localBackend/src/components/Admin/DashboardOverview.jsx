@@ -11,6 +11,7 @@ import {
 } from "../../lib/redux/slices/productsSlice";
 import { fetchOrders } from "../../lib/redux/slices/ordersSlice";
 import { fetchUsers } from "../../lib/redux/slices/usersSlice";
+import CategoryStatsOverview from "./CategoryStatsOverview";
 
 // Chart.js components
 import {
@@ -24,8 +25,8 @@ import {
   Title,
   Tooltip,
   Legend,
+  Filler, // Import the Filler plugin
 } from "chart.js";
-import CategoryStatsOverview from "./CategoryStatsOverview";
 
 ChartJS.register(
   CategoryScale,
@@ -36,7 +37,8 @@ ChartJS.register(
   ArcElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler // Register the Filler plugin
 );
 
 const DashboardOverview = () => {

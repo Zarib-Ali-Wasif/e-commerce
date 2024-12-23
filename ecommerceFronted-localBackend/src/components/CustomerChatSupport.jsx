@@ -209,7 +209,7 @@ const CustomerChatSupport = () => {
       >
         <Box
           sx={{
-            width: { xs: "100%", sm: "80%", md: "50%" },
+            width: { xs: "95%", sm: "80%", md: "50%" },
             margin: "auto",
             backgroundColor: "#F9F9F9",
             borderRadius: 2,

@@ -6,6 +6,7 @@ import {
   Button,
   Select,
   MenuItem,
+  CircularProgress,
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useFormik } from "formik";
@@ -22,6 +23,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const location = useLocation(); // Get current location
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false); // Loader state
   const [redirectTo, setRedirectTo] = useState("");
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -77,32 +79,8 @@ const Login = () => {
       role: "",
     },
     validationSchema,
-    // onSubmit: async (data, { resetForm }) => {
-    //   try {
-    //     localStorage.setItem("role", data.role);
-    //     const resultAction = await dispatch(loginUserAsync(data)).unwrap();
-    //     if (resultAction) {
-    //       const decodedToken = jwtDecode(response.access_token);
-    //       localStorage.setItem("user", JSON.stringify(decodedToken));
-    //       resetForm();
-    //       setTimeout(() => {
-    //         if (redirectTo) {
-    //           navigate(`/${redirectTo}`); // Navigate to the passed redirectTo path
-    //           // setRedirectTo("");
-    //         } else {
-    //           navigate(
-    //             localStorage.getItem("role")?.role === "Admin"
-    //               ? "/admin-panel"
-    //               : "/"
-    //           );
-    //         }
-    //       }, 1000);
-    //     }
-    //   } catch (error) {
-    //     toast.error("Login failed. Please check your credentials.");
-    //   }
-    // },
     onSubmit: async (data, { resetForm }) => {
+      setLoading(true); // Start loader
       try {
         localStorage.setItem("role", data.role);
 
@@ -114,9 +92,8 @@ const Login = () => {
           const decodedToken = jwtDecode(resultAction.access_token);
           localStorage.setItem("user", JSON.stringify(decodedToken));
 
-          resetForm();
-
           setTimeout(() => {
+            setLoading(false); // Stop loader
             // Navigate based on role or redirectTo
             if (redirectTo) {
               navigate(`/${redirectTo}`); // Navigate to passed redirectTo path
@@ -131,6 +108,8 @@ const Login = () => {
       } catch (error) {
         console.error("Login error:", error); // Log for debugging
         toast.error("Login failed. Please check your credentials.");
+      } finally {
+        resetForm(); // Reset form fields
       }
     },
   });
@@ -214,7 +193,6 @@ const Login = () => {
             <Typography color="error">{formik.errors.password}</Typography>
           ) : null}
         </Box>
-        {/* <Typography sx={{ textAlign: "start" }}>Role</Typography> */}
         <Box sx={{ mb: 2, mt: 4.6, textAlign: "start" }}>
           <Select
             name="role"
@@ -261,9 +239,13 @@ const Login = () => {
             backgroundColor: "#1C4771",
           },
         }}
-        // ToDo: Add redirectTo state
+        disabled={loading} // Disable button while loading
       >
-        Log In
+        {loading ? (
+          <CircularProgress size={24} color="inherit" sx={{ color: "white" }} />
+        ) : (
+          "Log In"
+        )}
       </Button>
       <ToastContainer />
     </Box>

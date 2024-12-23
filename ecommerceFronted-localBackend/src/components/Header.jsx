@@ -158,10 +158,7 @@ function Header() {
                   <ListItemIcon sx={{ color: "#1C4771" }}>
                     <SettingsIcon />
                   </ListItemIcon>
-                  <ListItemText
-                    primary="Admin Settings"
-                    sx={{ color: "#1C4771" }}
-                  />
+                  <ListItemText primary="Settings" sx={{ color: "#1C4771" }} />
                 </ListItemButton>
               </ListItem>
             )}
@@ -394,7 +391,7 @@ function Header() {
                   <ListItemIcon>
                     <SettingsIcon sx={{ color: "#1C4771" }} />
                   </ListItemIcon>
-                  Admin Settings
+                  Settings
                 </MenuItem>
               ),
               <MenuItem

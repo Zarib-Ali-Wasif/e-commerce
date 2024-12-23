@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import FAQ from "../components/FAQ";
+import { ToastContainer, toast } from "react-toastify";
 
 // Custom Theme with primary color #282c34
 const theme = createTheme({
@@ -62,9 +63,20 @@ const theme = createTheme({
 
 const Contact = () => {
   const navigate = useNavigate();
-  const handleChat = (e) => {
+
+  const handleChatSupport = (e) => {
     e.preventDefault();
-    navigate("/customer-chat-support");
+    const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+    if (isAuthenticated || isAuthenticated === "true") {
+      navigate("/customer-chat-support");
+    } else {
+      toast.info("Please first login to access chat support.");
+      setTimeout(() => {
+        navigate("/login", {
+          state: { redirectTo: "customer-chat-support" },
+        });
+      }, 2500);
+    }
   };
   const handleEmail = (e) => {
     e.preventDefault();
@@ -87,7 +99,6 @@ const Contact = () => {
         sx={{
           pt: 12,
           backgroundColor: "#d1dce8",
-          minHeight: "60vh",
           height: "100%",
           display: "flex",
           flexDirection: "column",
@@ -174,7 +185,7 @@ const Contact = () => {
                     color: theme.palette.primary.main,
                     borderColor: theme.palette.primary.main,
                   }}
-                  onClick={handleChat}
+                  onClick={handleChatSupport}
                 >
                   Chat Now
                 </Button>
@@ -294,6 +305,7 @@ const Contact = () => {
       </Box>
       {/* FAQ section */}
       <FAQ />
+      <ToastContainer />
     </ThemeProvider>
   );
 };

@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import ScrollToTop from "../components/ScrollToTop"; // Import ScrollToTop
 import Home from "../pages/Home";
 import About from "../pages/About";
 import Products from "../pages/Products";
@@ -50,6 +51,8 @@ function AppRoutes() {
         v7_relativeSplatPath: true,
       }}
     >
+      {/* ScrollToTop ensures the page scrolls to the top on route change */}
+      <ScrollToTop />
       <Layout>
         <Routes>
           {/* Public Routes */}

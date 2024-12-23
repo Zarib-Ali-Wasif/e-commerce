@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Grid, Button, Typography, Box } from "@mui/material";
+import { Grid, Button, Typography, Box, CircularProgress } from "@mui/material";
 import DashboardOverview from "./DashboardOverview";
 import OrdersManagement from "./OrdersManagement";
 import ProductsManagement from "./ProductsManagement";
@@ -15,10 +15,25 @@ import {
 
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState("DashboardOverview");
+  const [loading, setLoading] = useState({
+    DashboardOverview: false,
+    CustomerManagement: false,
+    ProductsManagement: false,
+    OrdersManagement: false,
+    CustomerSupport: false,
+  });
   const navigate = useNavigate();
 
-  const handleAdminChatSupport = () => {
-    navigate("/admin-panel-chat-support");
+  const handleClick = (section) => {
+    setLoading((prevState) => ({ ...prevState, [section]: true }));
+    setTimeout(() => {
+      if (section === "CustomerSupport") {
+        navigate("/admin-panel-chat-support");
+      } else {
+        setActiveSection(section);
+      }
+      setLoading((prevState) => ({ ...prevState, [section]: false }));
+    }, 1000); // Simulate a delay for loader
   };
 
   return (
@@ -33,135 +48,66 @@ const AdminPanel = () => {
 
       {/* Navigation Buttons */}
       <Grid container spacing={4} justifyContent="center" marginBottom={5}>
-        <Grid item>
-          <Button
-            variant="outlined"
-            startIcon={<Dashboard />}
-            onClick={() => setActiveSection("DashboardOverview")}
-            sx={{
-              minWidth: 180,
-              borderRadius: "12px",
-              padding: "12px 24px",
-              textTransform: "none",
-              fontWeight: 500,
-              boxShadow: 4,
-              border: "1px solid #1C4771",
-              color: "#1C4771",
-              "&:hover": {
-                backgroundColor: "#1C4771",
-                color: "white",
-                boxShadow: 8,
-              },
-              transition: "all 0.3s ease",
-            }}
-          >
-            Overview
-          </Button>
-        </Grid>
-
-        <Grid item>
-          <Button
-            variant="outlined"
-            startIcon={<People />}
-            onClick={() => setActiveSection("CustomerManagement")}
-            sx={{
-              minWidth: 180,
-              borderRadius: "12px",
-              padding: "12px 12px",
-              textTransform: "none",
-              fontWeight: 500,
-              boxShadow: 4,
-              border: "1px solid #1C4771",
-              color: "#1C4771",
-              "&:hover": {
-                backgroundColor: "#1C4771",
-                color: "white",
-                boxShadow: 8,
-              },
-              transition: "all 0.3s ease",
-            }}
-          >
-            Manage Customers
-          </Button>
-        </Grid>
-
-        <Grid item>
-          <Button
-            variant="outlined"
-            startIcon={<Inventory />}
-            onClick={() => setActiveSection("ProductsManagement")}
-            sx={{
-              minWidth: 180,
-              borderRadius: "12px",
-              padding: "12px 12px",
-              textTransform: "none",
-              fontWeight: 500,
-              boxShadow: 4,
-              border: "1px solid #1C4771",
-              color: "#1C4771",
-              "&:hover": {
-                backgroundColor: "#1C4771",
-                color: "white",
-                boxShadow: 8,
-              },
-              transition: "all 0.3s ease",
-            }}
-          >
-            Manage Products
-          </Button>
-        </Grid>
-
-        <Grid item>
-          <Button
-            variant="outlined"
-            startIcon={<ShoppingCart />}
-            onClick={() => setActiveSection("OrdersManagement")}
-            sx={{
-              minWidth: 180,
-              borderRadius: "12px",
-              padding: "12px 24px",
-              textTransform: "none",
-              fontWeight: 500,
-              boxShadow: 4,
-              border: "1px solid #1C4771",
-              color: "#1C4771",
-              "&:hover": {
-                backgroundColor: "#1C4771",
-                color: "white",
-                boxShadow: 8,
-              },
-              transition: "all 0.3s ease",
-            }}
-          >
-            Manage Orders
-          </Button>
-        </Grid>
-
-        <Grid item>
-          <Button
-            variant="outlined"
-            startIcon={<SupportAgent />}
-            onClick={() => handleAdminChatSupport()}
-            sx={{
-              minWidth: 180,
-              borderRadius: "12px",
-              padding: "12px 18px",
-              textTransform: "none",
-              fontWeight: 500,
-              boxShadow: 4,
-              border: "1px solid #1C4771",
-              color: "#1C4771",
-              "&:hover": {
-                backgroundColor: "#1C4771",
-                color: "white",
-                boxShadow: 8,
-              },
-              transition: "all 0.3s ease",
-            }}
-          >
-            Customer Support
-          </Button>
-        </Grid>
+        {[
+          {
+            label: "Overview",
+            section: "DashboardOverview",
+            icon: <Dashboard />,
+          },
+          {
+            label: "Manage Customers",
+            section: "CustomerManagement",
+            icon: <People />,
+          },
+          {
+            label: "Manage Products",
+            section: "ProductsManagement",
+            icon: <Inventory />,
+          },
+          {
+            label: "Manage Orders",
+            section: "OrdersManagement",
+            icon: <ShoppingCart />,
+          },
+          {
+            label: "Customer Support",
+            section: "CustomerSupport",
+            icon: <SupportAgent />,
+          },
+        ].map(({ label, section, icon }) => (
+          <Grid item key={section}>
+            <Button
+              variant="outlined"
+              startIcon={
+                loading[section] ? (
+                  <CircularProgress size={20} sx={{ color: "#1C4771" }} />
+                ) : (
+                  icon
+                )
+              }
+              onClick={() => handleClick(section)}
+              sx={{
+                minWidth: 202,
+                borderRadius: "12px",
+                padding: "12px 24px",
+                textTransform: "none",
+                fontWeight: 500,
+                boxShadow: 4,
+                border: "1px solid #1C4771",
+                color: "#1C4771",
+                "&:hover": {
+                  backgroundColor: "#1C4771",
+                  color: "white",
+                  boxShadow: 8,
+                },
+                transition: "all 0.3s ease",
+              }}
+              disabled={loading[section]}
+            >
+              {label}
+            </Button>
+          </Grid>
+        ))}
       </Grid>
 
       {/* Dynamic Section Rendering */}

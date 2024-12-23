@@ -58,6 +58,7 @@ function FAQ() {
         flexDirection: "column",
         justifyContent: "center",
         backgroundColor: "#d1dce8",
+        py: 10,
       }}
     >
       <Box
