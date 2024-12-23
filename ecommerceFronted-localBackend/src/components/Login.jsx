@@ -93,7 +93,6 @@ const Login = () => {
           localStorage.setItem("user", JSON.stringify(decodedToken));
 
           setTimeout(() => {
-            setLoading(false); // Stop loader
             // Navigate based on role or redirectTo
             if (redirectTo) {
               navigate(`/${redirectTo}`); // Navigate to passed redirectTo path
@@ -109,6 +108,9 @@ const Login = () => {
         console.error("Login error:", error); // Log for debugging
         toast.error("Login failed. Please check your credentials.");
       } finally {
+        setTimeout(() => {
+          setLoading(false); // Stop loader after 1 second, regardless of success or failure
+        }, 1000);
         resetForm(); // Reset form fields
       }
     },
