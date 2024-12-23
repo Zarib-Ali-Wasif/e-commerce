@@ -73,7 +73,7 @@ const OrderConfirmation = () => {
           minHeight: "100vh",
         }}
       >
-        <CircularProgress size={50} />
+        <CircularProgress size={50} sx={{ color: "#1C4771" }} />
         <Typography>Loading, Please Wait...</Typography>
       </Box>
     );

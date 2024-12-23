@@ -70,7 +70,7 @@ const RecentOrders = () => {
           alignItems="center"
           height="50vh"
         >
-          <CircularProgress size={50} />
+          <CircularProgress size={50} sx={{ color: "#1C4771" }} />
           <Typography variant="body1" mt={2}>
             Loading orders...
           </Typography>

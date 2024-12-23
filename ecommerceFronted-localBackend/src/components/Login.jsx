@@ -244,7 +244,7 @@ const Login = () => {
         disabled={loading} // Disable button while loading
       >
         {loading ? (
-          <CircularProgress size={24} color="inherit" sx={{ color: "white" }} />
+          <CircularProgress size={24} sx={{ color: "white" }} />
         ) : (
           "Log In"
         )}

@@ -147,7 +147,7 @@ const CustomerManagement = () => {
                         minHeight: "60vh",
                       }}
                     >
-                      <CircularProgress size={50} />
+                      <CircularProgress size={50} sx={{ color: "#1C4771" }} />
                       <Typography>Loading Customers...</Typography>
                     </Box>
                   </TableCell>
