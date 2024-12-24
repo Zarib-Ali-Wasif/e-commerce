@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Modal,
   Box,
@@ -13,18 +13,29 @@ import { useSelector } from "react-redux";
 import { getProductDetails } from "./../lib/utils/helperFunctions";
 import { useDispatch } from "react-redux";
 import { addToCart } from "./../lib/redux/slices/cartSlice";
+import {
+  fetchProducts,
+  fetchCategories,
+} from "./../lib/redux/slices/productsSlice";
 
-const ProductDetailsModal = ({
-  open,
-  handleClose,
-  productId,
-  productsList,
-}) => {
+const ProductDetailsModal = ({ open, handleClose, productId }) => {
   const dispatch = useDispatch();
-  const product = useSelector((state) =>
-    getProductDetails(productId, state.cart.productsList)
-  );
+  const productsList = useSelector((state) => state.products.productsList);
   const role = localStorage.getItem("role");
+
+  // Fetch products and categories on component mount
+  useEffect(() => {
+    if (!productId) return;
+    console.log("Fetching product details...", productId);
+    console.log("Fetching product length", productsList.length);
+    if (productsList.length > 0) return;
+    dispatch(fetchProducts("all")); // Fetch all products initially
+    dispatch(fetchCategories()); // Fetch product categories
+  }, [dispatch, productId]);
+
+  const product = useSelector((state) =>
+    getProductDetails(productId, state.products.productsList)
+  );
 
   if (!product) {
     return (
