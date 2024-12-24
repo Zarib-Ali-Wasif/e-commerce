@@ -45,19 +45,24 @@ const Products = ({ showModal }) => {
     dispatch(fetchCategories()); // Fetch product categories
   }, [dispatch]);
 
+  useEffect(() => {
+    if (id && productsList.length > 0) {
+      const productExists = productsList.some((product) => product._id === id);
+      if (productExists) {
+        setSelectedProductId(id);
+        setModalOpen(true);
+      } else {
+        toast.error("Product not found");
+        navigate("/products");
+      }
+    }
+  }, [id, productsList, navigate]);
+
   // Handle category change
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
     dispatch(fetchProducts(event.target.value)); // Fetch products based on selected category on change of category selection in dropdown list.
   };
-
-  // Open modal when `showModal` is true and `id` is valid
-  useEffect(() => {
-    if (showModal && id) {
-      setSelectedProductId(id);
-      setModalOpen(true);
-    }
-  }, [id, showModal]);
 
   const handleCloseModal = () => {
     setModalOpen(false);
