@@ -19,7 +19,7 @@ import { getProductDetails } from "./../lib/utils/helperFunctions";
 import { fetchProducts } from "./../lib/redux/slices/productsSlice";
 import { toast } from "react-toastify";
 import { GST_PERCENT } from "./../lib/utils/helperFunctions";
-import { loadStripe } from "@stripe/stripe-js";
+// import { loadStripe } from "@stripe/stripe-js";
 import LazyLoad from "react-lazyload";
 
 const Checkout = () => {
@@ -142,17 +142,24 @@ const Checkout = () => {
     }
   };
 
-  // Function to initiate Stripe payment
   const makePayment = async (orderDetails) => {
     try {
+      // Dynamically import the loadStripe function
+      const { loadStripe } = await import("@stripe/stripe-js");
+
       const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+
+      if (!stripe) {
+        toast.error("Stripe initialization failed.");
+        return;
+      }
 
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       };
 
-      // Create a checkout session
+      // Create a checkout session only when the user triggers payment
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}orders/create-checkout-session`,
         {
@@ -161,6 +168,10 @@ const Checkout = () => {
           body: JSON.stringify(orderDetails),
         }
       );
+
+      if (!response.ok) {
+        throw new Error("Failed to create checkout session.");
+      }
 
       const session = await response.json();
 
