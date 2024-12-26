@@ -296,23 +296,26 @@ const Products = ({ showModal }) => {
                   </CardContent>
 
                   <Box sx={{ textAlign: "center", mb: 2 }}>
-                    <Button
-                      variant="contained"
-                      onClick={() => {
-                        dispatch(addToCart(product));
-                        dispatch(updateCartSummary(productsList));
-                      }}
-                      sx={{
-                        textTransform: "none",
-                        marginRight: 1,
-                        backgroundColor: "#1C4771",
-                        "&:hover": {
-                          backgroundColor: "#163b56",
-                        },
-                      }}
-                    >
-                      Add to Cart
-                    </Button>
+                    {(localStorage.getItem("isAuthenticated") !== "true" ||
+                      localStorage.getItem("role") === "User") && (
+                      <Button
+                        variant="contained"
+                        onClick={() => {
+                          dispatch(addToCart(product));
+                          dispatch(updateCartSummary(productsList));
+                        }}
+                        sx={{
+                          textTransform: "none",
+                          marginRight: 1,
+                          backgroundColor: "#1C4771",
+                          "&:hover": {
+                            backgroundColor: "#163b56",
+                          },
+                        }}
+                      >
+                        Add to Cart
+                      </Button>
+                    )}
 
                     <Button
                       variant="outlined"
