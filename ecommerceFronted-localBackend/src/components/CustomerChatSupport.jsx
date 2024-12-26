@@ -17,9 +17,6 @@ import {
 import { useTheme } from "@mui/material/styles";
 import { AttachFile, PhotoCamera, Send } from "@mui/icons-material";
 
-const API_URL = import.meta.env.VITE_API_URL;
-const socket = io(API_URL); // Replace with your backend URL.
-
 const CustomerChatSupport = () => {
   const theme = useTheme(); // Using Material UI theme
   const [roomId, setRoomId] = useState(null); // Chat room ID
@@ -30,9 +27,19 @@ const CustomerChatSupport = () => {
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
   const messagesEndRef = useRef(null); // Reference for auto-scroll
+  const [socket, setSocket] = useState(null);
+  const userId = localStorage.getItem("userId"); // Fetch user ID from local storage
+  const API_URL = import.meta.env.VITE_API_URL;
 
-  // Fetch user ID from local storage
-  const userId = localStorage.getItem("userId");
+  // Initialize socket
+  useEffect(() => {
+    const newSocket = io(API_URL);
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [API_URL]);
 
   // Fetch or create room for the user
   useEffect(() => {
@@ -93,7 +100,7 @@ const CustomerChatSupport = () => {
     };
 
     fetchOrCreateRoom();
-  }, [userId]);
+  }, [userId, API_URL]);
 
   // Fetch messages for the room
   useEffect(() => {
@@ -105,7 +112,7 @@ const CustomerChatSupport = () => {
         setError(null);
         const response = await axios.get(`${API_URL}chat/room/${roomId}`);
         setMessages(
-          response.data.length != 0
+          response.data.length !== 0
             ? response.data
             : [
                 {
@@ -124,11 +131,11 @@ const CustomerChatSupport = () => {
     };
 
     fetchMessages();
-  }, [roomId]);
+  }, [roomId, API_URL]);
 
   // Join room and handle incoming messages
   useEffect(() => {
-    if (roomId) {
+    if (roomId && socket) {
       socket.emit("joinRoom", roomId);
 
       const handleNewMessage = (message) => {
@@ -143,7 +150,7 @@ const CustomerChatSupport = () => {
         socket.emit("leaveRoom", roomId);
       };
     }
-  }, [roomId]);
+  }, [roomId, socket]);
 
   // Auto-scroll to the latest message
   const scrollToBottom = () => {
@@ -157,7 +164,7 @@ const CustomerChatSupport = () => {
 
   // Send a new message
   const sendMessage = async () => {
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || !socket) return;
 
     const message = { content: newMessage, roomId, userId };
 
