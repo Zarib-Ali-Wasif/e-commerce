@@ -22,9 +22,6 @@ import {
 import { useTheme } from "@mui/material/styles";
 import { AttachFile, PhotoCamera, Send, Close } from "@mui/icons-material";
 
-const API_URL = import.meta.env.VITE_API_URL;
-const socket = io(API_URL); // Update with your backend URL.
-
 const AdminChatSupport = () => {
   const theme = useTheme(); // Using Material UI theme
   const [chatRooms, setChatRooms] = useState([]);
@@ -40,14 +37,29 @@ const AdminChatSupport = () => {
   const [unreadMessages, setUnreadMessages] = useState({}); // Keeps track of unread messages by room ID
   const messagesEndRef = useRef(null); // Reference for auto-scroll
   const [isChatSelected, setIsChatSelected] = useState(false);
+  const [socket, setSocket] = useState(null);
+  const API_URL = import.meta.env.VITE_API_URL;
 
-  // Fetch chat rooms
+  // Initialize Socket.IO connection
   useEffect(() => {
+    const newSocket = io(API_URL);
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [API_URL]);
+
+  // Fetch and join chat rooms
+  useEffect(() => {
+    if (!socket) return;
+
     const fetchAndJoinChatRooms = async () => {
       try {
         setListLoading(true);
         const response = await axios.get(`${API_URL}chat/all`);
         const rooms = response.data;
+
         setChatRooms(rooms);
 
         rooms.forEach((room) => {
@@ -67,10 +79,12 @@ const AdminChatSupport = () => {
         socket.emit("leaveRoom", room._id);
       });
     };
-  }, []);
+  }, [API_URL, socket]);
 
   // Handle incoming messages
   useEffect(() => {
+    if (!socket) return;
+
     const handleNewMessage = (message) => {
       if (message.roomId === selectedRoom) {
         setMessages((prev) => [...prev, message]);
@@ -88,7 +102,7 @@ const AdminChatSupport = () => {
     return () => {
       socket.off("newMessage", handleNewMessage);
     };
-  }, [selectedRoom]);
+  }, [socket, selectedRoom]);
 
   // Select user room
   const selectUserRoom = async (userId) => {
@@ -127,8 +141,9 @@ const AdminChatSupport = () => {
 
   // Fetch messages for the selected room
   useEffect(() => {
+    if (!selectedRoom || !socket) return;
+
     const fetchMessages = async () => {
-      if (!selectedRoom) return;
       try {
         setLoading(true);
         setError(null);
@@ -153,11 +168,15 @@ const AdminChatSupport = () => {
     };
 
     fetchMessages();
-  }, [selectedRoom]);
 
-  // Send a new message.
+    return () => {
+      socket.emit("leaveRoom", selectedRoom);
+    };
+  }, [selectedRoom, API_URL, socket]);
+
+  // Send a new message
   const sendMessage = async () => {
-    if (!newMessage.trim()) return; // Prevent sending empty messages.
+    if (!newMessage.trim() || !socket) return; // Don't send empty messages
 
     const messageData = {
       content: newMessage,
