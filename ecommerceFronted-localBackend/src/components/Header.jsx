@@ -257,25 +257,27 @@ function Header() {
           </Tabs>
 
           {/* Cart Icon with Badge */}
-          <Box component={NavLink} to="/cart">
-            <Badge
-              badgeContent={cartCount}
-              color="primary"
-              sx={{
-                mr: 1.3,
-                ml: 0.5,
-                padding: 0.6,
-                "& .MuiBadge-badge": {
-                  backgroundColor: "#1C4771",
-                  color: "white",
-                },
-              }}
-            >
-              <ShoppingCartIcon
-                sx={{ color: "#1C4771", fontSize: 28, ml: 2 }}
-              />
-            </Badge>
-          </Box>
+          {!isAuthenticated || (isAuthenticated && userInfo.role === "User") ? (
+            <Box component={NavLink} to="/cart">
+              <Badge
+                badgeContent={cartCount}
+                color="primary"
+                sx={{
+                  mr: 1.3,
+                  ml: 0.5,
+                  padding: 0.6,
+                  "& .MuiBadge-badge": {
+                    backgroundColor: "#1C4771",
+                    color: "white",
+                  },
+                }}
+              >
+                <ShoppingCartIcon
+                  sx={{ color: "#1C4771", fontSize: 28, ml: 2 }}
+                />
+              </Badge>
+            </Box>
+          ) : null}
 
           {/* Account  with Dropdown */}
           {isAuthenticated ? (
@@ -321,21 +323,23 @@ function Header() {
               onClick={() => navigate("/")}
             />
           </Typography>
-          <IconButton component={NavLink} to="/cart">
-            <Badge
-              badgeContent={cartCount}
-              color="primary"
-              sx={{
-                padding: 0.6,
-                "& .MuiBadge-badge": {
-                  backgroundColor: "#1C4771",
-                  color: "white",
-                },
-              }}
-            >
-              <ShoppingCartIcon sx={{ color: "#1C4771", fontSize: 28 }} />
-            </Badge>
-          </IconButton>
+          {!isAuthenticated || (isAuthenticated && userInfo.role === "User") ? (
+            <IconButton component={NavLink} to="/cart">
+              <Badge
+                badgeContent={cartCount}
+                color="primary"
+                sx={{
+                  padding: 0.6,
+                  "& .MuiBadge-badge": {
+                    backgroundColor: "#1C4771",
+                    color: "white",
+                  },
+                }}
+              >
+                <ShoppingCartIcon sx={{ color: "#1C4771", fontSize: 28 }} />
+              </Badge>
+            </IconButton>
+          ) : null}
         </Toolbar>
       </AppBar>
 
